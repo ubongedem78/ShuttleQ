@@ -1,6 +1,6 @@
 const { sequelize } = require("../config/database");
 const { DataTypes } = require("sequelize");
-const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN} = DataTypes;
+const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN } = DataTypes;
 
 const User = sequelize.define("User", {
   id: {
