@@ -45,6 +45,7 @@ const Court = sequelize.define("Court", {
     type: UUID,
     allowNull: false,
     primaryKey: true,
+    defaultValue: UUIDV4,
   },
   courtName: {
     type: STRING,
@@ -131,6 +132,48 @@ const Team = sequelize.define("Team", {
     type: ENUM("SINGLES", "DOUBLES"),
     allowNull: false,
   },
+  isActive: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+});
+
+// Here, i want to find the previous active team of the player and set the isActive to false: This ensures that the previous team of the player is set as inactive. After doing this, i want to set the current team of the player as active.
+// This block runs before a new team is created
+Team.addHook("beforeCreate", async (team, options) => {
+  await Team.update(
+    { isActive: false },
+    {
+      where: {
+        playerId: team.playerId,
+        isActive: true,
+      },
+      individualHooks: true,
+      transaction: options.transaction,
+    }
+  );
+
+  team.isActive = true;
+});
+
+// It checks if the isActive flag is being updated to true. If yes, it proceeds with deactivating the previous active team.
+// It finds the previous active team of the player and sets its isActive flag to false
+// This block runs before updating an existing team
+Team.addHook("beforeUpdate", async (team, options) => {
+  if (team.isActive === true) {
+    await Team.update(
+      { isActive: false },
+      {
+        where: {
+          playerId: team.playerId,
+          isActive: true,
+        },
+        individualHooks: true,
+        transaction: options.transaction,
+      }
+    );
+  }
 });
 
 User.hasOne(Queue, { as: "currentQueue", foreignKey: "playerId" });
@@ -149,6 +192,12 @@ Team.belongsToMany(Queue, {
   foreignKey: "teamId",
   otherKey: "queueId",
 });
+
+Team.hasOne(Game, { foreignKey: "teamAId", as: "teamA" });
+Team.hasOne(Game, { foreignKey: "teamBId", as: "teamB" });
+
+Game.belongsTo(Team, { foreignKey: "teamAId", as: "teamA" });
+Game.belongsTo(Team, { foreignKey: "teamBId", as: "teamB" });
 
 Game.belongsTo(Queue, { as: "queue", foreignKey: "queueId" });
 Game.belongsTo(Court, { as: "court", foreignKey: "courtId" });
