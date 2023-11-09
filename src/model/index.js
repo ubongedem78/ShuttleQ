@@ -1,6 +1,6 @@
 const { sequelize } = require("../config/database");
 const { DataTypes } = require("sequelize");
-const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4 } = DataTypes;
+const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN} = DataTypes;
 
 const User = sequelize.define("User", {
   id: {
@@ -64,8 +64,8 @@ const Game = sequelize.define("Game", {
     primaryKey: true,
     defaultValue: UUIDV4,
   },
-  type: {
-    gameType: ENUM("SINGLES", "DOUBLES"),
+  gameType: {
+    type: ENUM("SINGLES", "DOUBLES"),
     allowNull: false,
   },
   teamAId: {
