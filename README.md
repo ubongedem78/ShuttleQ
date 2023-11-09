@@ -48,13 +48,9 @@ ShuttleQ addresses the common issue of managing player queues at badminton court
 - Pairs play 2 consecutive games only if they win the first game.
 - Top pairs on the queue are selected when the game starts.
 - A losing pair is pushed to the bottom of the queue.
-- New pairs are added to the queue before the losing pair plays again.
+- New pairs can be added to the queue.
 - A pair that wins 2 consecutive games is pushed off the top of the queue.
-- If all 4 players are not out, the winning pair plays before the losing pair.
-- Winning pairs remain at the top of the queue.
-- Deuce condition at 20:20 in a game.
-- Scoring handled during the game, allowing score increment and decrement.
-- Ability to add new players or pairs to the queue.
+- In the event where all 4 players are out, the winning pair plays before the losing pair.
 
 ShuttleQ provides a comprehensive solution for organizing and managing badminton games, making it easier for players to enjoy the sport and maintain a fair playing environment. The application leverages a modern tech stack to offer a seamless experience for both players and administrators.
 
