@@ -93,6 +93,7 @@ const Game = sequelize.define("Game", {
   },
   queueId: {
     type: UUID,
+    allowNull: false,
   },
 });
 
