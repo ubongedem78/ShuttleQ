@@ -12,23 +12,66 @@ const User = sequelize.define("User", {
   firstName: {
     type: STRING,
     allowNull: false,
+    validate: {
+      isAlpha: {
+        args: true,
+        msg: "First name must only contain alphabets",
+      },
+      len: {
+        args: [3, 10],
+        msg: "First name must be between 3 and 10 characters",
+      },
+    },
   },
   lastName: {
     type: STRING,
     allowNull: false,
+    validate: {
+      isAlpha: {
+        args: true,
+        msg: "First name must only contain alphabets",
+      },
+      len: {
+        args: [3, 10],
+        msg: "First name must be between 3 and 10 characters",
+      },
+    },
   },
   email: {
     type: STRING,
     allowNull: false,
     unique: true,
+    validate: {
+      isEmail: {
+        args: true,
+        msg: "Please enter a valid email address",
+      },
+    },
   },
   avatar: {
     type: STRING,
+    allowNull: true,
+    set(value) {
+      if (value) {
+        this.setDataValue("avatar", value);
+      } else {
+        this.setDataValue(
+          "avatar",
+          "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+        );
+      }
+    },
   },
   userName: {
     type: STRING,
     allowNull: false,
     unique: true,
+    validate: {
+      len: {
+        args: [3, 20],
+        msg: "Username must be between 3 and 20 characters",
+      },
+    },
   },
   passwordHash: {
     type: STRING,
