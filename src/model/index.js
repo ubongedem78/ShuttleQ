@@ -1,5 +1,6 @@
 const { sequelize } = require("../config/database");
 const { DataTypes } = require("sequelize");
+const { Op } = require("sequelize");
 const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN } = DataTypes;
 
 const User = sequelize.define("User", {
@@ -186,11 +187,13 @@ const Team = sequelize.define("Team", {
     primaryKey: true,
     defaultValue: UUIDV4,
   },
-  player1Name: {
-    type: STRING,
+  player1Id: {
+    type: UUID,
+    allowNull: false,
   },
-  player2Name: {
-    type: STRING,
+  player2Id: {
+    type: UUID,
+    allowNull: true,
   },
   gameType: {
     type: ENUM("SINGLES", "DOUBLES"),
@@ -206,19 +209,19 @@ const Team = sequelize.define("Team", {
 // Here, i want to find the previous active team of the player and set the isActive to false: This ensures that the previous team of the player is set as inactive. After doing this, i want to set the current team of the player as active.
 // This block runs before a new team is created
 Team.addHook("beforeCreate", async (team, options) => {
-  await Team.update(
-    { isActive: false },
-    {
-      where: {
-        playerId: team.playerId,
-        isActive: true,
-      },
-      individualHooks: true,
-      transaction: options.transaction,
-    }
-  );
-
-  team.isActive = true;
+  if (team.isActive) {
+    // Find the previous active team of the player and set its isActive flag to false
+    await Team.update(
+      { isActive: false },
+      {
+        where: {
+          [Op.and]: [{ playerId: team.player1Id }, { isActive: true }],
+        },
+        individualHooks: true,
+        transaction: options.transaction,
+      }
+    );
+  }
 });
 
 // It checks if the isActive flag is being updated to true. If yes, it proceeds with deactivating the previous active team.
@@ -270,7 +273,7 @@ Team.hasMany(Queue, { foreignKey: "teamId" });
 Queue.belongsTo(Team, { foreignKey: "teamId" });
 
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then(() => {
     console.log("Database Synced Successfully...");
   })
