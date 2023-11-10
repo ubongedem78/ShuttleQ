@@ -165,6 +165,14 @@ const Queue = sequelize.define("Queue", {
     type: ENUM("PENDING", "PLAYING"),
     allowNull: false,
   },
+  playerName: {
+    type: STRING,
+    allowNull: false,
+  },
+  gameType: {
+    type: ENUM("SINGLES", "DOUBLES"),
+    allowNull: false,
+  },
   timestamp: {
     type: DATE,
     allowNull: false,
@@ -178,9 +186,11 @@ const Team = sequelize.define("Team", {
     primaryKey: true,
     defaultValue: UUIDV4,
   },
-  name: {
+  player1Name: {
     type: STRING,
-    allowNull: false,
+  },
+  player2Name: {
+    type: STRING,
   },
   gameType: {
     type: ENUM("SINGLES", "DOUBLES"),
@@ -255,6 +265,9 @@ Game.belongsTo(Team, { foreignKey: "teamBId", as: "teamB" });
 
 Game.belongsTo(Queue, { as: "queue", foreignKey: "queueId" });
 Game.belongsTo(Court, { as: "court", foreignKey: "courtId" });
+
+Team.hasMany(Queue, { foreignKey: "teamId" });
+Queue.belongsTo(Team, { foreignKey: "teamId" });
 
 sequelize
   .sync()
