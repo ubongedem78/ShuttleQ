@@ -40,7 +40,10 @@ const User = sequelize.define("User", {
   email: {
     type: STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      args: true,
+      msg: "Email address already exists",
+    },
     validate: {
       isEmail: {
         args: true,
@@ -52,8 +55,12 @@ const User = sequelize.define("User", {
     type: STRING,
     allowNull: true,
     set(value) {
-      if (value) {
-        this.setDataValue("avatar", value);
+      if (!value) {
+        this.setDataValue(
+          "avatar",
+          this.getDataValue("firstName")[0].toUpperCase() ||
+            this.getDataValue("userName")[0].toUpperCase()
+        );
       } else {
         this.setDataValue(
           "avatar",
@@ -65,7 +72,10 @@ const User = sequelize.define("User", {
   userName: {
     type: STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      args: true,
+      msg: "Username already exists",
+    },
     validate: {
       len: {
         args: [3, 20],
