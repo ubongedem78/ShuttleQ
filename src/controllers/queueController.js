@@ -21,4 +21,34 @@ const getQueue = async (req, res) => {
   }
 };
 
-module.exports = { getQueue };
+//Delete a team from the queue
+const deleteTeamFromQueue = async (req, res) => {
+  try {
+    const { teamId } = req.params;
+
+    const team = await Queue.findOne({
+      where: {
+        id: teamId,
+      },
+    });
+
+    if (!team) {
+      return res.status(404).json({
+        status: "error",
+        message: "Team not found",
+      });
+    }
+
+    await team.destroy();
+
+    res.status(200).json({
+      status: "success",
+      message: "Team deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports = { getQueue, deleteTeamFromQueue };

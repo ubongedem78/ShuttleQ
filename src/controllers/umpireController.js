@@ -1,9 +1,10 @@
 const { Team, User, Queue } = require("../model");
+const { Op } = require("sequelize");
 
 //Create a new team
 const createTeam = async (req, res) => {
   try {
-    const { gameType, playerNames } = req.body;
+    const { gameType, playerNames, courtId } = req.body;
 
     //validate gameType
     if (!gameType || !["SINGLES", "DOUBLES"].includes(gameType.toUpperCase())) {
@@ -57,8 +58,32 @@ const createTeam = async (req, res) => {
       gameType: gameType.toUpperCase(),
       player1Id: userIDs[0],
       player2Id: userIDs[1] || null,
+      courtId: courtId || null,
+      playerId: userIDs[0],
       isActive: false,
     });
+
+    // you want to check if the team or any of its players are already in the queue to avoid creating duplicates in the queue
+    const teamInQueue = await Queue.findOne({
+      where: {
+        [Op.or]: [
+          { teamId: team.id, status: "PENDING" },
+          { playerId: userIDs, status: "PENDING" },
+        ],
+      },
+    });
+
+    if (teamInQueue) {
+      const teamMessage =
+        teamInQueue.teamId === team.id
+          ? `Team with id ${team.id} is already in the queue`
+          : `Player(s) with id ${userIDs.join(" or ")} is already in the queue`;
+
+      return res.status(400).json({
+        status: "error",
+        message: teamMessage,
+      });
+    }
 
     //Make entry into queue
     await Queue.create({
@@ -68,7 +93,8 @@ const createTeam = async (req, res) => {
       playerId: team.player1Id,
       playerName:
         playerNames.split(",")[0] +
-        (playerNames.split(",")[1] ? " / " + playerNames.split(",")[1] : ""),
+        (playerNames.split(",")[1] ? "/" + playerNames.split(",")[1] : ""),
+      courtId: courtId || null,
       timestamp: new Date(),
     });
 

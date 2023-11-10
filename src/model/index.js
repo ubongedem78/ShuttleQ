@@ -106,7 +106,7 @@ const Court = sequelize.define("Court", {
     allowNull: false,
   },
   courtType: {
-    type: STRING,
+    type: ENUM("LEARNERS", "INTERMEDIATE", "PROFESSIONAL"),
     allowNull: false,
   },
 });
@@ -174,6 +174,10 @@ const Queue = sequelize.define("Queue", {
     type: ENUM("SINGLES", "DOUBLES"),
     allowNull: false,
   },
+  courtId: {
+    type: UUID,
+    allowNull: true,
+  },
   timestamp: {
     type: DATE,
     allowNull: false,
@@ -198,6 +202,10 @@ const Team = sequelize.define("Team", {
   gameType: {
     type: ENUM("SINGLES", "DOUBLES"),
     allowNull: false,
+  },
+  courtId: {
+    type: UUID,
+    allowNull: true,
   },
   isActive: {
     type: BOOLEAN,

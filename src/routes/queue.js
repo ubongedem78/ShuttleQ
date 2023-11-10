@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { getQueue } = require("../controllers/queueController");
+const {
+  getQueue,
+  deleteTeamFromQueue,
+} = require("../controllers/queueController");
 
-router.get("/get-queue", getQueue);
+router.get("/queue", getQueue);
+router.delete("/queue/:teamId", deleteTeamFromQueue);
 
 module.exports = router;
