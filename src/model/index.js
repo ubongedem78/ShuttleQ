@@ -205,50 +205,19 @@ const Team = sequelize.define("Team", {
   },
   courtId: {
     type: UUID,
+    unique: true,
     allowNull: true,
+  },
+  consecutiveWins: {
+    type: INTEGER,
+    defaultValue: 0,
+    allowNull: false,
   },
   isActive: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
-});
-
-// Here, i want to find the previous active team of the player and set the isActive to false: This ensures that the previous team of the player is set as inactive. After doing this, i want to set the current team of the player as active.
-// This block runs before a new team is created
-Team.addHook("beforeCreate", async (team, options) => {
-  if (team.isActive) {
-    // Find the previous active team of the player and set its isActive flag to false
-    await Team.update(
-      { isActive: false },
-      {
-        where: {
-          [Op.and]: [{ playerId: team.player1Id }, { isActive: true }],
-        },
-        individualHooks: true,
-        transaction: options.transaction,
-      }
-    );
-  }
-});
-
-// It checks if the isActive flag is being updated to true. If yes, it proceeds with deactivating the previous active team.
-// It finds the previous active team of the player and sets its isActive flag to false
-// This block runs before updating an existing team
-Team.addHook("beforeUpdate", async (team, options) => {
-  if (team.isActive === true) {
-    await Team.update(
-      { isActive: false },
-      {
-        where: {
-          playerId: team.playerId,
-          isActive: true,
-        },
-        individualHooks: true,
-        transaction: options.transaction,
-      }
-    );
-  }
 });
 
 User.hasOne(Queue, { as: "currentQueue", foreignKey: "playerId" });

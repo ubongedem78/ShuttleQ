@@ -60,7 +60,7 @@ const createTeam = async (req, res) => {
       player2Id: userIDs[1] || null,
       courtId: courtId || null,
       playerId: userIDs[0],
-      isActive: false,
+      isActive: true,
     });
 
     // you want to check if the team or any of its players are already in the queue to avoid creating duplicates in the queue
