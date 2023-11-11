@@ -141,7 +141,7 @@ const Game = sequelize.define("Game", {
   winnerId: {
     type: UUID,
   },
-  winCount: {
+  consecutiveWins: {
     type: INTEGER,
     defaultValue: 0,
   },

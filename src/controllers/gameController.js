@@ -1,4 +1,4 @@
-const { Game, Court, Team } = require("../model");
+const { Game, Court, Team, Queue } = require("../model");
 
 //Create A Game
 const createGame = async (req, res) => {
@@ -69,4 +69,84 @@ const createGame = async (req, res) => {
   }
 };
 
-module.exports = { createGame };
+//Start Game
+const startGame = async (req, res) => {
+  try {
+    const { gameId, winnerId } = req.body;
+    const game = await Game.findOne({ where: { id: gameId } });
+    if (!game) {
+      return res.status(400).send({ message: "Game does not exist" });
+    }
+
+    if (winnerId) {
+      const winnerTeam = await Team.findOne({ where: { id: winnerId } });
+      const loserTeam = winnerTeam === game.teamA ? game.teamB : game.teamA;
+
+      // Update win counts
+      winnerTeam.consecutiveWins += 1;
+      winnerTeam.save();
+
+      loserTeam.consecutiveWins = 0;
+      loserTeam.save();
+    }
+
+    // Update game status
+    game.status = "PLAYING";
+    game.save();
+
+    res.status(200).send({ message: "Game started successfully", game });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Failed to start game" });
+  }
+};
+
+//End Game
+const endGame = async (req, res) => {
+  try {
+    const { gameId } = req.body;
+    const game = await Game.findOne({ where: { id: gameId } });
+    if (!game) {
+      return res.status(400).send({ message: "Game does not exist" });
+    }
+
+    //queue logic based on consecutive wins
+    const winnerTeam =
+      game.teamA.consecutiveWins === 2 ? game.teamA : game.teamB;
+    const loserTeam = winnerTeam === game.teamA ? game.teamB : game.teamA;
+
+    winnerTeam.consecutiveWins = 0;
+    loserTeam.consecutiveWins = 0;
+    winnerTeam.save();
+    loserTeam.save();
+
+    //reorder queue
+    const queue = await Queue.findAll({
+      where: { gameType: game.gameType },
+      order: [["timestamp", "ASC"]],
+    });
+
+    queue = queue.filter((entry) => entry.teamId !== loserTeam.id);
+
+    if (winnerTeam.consecutiveWins === 2) {
+      queue.push({
+        teamId: loserTeam.id,
+        gameType: game.gameType,
+        status: "PENDING",
+        playerId: loserTeam.player1Id,
+        playerName: `${loserTeam.player1.firstName}/${loserTeam.player2.firstName}`,
+        courtId: game.courtId,
+        timestamp: new Date(),
+      });
+    }
+
+    await Queue.bulkCreate(queue, { updateOnDuplicate: ["timestamp"] });
+
+    res.status(200).send({ message: "Game ended successfully", game });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Failed to end game" });
+  }
+};
+
+module.exports = { createGame, startGame, endGame };
