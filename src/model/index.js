@@ -205,7 +205,6 @@ const Team = sequelize.define("Team", {
   },
   courtId: {
     type: UUID,
-    unique: true,
     allowNull: true,
   },
   consecutiveWins: {
@@ -220,37 +219,28 @@ const Team = sequelize.define("Team", {
   },
 });
 
-User.hasOne(Queue, { as: "currentQueue", foreignKey: "playerId" });
-Queue.belongsTo(User, { as: "player", foreignKey: "playerId" });
+User.belongsTo(Queue, { foreignKey: "playerId", as: "currentQueue" });
+Queue.hasOne(User, { foreignKey: "playerId", as: "Player" });
 
-User.hasMany(Team, { as: "teams", foreignKey: "playerId" });
-Team.belongsTo(User, { as: "player", foreignKey: "playerId" });
+User.hasOne(Team, { foreignKey: "playerId", as: "Player" });
+Team.belongsTo(User, { foreignKey: "playerId", as: "Player" });
 
-Queue.belongsToMany(Team, {
-  through: "QueueTeam",
-  foreignKey: "queueId",
-  otherKey: "teamId",
-});
-Team.belongsToMany(Queue, {
-  through: "QueueTeam",
-  foreignKey: "teamId",
-  otherKey: "queueId",
-});
+Team.hasMany(Game, { foreignKey: "teamAId", as: "TeamA" });
+Team.hasMany(Game, { foreignKey: "teamBId", as: "TeamB" });
+Game.belongsTo(Team, { foreignKey: "teamAId", as: "TeamA" });
+Game.belongsTo(Team, { foreignKey: "teamBId", as: "TeamB" });
 
-Team.hasOne(Game, { foreignKey: "teamAId", as: "teamA" });
-Team.hasOne(Game, { foreignKey: "teamBId", as: "teamB" });
+Queue.hasMany(Game, { foreignKey: "queueId" });
+Game.belongsTo(Queue, { foreignKey: "queueId" });
 
-Game.belongsTo(Team, { foreignKey: "teamAId", as: "teamA" });
-Game.belongsTo(Team, { foreignKey: "teamBId", as: "teamB" });
+Court.hasOne(Queue, { foreignKey: "courtId" });
+Queue.belongsTo(Court, { foreignKey: "courtId" });
 
-Game.belongsTo(Queue, { as: "queue", foreignKey: "queueId" });
-Game.belongsTo(Court, { as: "court", foreignKey: "courtId" });
-
-Team.hasMany(Queue, { foreignKey: "teamId" });
 Queue.belongsTo(Team, { foreignKey: "teamId" });
+Team.hasOne(Queue, { foreignKey: "teamId" });
 
 sequelize
-  .sync({ alter: true })
+  .sync()
   .then(() => {
     console.log("Database Synced Successfully...");
   })
