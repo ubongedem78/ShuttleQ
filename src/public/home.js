@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => {
           if (response.status === 201) {
             console.log("Game created:", response.data);
-            window.location.href = `game.html?gameId=${response.data.game.id}`;
+            window.location.href = `game.html?gameId=${response.data.game.id}?winnerId=${response.data.game.winnerId}`;
           }
         })
         .catch((error) => {
@@ -110,6 +110,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
   });
+
+  // http://127.0.0.1:5500/src/public/game.html?gameId=917c89d7-ee4a-4292-a24a-fa19762cbbfd?winnerId=null
 
   const addPlayerButton = document.getElementById("addPlayer");
   addPlayerButton.addEventListener("click", () => {
