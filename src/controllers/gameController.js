@@ -1,64 +1,73 @@
-const { Game, Court, Team, Queue } = require("../model");
+const { Game, Court, Team, Queue, CourtQueue } = require("../model");
 
-//Create A Game
+// Create A Game
 const createGame = async (req, res) => {
   try {
-    const { gameType, teamAId, teamBId, courtId, queueId } = req.body;
+    const { gameType, teamAId, teamBId, courtId } = req.body;
 
-    //you want to check if the teams exist
-    const teamA = await Team.findOne({ where: { id: teamAId } });
-    const teamB = await Team.findOne({ where: { id: teamBId } });
+    const [teamA, teamB, courtQueue] = await Promise.all([
+      Team.findByPk(teamAId),
+      Team.findByPk(teamBId),
+      Queue.findOne({
+        where: {
+          courtId,
+        },
+      }),
+    ]);
 
+    console.log("teamA", teamA);
+    console.log("teamB", teamB);
+
+    // You want to check if the teams exist
     if (!teamA || !teamB) {
       return res
         .status(400)
         .send({ message: "One or both of the teams do not exist" });
     }
 
-    //you want to check if the court exists
-    const court = await Court.findOne({ where: { id: courtId } });
-
-    if (!court) {
-      return res.status(400).send({ message: "The court does not exist" });
+    // You want to check if the court & queue exists
+    if (!courtQueue) {
+      return res.status(400).json({ message: "CourtQueue does not exist" });
     }
 
-    //you want to check if the queue exists
-    const queue = await Queue.findOne({ where: { id: queueId } });
+    console.log("courtqueue", courtQueue);
 
-    if (!queue) {
-      return res.status(400).send({ message: "Queue does not exist" });
+    //check gameType for teamA and teamB
+    if (teamA.gameType !== gameType && teamB.gameType !== gameType) {
+      return res.status(400).json({
+        message: "Cannot create a game with teams of different game types",
+      });
     }
 
-    //Check if the queue has enough players to start a game for each type(2 players/teams singles and 4 players/2 teams for doubles)
-    if (gameType === "SINGLES" && queue.players.length < 2) {
+    // Check if the queue has enough players to start a game for each type(2 players/teams singles and 4 players/2 teams for doubles)
+    if (gameType === "SINGLES" && courtQueue.length < 2) {
       return res
         .status(400)
-        .send({ message: "Not enough players to start a singles game" });
-    } else if (gameType === "DOUBLES" && queue.players.length < 4) {
+        .json({ message: "Not enough players to start a singles game" });
+    } else if (gameType === "DOUBLES" && courtQueue.length < 4) {
       return res
         .status(400)
-        .send({ message: "Not enough players to start a doubles game" });
+        .json({ message: "Not enough players to start a doubles game" });
     }
 
-    //check if teams are in the same court's queue
+    // Check if teams are in the same court's queue
     if (teamA.courtId !== teamB.courtId) {
       return res
         .status(400)
         .send({ message: "Teams are not in the same court" });
     }
 
-    //check if game type is valid
+    // Check if game type is valid
     if (!["SINGLES", "DOUBLES"].includes(gameType.toUpperCase())) {
       return res.status(400).send({ message: "Invalid game type" });
     }
 
-    //create game finally
+    // Create game finally
     const game = await Game.create({
       gameType: gameType.toUpperCase(),
       teamAId: teamA.id,
       teamBId: teamB.id,
       courtId: courtId,
-      queueId: queueId,
       status: "PENDING",
     });
 
@@ -69,17 +78,29 @@ const createGame = async (req, res) => {
   }
 };
 
-//Start Game
+// Start Game
 const startGame = async (req, res) => {
   try {
     const { gameId, winnerId } = req.body;
-    const game = await Game.findOne({ where: { id: gameId } });
+
+    if (!gameId) {
+      return res.status(400).send({ message: "Invalid game ID" });
+    }
+    const game = await Game.findByPk(gameId);
+    console.log("game", game);
     if (!game) {
       return res.status(400).send({ message: "Game does not exist" });
     }
 
+    if (game.status !== "PENDING") {
+      return res.status(400).json({
+        message: "Cannot start a game that is not in the PENDING state",
+      });
+    }
+
     if (winnerId) {
-      const winnerTeam = await Team.findOne({ where: { id: winnerId } });
+      console.log("checking winnerId", winnerId);
+      const winnerTeam = await Team.findByPk(winnerId);
       const loserTeam = winnerTeam === game.teamA ? game.teamB : game.teamA;
 
       // Update win counts
@@ -101,32 +122,44 @@ const startGame = async (req, res) => {
   }
 };
 
-//End Game
+// End Game
 const endGame = async (req, res) => {
   try {
     const { gameId } = req.body;
-    const game = await Game.findOne({ where: { id: gameId } });
+    const game = await Game.findByPk(gameId);
+
     if (!game) {
       return res.status(400).send({ message: "Game does not exist" });
     }
 
-    //queue logic based on consecutive wins
-    const winnerTeam =
-      game.teamA.consecutiveWins === 2 ? game.teamA : game.teamB;
-    const loserTeam = winnerTeam === game.teamA ? game.teamB : game.teamA;
+    if (game.status !== "PLAYING") {
+      return res.status(400).json({
+        message: "Cannot end a game that is not in the PLAYING state",
+      });
+    }
+
+    // Queue logic based on consecutive wins
+    const winnerTeamId =
+      game.teamA.consecutiveWins === 2 ? game.teamAId : game.teamBId;
+    const loserTeamId =
+      winnerTeamId === game.teamAId ? game.teamBId : game.teamAId;
+
+    const winnerTeam = await Team.findByPk(winnerTeamId);
+    const loserTeam = await Team.findByPk(loserTeamId);
 
     winnerTeam.consecutiveWins = 0;
     loserTeam.consecutiveWins = 0;
-    winnerTeam.save();
-    loserTeam.save();
+    await Promise.all([winnerTeam.save(), loserTeam.save()]);
 
-    //reorder queue
     const queue = await Queue.findAll({
-      where: { gameType: game.gameType },
+      where: {
+        gameType: game.gameType,
+        teamId: {
+          [Op.ne]: loserTeamId,
+        },
+      },
       order: [["timestamp", "ASC"]],
     });
-
-    queue = queue.filter((entry) => entry.teamId !== loserTeam.id);
 
     if (winnerTeam.consecutiveWins === 2) {
       queue.push({

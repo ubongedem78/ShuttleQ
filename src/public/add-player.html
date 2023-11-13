@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Players</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <button id="back" class="bg-red-500 text-white px-4 py-2 rounded">
+      Go Back
+    </button>
+
+    <h1>Add Players</h1>
+    <form id="addPlayerForm">
+      <label for="gameType">Game Type:</label>
+      <select id="gameType" name="gameType">
+        <option value="SINGLES">Singles</option>
+        <option value="DOUBLES">Doubles</option>
+      </select>
+
+      <div id="playerFields">
+        <label for="player1Name">Player 1:</label>
+        <input type="text" id="player1Name" name="player1Name" required />
+        <label for="player2Name" id="player2NameLabel" style="display: none"
+          >Player 2:</label
+        >
+        <input
+          type="text"
+          id="player2Name"
+          name="player2Name"
+          style="display: none"
+        />
+      </div>
+
+      <label for="courtId">Select Court:</label>
+      <select id="courtId" name="courtId"></select>
+
+      <button type="submit">Save</button>
+    </form>
+
+    <script src="add-player.js"></script>
+  </body>
+</html>

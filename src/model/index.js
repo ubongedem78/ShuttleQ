@@ -95,7 +95,7 @@ const User = sequelize.define("User", {
 });
 
 const Court = sequelize.define("Court", {
-  id: {
+  courtId: {
     type: UUID,
     allowNull: false,
     primaryKey: true,
@@ -106,7 +106,7 @@ const Court = sequelize.define("Court", {
     allowNull: false,
   },
   courtType: {
-    type: ENUM("LEARNERS", "INTERMEDIATE", "PROFESSIONAL"),
+    type: STRING,
     allowNull: false,
   },
 });
@@ -137,6 +137,10 @@ const Game = sequelize.define("Game", {
   courtId: {
     type: UUID,
     allowNull: false,
+    references: {
+      model: Court,
+      key: "courtId",
+    },
   },
   winnerId: {
     type: UUID,
@@ -144,10 +148,6 @@ const Game = sequelize.define("Game", {
   consecutiveWins: {
     type: INTEGER,
     defaultValue: 0,
-  },
-  queueId: {
-    type: UUID,
-    allowNull: false,
   },
 });
 
@@ -176,7 +176,11 @@ const Queue = sequelize.define("Queue", {
   },
   courtId: {
     type: UUID,
-    allowNull: true,
+    allowNull: false,
+    references: {
+      model: Court,
+      key: "courtId",
+    },
   },
   timestamp: {
     type: DATE,
@@ -205,7 +209,11 @@ const Team = sequelize.define("Team", {
   },
   courtId: {
     type: UUID,
-    allowNull: true,
+    allowNull: false,
+    references: {
+      model: Court,
+      key: "courtId",
+    },
   },
   consecutiveWins: {
     type: INTEGER,
@@ -219,7 +227,28 @@ const Team = sequelize.define("Team", {
   },
 });
 
-User.belongsTo(Queue, { foreignKey: "playerId", as: "currentQueue" });
+const CourtQueue = sequelize.define("CourtQueue", {
+  queueId: {
+    type: UUID,
+    allowNull: false,
+    primaryKey: true,
+    references: {
+      model: Queue,
+      key: "queueId",
+    },
+  },
+  courtId: {
+    type: UUID,
+    primaryKey: true,
+    allowNull: false,
+    references: {
+      model: Court,
+      key: "courtId",
+    },
+  },
+});
+
+User.hasOne(Queue, { foreignKey: "playerId", as: "currentQueue" });
 Queue.hasOne(User, { foreignKey: "playerId", as: "Player" });
 
 User.hasOne(Team, { foreignKey: "playerId", as: "Player" });
@@ -239,8 +268,14 @@ Queue.belongsTo(Court, { foreignKey: "courtId" });
 Queue.belongsTo(Team, { foreignKey: "teamId" });
 Team.hasOne(Queue, { foreignKey: "teamId" });
 
+Court.hasOne(CourtQueue, { foreignKey: "courtId" });
+CourtQueue.belongsTo(Court, { foreignKey: "courtId" });
+
+Queue.hasOne(CourtQueue, { foreignKey: "queueId" });
+CourtQueue.belongsTo(Queue, { foreignKey: "queueId" });
+
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then(() => {
     console.log("Database Synced Successfully...");
   })
@@ -248,4 +283,4 @@ sequelize
     console.error("Database Sync Failed, error: ", err);
   });
 
-module.exports = { User, Court, Game, Queue, Team };
+module.exports = { User, Court, Game, Queue, Team, CourtQueue };

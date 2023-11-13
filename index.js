@@ -3,9 +3,16 @@ const app = express();
 require("dotenv").config();
 const { readdirSync } = require("fs");
 const { sequelize } = require("./src/config/database");
+const cors = require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+    credentials: true,
+  })
+);
 
 readdirSync("./src/routes").map((path) => {
   app.use("/api", require(`./src/routes/${path}`));

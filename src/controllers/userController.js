@@ -1,6 +1,6 @@
-const { User } = require("../model");
+const { User, Queue, Team } = require("../model");
 
-//Get All Users
+// Get All Users
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
@@ -11,10 +11,16 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-//Get User By Id
+// Get User By Id
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { id: req.params.id } });
+    const userId = req.params.id;
+    const user = await User.findByPk(userId, {
+      include: [
+        { model: Queue, as: "currentQueue" },
+        { model: Team, as: "Player" },
+      ],
+    });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -25,10 +31,20 @@ const getUserById = async (req, res) => {
   }
 };
 
-//Create User
+// Create User
 const createUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const { firstName, lastName, email, userName, avatar, passwordHash, role } =
+      req.body;
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      avatar,
+      userName,
+      passwordHash,
+      role,
+    });
     return res.status(201).json({ user });
   } catch (error) {
     console.error("Error in creating user: ", error);
@@ -36,33 +52,50 @@ const createUser = async (req, res) => {
   }
 };
 
-//Update User
+// Update User
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { id: req.params.id } });
+    const userId = req.params.id;
+    const { firstName, lastName, email, userName, avatar, passwordHash, role } =
+      req.body;
+
+    const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    await user.update(req.body);
-    return res.status(200).json({ user });
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+    user.userName = userName;
+    user.avatar = avatar;
+    user.passwordHash = passwordHash;
+    user.role = role;
+
+    await user.save();
+    res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
     console.error("Error in updating user: ", error);
     return res.status(500).json({ error: error.message });
   }
 };
 
-//Delete User
+// Delete User
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { id: req.params.id } });
+    const userId = req.params.id;
+    const user = await User.findByPk(userId);
+
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
+
     await user.destroy();
-    return res.status(204).json({ message: "User deleted successfully" });
+
+    res.status(204).json({ message: "User deleted successfully" });
+    console.log("User deleted successfully");
   } catch (error) {
-    console.error("Error in deleting user: ", error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete user" });
   }
 };
 
