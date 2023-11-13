@@ -78,6 +78,37 @@ const createGame = async (req, res) => {
   }
 };
 
+// Get Game Details using gameId
+const getGameDetails = async (req, res) => {
+  try {
+    const { gameId } = req.params; // Assuming gameId is passed as a route parameter
+
+    if (!gameId) {
+      return res.status(400).send({ message: "Invalid game ID" });
+    }
+
+    const game = await Game.findByPk(gameId, {
+      include: [
+        { model: Team, as: "TeamA" },
+        { model: Team, as: "TeamB" },
+        // { model: Queue },
+      ],
+    });
+
+    if (!game) {
+      return res.status(404).send({ message: "Game not found" });
+    }
+
+    // Return game details
+    res
+      .status(200)
+      .send({ message: "Game details retrieved successfully", game });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Failed to get game details" });
+  }
+};
+
 // Start Game
 const startGame = async (req, res) => {
   try {
@@ -182,4 +213,4 @@ const endGame = async (req, res) => {
   }
 };
 
-module.exports = { createGame, startGame, endGame };
+module.exports = { createGame, getGameDetails, startGame, endGame };

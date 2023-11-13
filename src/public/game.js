@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const team2Score = document.getElementById("team2-score");
   const decrementScoreTeam1 = document.getElementById("decrement-score-team1");
   const decrementScoreTeam2 = document.getElementById("decrement-score-team2");
+
+  // Get Data 
+  // http://127.0.0.1:5500/src/public/game.html?gameId=917c89d7-ee4a-4292-a24a-fa19762cbbfd?winnerId=null
+
+
+
+
   let scoreTeam1 = 0;
   let scoreTeam2 = 0;
 
