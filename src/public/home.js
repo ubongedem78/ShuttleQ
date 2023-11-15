@@ -6,7 +6,7 @@ let courtSelect = document.getElementById("courtSelect");
 document.addEventListener("DOMContentLoaded", function () {
   function fetchQueues(courtId) {
     axios
-      .get(`${baseUrl}/api/queue/${courtId}`)
+      .get(`${baseUrl}/api/queues/${courtId}`)
       .then((response) => {
         if (response.status === 200) {
           console.log("Queues fetched:", response.data);
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function deleteTeam(teamId) {
     axios
-      .delete(`${baseUrl}/api/queue/${teamId}`)
+      .delete(`${baseUrl}/api/queues/${teamId}`)
       .then((response) => {
         if (response.status === 200) {
           console.log("Team deleted:", teamId);
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fetch the list of courts
   axios
-    .get(`${baseUrl}/api/court`)
+    .get(`${baseUrl}/api/courts`)
     .then((response) => {
       console.log(response);
       const courts = response.data.data;
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       axios
-        .post(`${baseUrl}/api/game/create`, gameData)
+        .post(`${baseUrl}/api/games`, gameData)
         .then((response) => {
           if (response.status === 201) {
             console.log("Game created:", response.data);

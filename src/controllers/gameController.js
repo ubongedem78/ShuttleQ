@@ -174,9 +174,8 @@ const startGame = async (req, res) => {
 
       loserTeam.consecutiveWins = 0;
       loserTeam.save();
-    } else {
-      console.log("no winnerId");
-    }
+    } 
+    //if winner id is null at the first game of the day then both teams will have 0 wins
 
     // Update game status
     game.status = "PLAYING";

@@ -7,8 +7,8 @@ const {
   deleteCourt,
 } = require("../controllers/courtController");
 
-router.post("/court", createCourt);
-router.get("/court", getCourts);
-router.delete("/court/:courtId", deleteCourt);
+router.post("/courts", createCourt);
+router.get("/courts", getCourts);
+router.delete("/courts/:courtId", deleteCourt);
 
 module.exports = router;

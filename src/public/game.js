@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Winner ID:", winnerId);
 
   axios
-    .get(`${baseUrl}/api/game/${gameId}`)
+    .get(`${baseUrl}/api/games/${gameId}`)
     .then((response) => {
       console.log("response", response);
       const game = response.data.game;
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Start Game button clicked");
 
     axios
-      .post(`${baseUrl}/api/game/start`, {
+      .post(`${baseUrl}/api/games/start`, {
         gameId: gameId,
         winnerId: winnerId,
       })

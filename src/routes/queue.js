@@ -6,8 +6,8 @@ const {
   deleteTeamFromQueue,
 } = require("../controllers/queueController");
 
-router.get("/queue", getQueue);
-router.get("/queue/:courtId", getQueueForCourt);
-router.delete("/queue/:teamId", deleteTeamFromQueue);
+router.get("/queues", getQueue);
+router.get("/queues/:courtId", getQueueForCourt);
+router.delete("/queues/:teamId", deleteTeamFromQueue);
 
 module.exports = router;

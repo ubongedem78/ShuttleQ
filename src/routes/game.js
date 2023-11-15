@@ -7,9 +7,9 @@ const {
   endGame,
 } = require("../controllers/gameController");
 
-router.post("/game/create", createGame);
-router.get("/game/:gameId", getGameDetails);
+router.route("/games").post(createGame).delete(endGame);
+router.get("/games/:gameId", getGameDetails);
+
 router.post("/game/start", startGame);
-router.post("/game/end", endGame);
 
 module.exports = router;
