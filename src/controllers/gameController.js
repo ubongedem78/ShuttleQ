@@ -28,7 +28,7 @@ const createGame = async (req, res) => {
       teamAName: queuePairs[0].playerName,
       teamBName: queuePairs[1].playerName,
       status: "PENDING",
-      courtId: req.body.courtId, // Make sure to pass the courtId in the request body
+      courtId: req.body.courtId, 
     });
 
     // Update the queue and teams
@@ -46,6 +46,30 @@ const createGame = async (req, res) => {
     return res.status(201).json({ success: true, game });
   } catch (error) {
     console.error("Error creating game:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Fetch Game Details
+const fetchGameDetails = async (req, res) => {
+  try {
+    const gameId = req.params.gameId;
+
+    // Get game details
+    const game = await Game.findByPk(gameId, {
+      include: [
+        { model: Team, as: "TeamA" },
+        { model: Team, as: "TeamB" },
+      ],
+    });
+
+    if (!game) {
+      return res.status(404).json({ error: "Game not found." });
+    }
+
+    return res.status(200).json({ success: true, game });
+  } catch (error) {
+    console.error("Error fetching game details:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -176,4 +200,4 @@ const endGame = async (req, res) => {
   }
 };
 
-module.exports = { createGame, startGame, endGame };
+module.exports = { createGame, fetchGameDetails, startGame, endGame };

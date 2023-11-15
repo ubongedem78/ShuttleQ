@@ -77,43 +77,43 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching courts:", error);
     });
 
-  // Create a game
-  const createGameButton = document.getElementById("createGame");
+  if (queueData.length > 0) {
+    const gameType = queueData[0].gameType;
+    const teamAId = queueData[0].teamId;
+    const teamBId = queueData[1].teamId;
+    const teamAName = queueData[0].playerName;
+    const teamBName = queueData[1].playerName;
+    const courtId = queueData[0].courtId;
 
-  // Create a game
-  createGameButton.addEventListener("click", () => {
-    console.log("Create game button clicked");
+    const gameData = {
+      gameType: gameType,
+      teamAId: teamAId,
+      teamBId: teamBId,
+      teamAName: teamAName,
+      teamBName: teamBName,
+      courtId: courtId,
+    };
+
+    const createGameButton = document.getElementById("createGame");
     console.log(queueData);
-    if (queueData.length > 0) {
-      const gameType = queueData[0].gameType;
-      const teamAId = queueData[0].teamId;
-      const teamBId = queueData[1].teamId;
-      const courtId = queueData[0].courtId;
 
-      const gameData = {
-        gameType: gameType,
-        teamAId: teamAId,
-        teamBId: teamBId,
-        courtId: courtId,
-      };
+    // Create a game
+    createGameButton.addEventListener("click", () => {
+      console.log("Create game button clicked");
 
       axios
         .post(`${baseUrl}/api/games`, gameData)
         .then((response) => {
           if (response.status === 201) {
             console.log("Game created:", response.data);
-            const gameId = response.data.game.id;
-            const winnerId = response.data.game.winnerId;
-            window.location.href = `game.html?gameId=${gameId}&winnerId=${winnerId}`;
+            window.location.href = `game.html?gameId=${response.data.game.id}`;
           }
         })
         .catch((error) => {
           console.error("Error creating game:", error);
         });
-    }
-  });
-
-  // http://127.0.0.1:5500/src/public/game.html?gameId=917c89d7-ee4a-4292-a24a-fa19762cbbfd?winnerId=null
+    });
+  }
 
   const addPlayerButton = document.getElementById("addPlayer");
   addPlayerButton.addEventListener("click", () => {
