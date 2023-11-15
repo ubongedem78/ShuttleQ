@@ -102,7 +102,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((response) => {
           if (response.status === 201) {
             console.log("Game created:", response.data);
-            window.location.href = `game.html?gameId=${response.data.game.id}?winnerId=${response.data.game.winnerId}`;
+            const gameId = response.data.game.id;
+            const winnerId = response.data.game.winnerId;
+            window.location.href = `game.html?gameId=${gameId}&winnerId=${winnerId}`;
           }
         })
         .catch((error) => {

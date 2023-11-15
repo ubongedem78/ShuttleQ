@@ -130,6 +130,22 @@ const Game = sequelize.define("Game", {
     type: UUID,
     allowNull: false,
   },
+  teamAName: {
+    type: STRING,
+    allowNull: true,
+  },
+  teamBName: {
+    type: STRING,
+    allowNull: true,
+  },
+  teamAScore: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
+  teamBScore: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
   status: {
     type: ENUM("PENDING", "PLAYING"),
     allowNull: false,
@@ -144,6 +160,7 @@ const Game = sequelize.define("Game", {
   },
   winnerId: {
     type: UUID,
+    allowNull: true,
   },
   consecutiveWins: {
     type: INTEGER,

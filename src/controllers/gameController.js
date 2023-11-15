@@ -1,4 +1,18 @@
-const { Game, Court, Team, Queue, CourtQueue } = require("../model");
+const { Game, Team, Queue } = require("../model");
+
+// Get Player Names
+const getPlayerNames = async (playerIds) => {
+  const playerNames = await Promise.all(
+    playerIds.map(async (playerId) => {
+      const player = await Queue.findOne({
+        attributes: ["playerName"],
+        where: { playerId },
+      });
+      return player ? player.playerName : null;
+    })
+  );
+  return playerNames;
+};
 
 // Create A Game
 const createGame = async (req, res) => {
@@ -15,9 +29,6 @@ const createGame = async (req, res) => {
       }),
     ]);
 
-    console.log("teamA", teamA);
-    console.log("teamB", teamB);
-
     // You want to check if the teams exist
     if (!teamA || !teamB) {
       return res
@@ -29,8 +40,6 @@ const createGame = async (req, res) => {
     if (!courtQueue) {
       return res.status(400).json({ message: "CourtQueue does not exist" });
     }
-
-    console.log("courtqueue", courtQueue);
 
     //check gameType for teamA and teamB
     if (teamA.gameType !== gameType && teamB.gameType !== gameType) {
@@ -81,7 +90,7 @@ const createGame = async (req, res) => {
 // Get Game Details using gameId
 const getGameDetails = async (req, res) => {
   try {
-    const { gameId } = req.params; // Assuming gameId is passed as a route parameter
+    const { gameId } = req.params;
 
     if (!gameId) {
       return res.status(400).send({ message: "Invalid game ID" });
@@ -91,7 +100,6 @@ const getGameDetails = async (req, res) => {
       include: [
         { model: Team, as: "TeamA" },
         { model: Team, as: "TeamB" },
-        // { model: Queue },
       ],
     });
 
@@ -99,7 +107,33 @@ const getGameDetails = async (req, res) => {
       return res.status(404).send({ message: "Game not found" });
     }
 
-    // Return game details
+    // Get player names
+    const teamAPlayerNames = await getPlayerNames([
+      game.TeamA.player1Id,
+      game.TeamA.player2Id,
+    ]);
+    const teamBPlayerNames = await getPlayerNames([
+      game.TeamB.player1Id,
+      game.TeamB.player2Id,
+    ]);
+
+    if (game.gameType === "SINGLES") {
+      game.teamAName = teamAPlayerNames[0];
+      game.teamBName = teamBPlayerNames[0];
+    } else {
+      game.teamAName = `${teamAPlayerNames[0]}/${teamAPlayerNames[1]}`;
+      game.teamBName = `${teamBPlayerNames[0]}/${teamBPlayerNames[1]}`;
+    }
+
+    //update playerNames
+    await Promise.all([
+      game.update({ teamAName: game.teamAName }),
+      game.update({ teamBName: game.teamBName }),
+    ]);
+
+    console.log("teamAName", game.teamAName);
+    console.log("teamBName", game.teamBName);
+
     res
       .status(200)
       .send({ message: "Game details retrieved successfully", game });
@@ -140,6 +174,8 @@ const startGame = async (req, res) => {
 
       loserTeam.consecutiveWins = 0;
       loserTeam.save();
+    } else {
+      console.log("no winnerId");
     }
 
     // Update game status
