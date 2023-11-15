@@ -1,4 +1,3 @@
-const e = require("express");
 const { Court, CourtQueue } = require("../model");
 
 // Create a new court and associate it with a CourtQueue

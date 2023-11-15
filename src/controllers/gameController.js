@@ -1,4 +1,3 @@
-const express = require("express");
 const { Game, Queue, Team } = require("../model/index");
 
 // Create Game
