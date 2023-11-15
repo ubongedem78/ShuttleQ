@@ -162,10 +162,6 @@ const Game = sequelize.define("Game", {
     type: UUID,
     allowNull: true,
   },
-  consecutiveWins: {
-    type: INTEGER,
-    defaultValue: 0,
-  },
 });
 
 const Queue = sequelize.define("Queue", {
@@ -232,11 +228,6 @@ const Team = sequelize.define("Team", {
       key: "courtId",
     },
   },
-  consecutiveWins: {
-    type: INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  },
   isActive: {
     type: BOOLEAN,
     allowNull: false,
@@ -265,6 +256,32 @@ const CourtQueue = sequelize.define("CourtQueue", {
   },
 });
 
+const RecentWinners = sequelize.define("RecentWinners", {
+  id: {
+    type: UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: UUIDV4,
+  },
+  teamId: {
+    type: UUID,
+    allowNull: false,
+  },
+  gameType: {
+    type: ENUM("SINGLES", "DOUBLES"),
+    allowNull: false,
+  },
+  consecutiveWins: {
+    type: INTEGER,
+    defaultValue: 0,
+    allowNull: false,
+  },
+  timestamp: {
+    type: DATE,
+    allowNull: false,
+  },
+});
+
 User.hasOne(Queue, { foreignKey: "playerId", as: "currentQueue" });
 Queue.hasOne(User, { foreignKey: "playerId", as: "Player" });
 
@@ -290,6 +307,9 @@ CourtQueue.belongsTo(Court, { foreignKey: "courtId" });
 
 Queue.hasOne(CourtQueue, { foreignKey: "queueId" });
 CourtQueue.belongsTo(Queue, { foreignKey: "queueId" });
+
+Team.hasMany(RecentWinners, { foreignKey: "teamId", as: "RecentWinners" });
+RecentWinners.belongsTo(Team, { foreignKey: "teamId", as: "Team" });
 
 sequelize
   .sync({ alter: true })

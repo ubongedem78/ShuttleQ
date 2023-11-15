@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     axios
       .post(`${baseUrl}/api/games/start`, {
         gameId: gameId,
-        winnerId: winnerId,
+        winnerId: winnerId 
       })
       .then((response) => {
         console.log("response", response);
