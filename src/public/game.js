@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // let baseUrl = "https://shuttleq.onrender.com";
 
   const gameId = window.location.pathname.split("/")[2];
+  console.log("gameId", gameId);
   const baseUrl = "http://localhost:3000";
   let winnerId = null;
   let deuce = false;
@@ -144,7 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (winnerId) {
       axios
         .put(`${baseUrl}/api/games/${gameId}/end`, {
-          gameId: gameId,
           winnerId: winnerId,
         })
         .then((response) => {
