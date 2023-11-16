@@ -59,6 +59,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (team1Score > 0) {
       team1Score--;
     }
+    //check for deuce condition when decrementing
+    if (deuce && team1Score >= DEUCE_THRESHOLD && team2Score < team1Score) {
+      deuce = false;
+    }
     updateScores();
   });
 
@@ -68,6 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     if (team2Score > 0) {
       team2Score--;
+    }
+    //check for deuce condition when decrementing
+    if (deuce && team1Score >= DEUCE_THRESHOLD && team2Score < team1Score) {
+      deuce = false; // Exiting deuce condition
     }
     updateScores();
   });
