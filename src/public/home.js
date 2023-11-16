@@ -1,9 +1,8 @@
-// let baseUrl = "https://shuttleq.onrender.com";
-let baseUrl = "http://localhost:3000";
-let queueData = [];
-let courtSelect = document.getElementById("courtSelect");
-
 document.addEventListener("DOMContentLoaded", function () {
+  // let baseUrl = "https://shuttleq.onrender.com";
+  let baseUrl = "http://localhost:3000";
+  let queueData = [];
+  let courtSelect = document.getElementById("courtSelect");
   function fetchQueues(courtId) {
     axios
       .get(`${baseUrl}/api/queues/${courtId}`)
@@ -65,7 +64,6 @@ document.addEventListener("DOMContentLoaded", function () {
         courtSelect.appendChild(option);
       });
 
-      // Listener to handle court selection
       courtSelect.addEventListener("change", (event) => {
         const selectedCourtId = event.target.value;
         fetchQueues(selectedCourtId);

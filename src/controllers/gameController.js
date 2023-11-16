@@ -116,7 +116,7 @@ const endGame = async (req, res) => {
       return res.status(404).json({ error: "Game not found." });
     }
 
-    // Update the game with the provided winnerId
+    // Update the game with winnerId
     if (winnerId) {
       await game.update({ winnerId });
     }

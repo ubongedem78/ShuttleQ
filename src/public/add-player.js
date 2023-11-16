@@ -1,7 +1,6 @@
-// let baseUrl = "https://shuttleq.onrender.com";
-let baseUrl = "http://localhost:3000";
-
 document.addEventListener("DOMContentLoaded", function () {
+  // let baseUrl = "https://shuttleq.onrender.com";
+  let baseUrl = "http://localhost:3000";
   const gameTypeSelect = document.getElementById("gameType");
   const playerFields = document.getElementById("playerFields");
   const player2NameLabel = document.getElementById("player2NameLabel");
