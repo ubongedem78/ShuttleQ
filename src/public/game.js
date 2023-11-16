@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const backButton = document.getElementById("back-button");
   // let baseUrl = "https://shuttleq.onrender.com";
 
-  const gameId = window.location.pathname.split("/")[2];
+  const gameId = new URLSearchParams(window.location.search).get("gameId");
   console.log("gameId", gameId);
   const baseUrl = "http://localhost:3000";
   let winnerId = null;
