@@ -17,6 +17,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
+  function deleteTeam(teamId) {
+    axios
+      .delete(`${baseUrl}/api/queues/${teamId}`)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("Team deleted:", teamId);
+          fetchQueues(courtSelect.value);
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting team:", error);
+      });
+  }
+
   function updateQueueUI() {
     const queueList = document.getElementById("queueList");
     queueList.innerHTML = "";
