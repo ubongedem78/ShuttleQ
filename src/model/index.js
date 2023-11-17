@@ -147,7 +147,7 @@ const Game = sequelize.define("Game", {
     defaultValue: 0,
   },
   status: {
-    type: ENUM("PENDING", "PLAYING"),
+    type: ENUM("PENDING", "PLAYING", "ENDED"),
     allowNull: false,
   },
   courtId: {
@@ -176,7 +176,7 @@ const Queue = sequelize.define("Queue", {
     allowNull: false,
   },
   status: {
-    type: ENUM("PENDING", "PLAYING"),
+    type: ENUM("PENDING", "PLAYING", "ENDED"),
     allowNull: false,
   },
   playerName: {
@@ -227,6 +227,10 @@ const Team = sequelize.define("Team", {
       model: Court,
       key: "courtId",
     },
+  },
+  consecutiveWins: {
+    type: INTEGER,
+    defaultValue: 0,
   },
   isActive: {
     type: BOOLEAN,
@@ -311,6 +315,9 @@ CourtQueue.belongsTo(Queue, { foreignKey: "queueId" });
 Team.hasMany(RecentWinners, { foreignKey: "teamId", as: "RecentWinners" });
 RecentWinners.belongsTo(Team, { foreignKey: "teamId", as: "Team" });
 
+Queue.hasMany(RecentWinners, { foreignKey: "queueId", as: "RecentWinners" });
+RecentWinners.belongsTo(Queue, { foreignKey: "queueId", as: "Queue" });
+
 sequelize
   .sync({ alter: true })
   .then(() => {
@@ -320,4 +327,4 @@ sequelize
     console.error("Database Sync Failed, error: ", err);
   });
 
-module.exports = { User, Court, Game, Queue, Team, CourtQueue };
+module.exports = { User, Court, Game, Queue, Team, CourtQueue, RecentWinners };
