@@ -66,10 +66,10 @@ const createTeam = async (req, res) => {
     }
 
     const userIDs = [];
-    const users = await User.findAll({ where: { firstName: players } });
+    const users = await User.findAll({ where: { userName: players } });
 
     // Here I will create a map that associates user first names with their IDs
-    const userMap = new Map(users.map((user) => [user.firstName, user.id]));
+    const userMap = new Map(users.map((user) => [user.userName, user.id]));
 
     // Iterate over each player name in the 'players' array
     for (const playerName of players) {
