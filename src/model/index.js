@@ -111,88 +111,116 @@ const Court = sequelize.define("Court", {
   },
 });
 
-const Team = sequelize.define("Team", {
-  id: {
-    type: UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: UUIDV4,
-  },
-  player1Id: {
-    type: UUID,
-    allowNull: false,
-  },
-  player2Id: {
-    type: UUID,
-    allowNull: true,
-  },
-  gameType: {
-    type: ENUM("SINGLES", "DOUBLES"),
-    allowNull: false,
-  },
-  courtId: {
-    type: UUID,
-    allowNull: false,
-    references: {
-      model: Court,
-      key: "courtId",
+const Team = sequelize.define(
+  "Team",
+  {
+    id: {
+      type: UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: UUIDV4,
+    },
+    player1Id: {
+      type: UUID,
+      allowNull: false,
+    },
+    player2Id: {
+      type: UUID,
+      allowNull: true,
+    },
+    gameType: {
+      type: ENUM("SINGLES", "DOUBLES"),
+      allowNull: false,
+    },
+    courtId: {
+      type: UUID,
+      allowNull: false,
+      references: {
+        model: Court,
+        key: "courtId",
+      },
+    },
+    consecutiveWins: {
+      type: INTEGER,
+      defaultValue: 0,
+    },
+    isActive: {
+      type: BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
-  consecutiveWins: {
-    type: INTEGER,
-    defaultValue: 0,
-  },
-  isActive: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
-});
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["gameType", "player1Id", "player2Id"],
+        where: { player2Id: { [Op.not]: null } },
+      },
+      {
+        unique: true,
+        fields: ["gameType", "player1Id"],
+        where: { player2Id: null },
+      },
+    ],
+  }
+);
 
-const Queue = sequelize.define("Queue", {
-  id: {
-    type: UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: UUIDV4,
-  },
-  playerId: {
-    type: UUID,
-    allowNull: false,
-  },
-  status: {
-    type: ENUM("PENDING", "PLAYING"),
-    allowNull: false,
-  },
-  playerName: {
-    type: STRING,
-    allowNull: false,
-  },
-  gameType: {
-    type: ENUM("SINGLES", "DOUBLES"),
-    allowNull: false,
-  },
-  courtId: {
-    type: UUID,
-    allowNull: false,
-    references: {
-      model: Court,
-      key: "courtId",
+const Queue = sequelize.define(
+  "Queue",
+  {
+    id: {
+      type: UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: UUIDV4,
+    },
+    playerId: {
+      type: UUID,
+      allowNull: false,
+    },
+    status: {
+      type: ENUM("PENDING", "PLAYING"),
+      allowNull: false,
+    },
+    playerName: {
+      type: STRING,
+      allowNull: false,
+    },
+    gameType: {
+      type: ENUM("SINGLES", "DOUBLES"),
+      allowNull: false,
+    },
+    courtId: {
+      type: UUID,
+      allowNull: false,
+      references: {
+        model: Court,
+        key: "courtId",
+      },
+    },
+    teamId: {
+      type: UUID,
+      allowNull: true,
+      references: {
+        model: Team,
+        key: "id",
+      },
+    },
+    timestamp: {
+      type: DATE,
+      allowNull: false,
     },
   },
-  teamId: {
-    type: UUID,
-    allowNull: true,
-    references: {
-      model: Team,
-      key: "id",
-    },
-  },
-  timestamp: {
-    type: DATE,
-    allowNull: false,
-  },
-});
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["gameType", "playerId", "courtId"],
+      },
+    ],
+  }
+);
 
 const RecentWinners = sequelize.define("RecentWinners", {
   id: {

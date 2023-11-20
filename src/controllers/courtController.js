@@ -1,4 +1,4 @@
-const { Court, Queue } = require("../model");
+const { Court } = require("../model");
 
 // Create a new court and associate it with a Queue
 const createCourt = async (req, res) => {
