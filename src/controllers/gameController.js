@@ -1,4 +1,5 @@
 const { Game, Queue, Team, RecentWinners } = require("../model/index");
+const { updateQueueAndTeams } = require("../utils/gameUtils");
 
 // Create Game
 const createGame = async (req, res) => {
@@ -29,17 +30,7 @@ const createGame = async (req, res) => {
       courtId: req.body.courtId,
     });
 
-    // Update the queue and teams
-    await Promise.all([
-      Queue.update(
-        { status: "PLAYING" },
-        { where: { id: queuePairs.map((pair) => pair.id) } }
-      ),
-      Team.update(
-        { isActive: true },
-        { where: { id: queuePairs.map((pair) => pair.teamId) } }
-      ),
-    ]);
+    await updateQueueAndTeams(queuePairs);
 
     return res.status(201).json({ success: true, game });
   } catch (error) {
