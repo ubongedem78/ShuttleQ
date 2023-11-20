@@ -91,7 +91,7 @@ const startGame = async (req, res) => {
 const endGame = async (req, res) => {
   try {
     const gameId = req.params.gameId;
-    const { winnerId } = req.body;
+    const { winnerId, teamAScore, teamBScore } = req.body;
 
     // Get game details
     const game = await Game.findByPk(gameId, {
@@ -107,7 +107,7 @@ const endGame = async (req, res) => {
 
     // Update the game with winnerId & the game status to "ENDED"
     if (winnerId) {
-      await game.update({ winnerId, status: "ENDED" });
+      await game.update({ winnerId, teamAScore, teamBScore, status: "ENDED" });
     } else {
       await game.update({ status: "ENDED" });
     }
@@ -115,6 +115,10 @@ const endGame = async (req, res) => {
     // Update the queue and teams based on the game outcome
     const winnerTeam = game.winnerId === game.teamAId ? game.TeamA : game.TeamB;
     const loserTeam = game.winnerId === game.teamAId ? game.TeamB : game.TeamA;
+
+    // Increment the consecutiveWins count for the winning team
+    await winnerTeam.increment("consecutiveWins");
+    console.log("I have incremented winning teams consecutive wins count");
 
     // Check if the winning team has won two consecutive games
     if (winnerTeam.consecutiveWins === 2) {
@@ -142,9 +146,6 @@ const endGame = async (req, res) => {
       );
       console.log("I have updated losing on queue table");
     } else {
-      // Increment the consecutiveWins count for the winning team
-      await winnerTeam.increment("consecutiveWins");
-
       // update status to pending for the winning team
       await Queue.update(
         { status: "PENDING" },

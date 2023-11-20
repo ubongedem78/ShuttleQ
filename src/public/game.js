@@ -155,9 +155,14 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("End Game button clicked");
 
         if (winnerId) {
+          // log both teams scores
+          console.log("team1Score", team1Score);
+          console.log("team2Score", team2Score);
           axios
             .put(`${baseUrl}/api/games/${gameId}/end`, {
               winnerId: winnerId,
+              teamAScore: team1Score,
+              teamBScore: team2Score,
             })
             .then((response) => {
               console.log("response", response);
