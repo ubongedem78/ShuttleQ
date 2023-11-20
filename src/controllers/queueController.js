@@ -28,7 +28,6 @@ const getQueueForCourt = async (req, res) => {
     const queue = await Queue.findAll({
       where: {
         courtId,
-        status: "PENDING",
       },
       order: [["timestamp", "ASC"]],
     });

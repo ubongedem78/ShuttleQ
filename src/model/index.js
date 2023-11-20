@@ -106,7 +106,7 @@ const Court = sequelize.define("Court", {
     allowNull: false,
   },
   courtType: {
-    type: STRING,
+    type: ENUM("ADVANCED", "INTERMEDIATE", "BEGINNERS"),
     allowNull: false,
   },
 });
@@ -138,6 +138,10 @@ const Team = sequelize.define("Team", {
       key: "courtId",
     },
   },
+  consecutiveWins: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
   isActive: {
     type: BOOLEAN,
     allowNull: false,
@@ -157,7 +161,7 @@ const Queue = sequelize.define("Queue", {
     allowNull: false,
   },
   status: {
-    type: ENUM("PENDING", "PLAYING", "ENDED"),
+    type: ENUM("PENDING", "PLAYING"),
     allowNull: false,
   },
   playerName: {
@@ -183,10 +187,6 @@ const Queue = sequelize.define("Queue", {
       model: Team,
       key: "id",
     },
-  },
-  consecutiveWins: {
-    type: INTEGER,
-    defaultValue: 0,
   },
   timestamp: {
     type: DATE,

@@ -1,4 +1,4 @@
-const { Game, Queue, Team, RecentWinners, User } = require("../model/index");
+const { Game, Queue, Team, RecentWinners } = require("../model/index");
 
 // Create Game
 const createGame = async (req, res) => {
@@ -126,74 +126,40 @@ const endGame = async (req, res) => {
     const winnerTeam = game.winnerId === game.teamAId ? game.TeamA : game.TeamB;
     const loserTeam = game.winnerId === game.teamAId ? game.TeamB : game.TeamA;
 
-    const winnerPlayer = await User.findByPk(winnerTeam.player1Id);
-    const loserPlayer = await User.findByPk(loserTeam.player1Id);
-
     // Check if the winning team has won two consecutive games
     if (winnerTeam.consecutiveWins === 2) {
-      // Remove the winning team from the top of the queue
-      await Queue.destroy({ where: { id: winnerTeam.id } });
-
-      // Re-register the winning team before the recent losers in the queue with a current timestamp
-      await Queue.create({
-        playerId: winnerTeam.player1Id,
-        status: "PENDING",
-        gameType: winnerTeam.gameType,
-        courtId: game.courtId,
-        timestamp: new Date(),
-        teamId: winnerTeam.id,
-        playerName: await getFormattedPlayerName(winnerPlayer, winnerTeam),
-      });
-      console.log("I have created winning team into queue");
-
+      console.log("I am in the winner is 2 block");
       // Reset the consecutiveWins count for the winning team
       await winnerTeam.update({ consecutiveWins: 0 });
       console.log("I have updated winning teams consecutive wins count");
 
-      // Re-register the losing team into the queue with the current timestamp and reset their consecutiveWins count
-      await Queue.create({
-        playerId: loserTeam.player1Id,
-        status: "PENDING",
-        playerName: await getFormattedPlayerName(loserPlayer, loserTeam),
-        gameType: loserTeam.gameType,
-        courtId: game.courtId,
-        teamId: loserTeam.id,
-        timestamp: new Date(),
-      });
-      console.log("I have created losing team into queue");
+      //update timestamp of the winning team to current timestamp
+      await Queue.update(
+        { timestamp: new Date(), status: "PENDING" },
+        { where: { teamId: winnerTeam.id, status: "PLAYING" } }
+      );
+
+      console.log("I have updated winning on queue table");
 
       // Reset the consecutiveWins count for the losing team
       await loserTeam.update({ consecutiveWins: 0 });
       console.log("I have updated losing teams consecutive wins count");
+
+      // update the timestamp and status of the losing team to current timestamp and PENDING
+      await Queue.update(
+        { timestamp: new Date(), status: "PENDING" },
+        { where: { teamId: loserTeam.id, status: "PLAYING" } }
+      );
+      console.log("I have updated losing on queue table");
     } else {
       // Increment the consecutiveWins count for the winning team
       await winnerTeam.increment("consecutiveWins");
 
-      // Reset the consecutiveWins count for the losing team
-      await loserTeam.update({ consecutiveWins: 0 });
-
-      // Keep winning team back at the top of the queue
-      const nextPair = await Queue.findOne({
-        where: { status: "PENDING" },
-        order: [["timestamp", "ASC"]],
-        limit: 1,
-      });
-
-      // Check for next pair, look at timestamp, subtract 1 millisecond and create new entry for winning team
-      if (nextPair) {
-        const newTimestamp = new Date(nextPair.timestamp.getTime() - 1);
-        await Queue.create({
-          playerId: winnerTeam.player1Id,
-          status: "PENDING",
-          gameType: winnerTeam.gameType,
-          courtId: game.courtId,
-          teamId: winnerTeam.id,
-          timestamp: newTimestamp,
-          playerName: await getFormattedPlayerName(winnerPlayer, winnerTeam),
-        });
-      } else {
-        console.error("No next pair found in the queue.");
-      }
+      // update status to pending for the winning team
+      await Queue.update(
+        { status: "PENDING" },
+        { where: { teamId: winnerTeam.id, status: "PLAYING" } }
+      );
 
       // Store the winning team as a recent winner
       await RecentWinners.create({
@@ -203,16 +169,14 @@ const endGame = async (req, res) => {
         timestamp: new Date(),
       });
 
-      // Re-register the losing team into the queue with the current timestamp
-      await Queue.create({
-        playerId: loserTeam.player1Id,
-        status: "PENDING",
-        playerName: await getFormattedPlayerName(loserPlayer, loserTeam),
-        gameType: loserTeam.gameType,
-        courtId: game.courtId,
-        teamId: loserTeam.id,
-        timestamp: new Date(),
-      });
+      // Reset the consecutiveWins count for the losing team
+      await loserTeam.update({ consecutiveWins: 0 });
+
+      // Update the timestamp for losing team to the current timestamp
+      await Queue.update(
+        { timestamp: new Date(), status: "PENDING" },
+        { where: { teamId: loserTeam.id, status: "PLAYING" } }
+      );
     }
 
     return res.status(200).json({ success: true, message: "Game ended." });
@@ -221,15 +185,5 @@ const endGame = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-// Get player name based on game type
-async function getFormattedPlayerName(player, team) {
-  if (team.gameType === "DOUBLES") {
-    const player2 = await User.findByPk(team.player2Id);
-    return `${player.firstName}/${player2.firstName}`;
-  } else {
-    return player.firstName;
-  }
-}
 
 module.exports = { createGame, fetchGameDetails, startGame, endGame };

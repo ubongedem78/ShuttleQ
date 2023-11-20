@@ -108,8 +108,6 @@ const createTeam = async (req, res) => {
       );
     }
 
-    const { Op } = require("sequelize");
-
     // Check if any of the players are already in the queue with a different game type
     const playersInQueueWithDifferentGameType = await Queue.findOne({
       where: {
