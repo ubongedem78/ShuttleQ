@@ -114,13 +114,12 @@ const endGame = async (req, res) => {
       return res.status(404).json({ error: "Game not found." });
     }
 
-    // Update the game with winnerId
+    // Update the game with winnerId & the game status to "ENDED"
     if (winnerId) {
-      await game.update({ winnerId });
+      await game.update({ winnerId, status: "ENDED" });
+    } else {
+      await game.update({ status: "ENDED" });
     }
-
-    // Update the game status to "ENDED"
-    await game.update({ status: "ENDED" });
 
     // Update the queue and teams based on the game outcome
     const winnerTeam = game.winnerId === game.teamAId ? game.TeamA : game.TeamB;
