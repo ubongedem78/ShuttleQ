@@ -17,7 +17,6 @@ const getUserById = async (req, res) => {
     const userId = req.params.id;
     const user = await User.findByPk(userId, {
       include: [
-        { model: Queue, as: "currentQueue" },
         { model: Team, as: "Player" },
       ],
     });

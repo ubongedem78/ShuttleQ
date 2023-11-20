@@ -1,6 +1,6 @@
-const { Court, CourtQueue } = require("../model");
+const { Court, Queue } = require("../model");
 
-// Create a new court and associate it with a CourtQueue
+// Create a new court and associate it with a Queue
 const createCourt = async (req, res) => {
   try {
     const { courtName, courtType } = req.body;
@@ -33,18 +33,10 @@ const createCourt = async (req, res) => {
     });
 
     console.log("Court created successfully");
-    console.log(court);
-
-    const courtQueue = await CourtQueue.create({
-      courtId: court.courtId,
-      queueId: court.courtId,
-    });
-
-    console.log("courtQ", courtQueue);
 
     res.status(201).json({
       status: "success",
-      data: { court, courtQueue },
+      data: { court },
     });
   } catch (error) {
     console.log(error);
@@ -74,7 +66,7 @@ const deleteCourt = async (req, res) => {
 
     const court = await Court.findOne({
       where: {
-        id: courtId,
+        courtId,
       },
     });
 
@@ -87,19 +79,10 @@ const deleteCourt = async (req, res) => {
 
     await court.destroy();
 
-    // Also delete the associated CourtQueue entry
-    await CourtQueue.destroy({
-      where: {
-        courtId: court.courtId,
-        queue: court.courtId,
-      },
-    });
-
     res.status(200).json({
       status: "success",
       message: "Court deleted successfully",
     });
-    console.log("Court deleted successfully");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });

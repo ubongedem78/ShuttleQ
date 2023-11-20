@@ -12,8 +12,6 @@ const createGame = async (req, res) => {
       limit: 2,
     });
 
-    console.log("queuePairs", queuePairs);
-
     if (queuePairs.length < 2) {
       return res
         .status(400)
