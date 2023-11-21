@@ -2,7 +2,7 @@ const { Game, Queue, Team, RecentWinners } = require("../model/index");
 const { updateQueueAndTeams } = require("../utils/gameUtils");
 
 // Create Game
-const createGame = async (req, res) => {
+const createAndStartGame = async (req, res) => {
   try {
     // Get the first two pairs from the queue
     const queuePairs = await Queue.findAll({
@@ -31,6 +31,8 @@ const createGame = async (req, res) => {
     });
 
     await updateQueueAndTeams(queuePairs);
+
+    await startGame(req, res);
 
     return res.status(201).json({ success: true, game });
   } catch (error) {
@@ -79,8 +81,6 @@ const startGame = async (req, res) => {
         .status(400)
         .json({ error: "Game is already in progress or does not exist." });
     }
-
-    return res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error starting game:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -177,4 +177,4 @@ const endGame = async (req, res) => {
   }
 };
 
-module.exports = { createGame, fetchGameDetails, startGame, endGame };
+module.exports = { createAndStartGame, fetchGameDetails, startGame, endGame };

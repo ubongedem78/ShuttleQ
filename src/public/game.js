@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const baseUrl = "http://localhost:3000";
   // const baseUrl = "https://shuttleq.onrender.com";
-  const startGameButton = document.getElementById("startGame");
+  // const startGameButton = document.getElementById("startGame");
   const decrementScoreTeam1 = document.getElementById("decrement-score-team1");
   const incrementScoreTeam1 = document.getElementById("team1-score");
   const decrementScoreTeam2 = document.getElementById("decrement-score-team2");
@@ -31,20 +31,20 @@ document.addEventListener("DOMContentLoaded", function () {
       teamA.textContent = game.teamAName;
       teamB.textContent = game.teamBName;
 
-      startGameButton.addEventListener("click", () => {
-        console.log("Start Game button clicked");
+      // startGameButton.addEventListener("click", () => {
+      //   console.log("Start Game button clicked");
 
-        axios
-          .put(`${baseUrl}/api/games/${gameId}/start`, {
-            gameId: gameId,
-          })
-          .then((response) => {
-            console.log("response", response);
-          })
-          .catch((error) => {
-            console.log("error", error);
-          });
-      });
+      //   axios
+      //     .put(`${baseUrl}/api/games/${gameId}/start`, {
+      //       gameId: gameId,
+      //     })
+      //     .then((response) => {
+      //       console.log("response", response);
+      //     })
+      //     .catch((error) => {
+      //       console.log("error", error);
+      //     });
+      // });
 
       let team1Score = 0;
       let team2Score = 0;

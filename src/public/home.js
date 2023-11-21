@@ -72,20 +72,32 @@ document.addEventListener("DOMContentLoaded", async function () {
       const createGameButton = document.getElementById("createGame");
 
       // Create a game
-      createGameButton.addEventListener("click", () => {
+      createGameButton.addEventListener("click", async () => {
         console.log("Create game button clicked");
 
-        axios
-          .post(`${baseUrl}/api/games`, gameData)
-          .then((response) => {
-            if (response.status === 201) {
-              console.log("Game created:", response.data);
-              window.location.href = `game.html?gameId=${response.data.game.id}`;
-            }
-          })
-          .catch((error) => {
-            console.error("Error creating game:", error);
-          });
+        try {
+          const response = await axios.post(`${baseUrl}/api/games`, gameData);
+
+          if (response.status === 201 && response.data && response.data.game) {
+            const gameId = response.data.game.id;
+            console.log("Game ID:", gameId);
+
+            // Start the game
+            await axios.put(`${baseUrl}/api/games/${gameId}/start`, {
+              gameId: gameId,
+            });
+
+            // Redirect to the game page
+            window.location.href = `game.html?gameId=${gameId}`;
+          } else {
+            console.error(
+              "Error creating game: Unexpected server response",
+              response
+            );
+          }
+        } catch (error) {
+          console.error("Error creating game:", error);
+        }
       });
     }
   }
