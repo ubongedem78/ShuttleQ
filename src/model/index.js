@@ -276,8 +276,12 @@ const Game = sequelize.define("Game", {
   },
 });
 
-User.hasOne(Team, { foreignKey: "playerId", as: "Player" });
-Team.belongsTo(User, { foreignKey: "playerId", as: "Player" });
+
+
+
+User.hasOne(Team, { foreignKey: 'playerId', as: 'PlayerTeam' });
+Team.belongsTo(User, { foreignKey: 'player1Id', as: 'Player1' });
+Team.belongsTo(User, { foreignKey: 'player2Id', as: 'Player2' });
 
 Court.hasOne(Queue, { foreignKey: "courtId", as: "Queue" });
 Queue.belongsTo(Court, { foreignKey: "courtId", as: "Court" });

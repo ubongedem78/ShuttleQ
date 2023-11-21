@@ -78,7 +78,9 @@ const createTeam = async (req, res) => {
     console.log("users", users);
 
     // Here I will create a map that associates user first names with their IDs
-    const userMap = new Map(users.map((user) => [user.userName.toUpperCase(), user.id]));
+    const userMap = new Map(
+      users.map((user) => [user.userName.toUpperCase(), user.id])
+    );
     console.log("userMap", userMap);
 
     // Iterate over each player name in the 'players' array
@@ -214,4 +216,47 @@ const createTeam = async (req, res) => {
   }
 };
 
-module.exports = { createTeam };
+const getTeamDetails = async (req, res) => {
+  try {
+    const { teamId } = req.params;
+    const team = await Team.findOne({
+      where: {
+        id: teamId,
+      },
+      include: [
+        {
+          model: User,
+          as: "Player1",
+          attributes: ["userName"],
+          foreignKey: "player1Id",
+        },
+        {
+          model: User,
+          as: "Player2",
+          attributes: ["userName"],
+          foreignKey: "player2Id",
+        },
+      ],
+    });
+
+    if (!team) {
+      return res.status(404).json({
+        status: "error",
+        message: `Team with id ${teamId} not found`,
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: team,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: "error",
+      message: "Something went wrong while fetching the team details",
+    });
+  }
+};
+
+module.exports = { createTeam, getTeamDetails };

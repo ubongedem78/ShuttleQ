@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { createTeam } = require("../controllers/teamController");
+const { createTeam, getTeamDetails } = require("../controllers/teamController");
 
 router.post("/teams", createTeam);
+router.get("/teams/:teamId", getTeamDetails);
 
 module.exports = router;
