@@ -9,6 +9,6 @@ const {
 
 router.get("/games/:gameId", fetchGameDetails);
 router.post("/games", createAndStartGame);
-router.put("/games/:gameId/end", endGame);
+router.put("/games/:gameId", endGame);
 
 module.exports = router;

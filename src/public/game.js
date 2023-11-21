@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log("team1Score", team1Score);
           console.log("team2Score", team2Score);
           axios
-            .put(`${baseUrl}/api/games/${gameId}/end`, {
+            .put(`${baseUrl}/api/games/${gameId}`, {
               winnerId: winnerId,
               teamAScore: team1Score,
               teamBScore: team2Score,
