@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const gameType = entry.gameType;
 
       const queueEntryDiv = document.createElement("div");
-      queueEntryDiv.textContent = `${playerName} - ${gameType}`;
+      queueEntryDiv.textContent = `${playerName}`;
 
       const deleteButton = document.createElement("button");
       deleteButton.textContent = "Delete";

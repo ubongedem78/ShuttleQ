@@ -66,15 +66,28 @@ const createTeam = async (req, res) => {
     }
 
     const userIDs = [];
-    const users = await User.findAll({ where: { userName: players } });
+    const users = await User.findAll({
+      where: {
+        userName: {
+          [Op.or]: players.map((playerName) => ({
+            [Op.iLike]: `%${playerName}`,
+          })),
+        },
+      },
+    });
+    console.log("users", users);
 
     // Here I will create a map that associates user first names with their IDs
-    const userMap = new Map(users.map((user) => [user.userName, user.id]));
+    const userMap = new Map(users.map((user) => [user.userName.toUpperCase(), user.id]));
+    console.log("userMap", userMap);
 
     // Iterate over each player name in the 'players' array
     for (const playerName of players) {
+      const formattedPlayerName = playerName.toUpperCase();
+      console.log("formattedPlayerName", formattedPlayerName);
       // Retrieve the user ID from the map based on the player name
-      const userID = userMap.get(playerName);
+      const userID = userMap.get(formattedPlayerName);
+      console.log("userID", userID);
       // Check if a user ID was found for the current player
       if (userID) {
         userIDs.push(userID);
