@@ -26,13 +26,11 @@ const createAndStartGame = async (req, res) => {
       teamBId: queuePairs[1].teamId,
       teamAName: queuePairs[0].playerName,
       teamBName: queuePairs[1].playerName,
-      status: "PENDING",
+      status: "PLAYING",
       courtId: req.body.courtId,
     });
 
     await updateQueueAndTeams(queuePairs);
-
-    await startGame(req, res);
 
     return res.status(201).json({ success: true, game });
   } catch (error) {
@@ -61,28 +59,6 @@ const fetchGameDetails = async (req, res) => {
     return res.status(200).json({ success: true, game });
   } catch (error) {
     console.error("Error fetching game details:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-// Start Game
-const startGame = async (req, res) => {
-  try {
-    const gameId = req.params.gameId;
-
-    // Update the game status to "PLAYING"
-    const [updatedRows] = await Game.update(
-      { status: "PLAYING" },
-      { where: { id: gameId, status: "PENDING" } }
-    );
-
-    if (updatedRows === 0) {
-      return res
-        .status(400)
-        .json({ error: "Game is already in progress or does not exist." });
-    }
-  } catch (error) {
-    console.error("Error starting game:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -177,4 +153,4 @@ const endGame = async (req, res) => {
   }
 };
 
-module.exports = { createAndStartGame, fetchGameDetails, startGame, endGame };
+module.exports = { createAndStartGame, fetchGameDetails, endGame };

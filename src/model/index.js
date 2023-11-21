@@ -259,7 +259,7 @@ const Game = sequelize.define("Game", {
     defaultValue: 0,
   },
   status: {
-    type: ENUM("PENDING", "PLAYING", "ENDED"),
+    type: ENUM("PLAYING", "ENDED"),
     allowNull: false,
   },
   courtId: {

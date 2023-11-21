@@ -77,15 +77,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         try {
           const response = await axios.post(`${baseUrl}/api/games`, gameData);
+          console.log(response)
 
           if (response.status === 201 && response.data && response.data.game) {
             const gameId = response.data.game.id;
             console.log("Game ID:", gameId);
-
-            // Start the game
-            await axios.put(`${baseUrl}/api/games/${gameId}/start`, {
-              gameId: gameId,
-            });
 
             // Redirect to the game page
             window.location.href = `game.html?gameId=${gameId}`;
