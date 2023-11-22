@@ -10,34 +10,6 @@ const User = sequelize.define("User", {
     primaryKey: true,
     defaultValue: UUIDV4,
   },
-  firstName: {
-    type: STRING,
-    allowNull: false,
-    validate: {
-      isAlpha: {
-        args: true,
-        msg: "First name must only contain alphabets",
-      },
-      len: {
-        args: [3, 10],
-        msg: "First name must be between 3 and 10 characters",
-      },
-    },
-  },
-  lastName: {
-    type: STRING,
-    allowNull: false,
-    validate: {
-      isAlpha: {
-        args: true,
-        msg: "Last name must only contain alphabets",
-      },
-      len: {
-        args: [3, 10],
-        msg: "Last name must be between 3 and 10 characters",
-      },
-    },
-  },
   email: {
     type: STRING,
     allowNull: false,
