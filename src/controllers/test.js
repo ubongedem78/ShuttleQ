@@ -23,18 +23,3 @@ const testController = async (req, res) => {
 };
 
 module.exports = { testController };
-
-//   const players = name.split(",").map((playerName) => playerName.trim());
-
-//   console.log("players", players);
-
-//   const username = [];
-//   for (const player of players) {
-//     const neel = await User.findAll({
-//       where: { userName: { [Op.iLike]: `%${player}` } },
-//     });
-//     console.log("neel", neel);
-//     username.push(neel);
-
-//     console.log("username", username);
-//   }

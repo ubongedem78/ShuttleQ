@@ -66,6 +66,29 @@ const User = sequelize.define("User", {
   },
 });
 
+const Guest = sequelize.define("Guest", {
+  id: {
+    type: UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: UUIDV4,
+  },
+  userName: {
+    type: STRING,
+    allowNull: false,
+    unique: {
+      args: true,
+      msg: "Username already exists",
+    },
+    validate: {
+      len: {
+        args: [3, 20],
+        msg: "Username must be between 3 and 20 characters",
+      },
+    },
+  },
+});
+
 const Court = sequelize.define("Court", {
   courtId: {
     type: UUID,
@@ -248,12 +271,13 @@ const Game = sequelize.define("Game", {
   },
 });
 
+User.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });
+Team.belongsTo(User, { foreignKey: "player1Id", as: "Player1" });
+Team.belongsTo(User, { foreignKey: "player2Id", as: "Player2" });
 
-
-
-User.hasOne(Team, { foreignKey: 'playerId', as: 'PlayerTeam' });
-Team.belongsTo(User, { foreignKey: 'player1Id', as: 'Player1' });
-Team.belongsTo(User, { foreignKey: 'player2Id', as: 'Player2' });
+Guest.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });
+Team.belongsTo(Guest, { foreignKey: "player1Id", as: "Player1" });
+Team.belongsTo(Guest, { foreignKey: "player2Id", as: "Player2" });
 
 Court.hasOne(Queue, { foreignKey: "courtId", as: "Queue" });
 Queue.belongsTo(Court, { foreignKey: "courtId", as: "Court" });
