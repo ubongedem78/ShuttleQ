@@ -16,9 +16,7 @@ const getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findByPk(userId, {
-      include: [
-        { model: Team, as: "PlayerTeam" },
-      ],
+      include: [{ model: Team, as: "PlayerTeam" }],
     });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -33,11 +31,8 @@ const getUserById = async (req, res) => {
 // Create User
 const createUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, userName, avatar, passwordHash, role } =
-      req.body;
+    const { email, userName, avatar, passwordHash, role } = req.body;
     const user = await User.create({
-      firstName,
-      lastName,
       email,
       avatar,
       userName,
@@ -55,15 +50,13 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { firstName, lastName, email, userName, avatar, passwordHash, role } =
-      req.body;
+    const { email, userName, avatar, passwordHash, role } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    user.firstName = firstName;
-    user.lastName = lastName;
+
     user.email = email;
     user.userName = userName;
     user.avatar = avatar;
