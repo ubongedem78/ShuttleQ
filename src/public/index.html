@@ -7,24 +7,25 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
-    <title>SHUTTLEQ</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <title>ShuttleQ</title>
   </head>
   <body>
-    <div class="container mx-auto mt-8">
-      <h1 class="text-2xl font-semibold mb-4">SHUTTLEQ</h1>
-      <label for="courtSelect">Select Court:</label>
-      <select id="courtSelect" name="courtSelect"></select>
-
-      <div id="queueList" class="mb-4"></div>
-      <button id="createGame" class="bg-blue-500 text-white px-4 py-2 rounded">
-        Create Game
-      </button>
-      <button id="addPlayer" class="bg-green-500 text-white px-4 py-2 rounded">
-        Add Player
-      </button>
+    <div class="container mx-auto mt-8 text-center">
+      <h1 class="text-4xl font-bold mb-8">SHUTTLEQ</h1>
+      <div class="flex justify-center space-x-4">
+        <a href="register.html" class="bg-blue-500 text-white p-2 rounded"
+          >Register</a
+        >
+        <a href="login.html" class="bg-green-500 text-white p-2 rounded"
+          >Login</a
+        >
+        <a
+          href="play-as-guest.html"
+          class="bg-yellow-500 text-white p-2 rounded"
+          >Play as Guest</a
+        >
+      </div>
     </div>
-
-    <script src="home.js"></script>
   </body>
 </html>

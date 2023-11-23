@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Play as Guest</title>
+  </head>
+  <body>
+    <div class="container mx-auto mt-8">
+      <h1 class="text-3xl font-bold mb-4">Play as Guest</h1>
+      <input
+        type="text"
+        id="guestUsername"
+        placeholder="Enter your username"
+        class="mb-2 p-2 border border-gray-300 rounded"
+      />
+      <button
+        onclick="playAsGuest()"
+        class="bg-yellow-500 text-white p-2 rounded"
+      >
+        Play as Guest
+      </button>
+
+      <a href="index.html" class="bg-yellow-500 text-white p-2 rounded">
+        Home</a
+      >
+    </div>
+    <script src="play-as-guest.js"></script>
+  </body>
+</html>

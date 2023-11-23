@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   goBackButton.addEventListener("click", () => {
     console.log("Go back button clicked");
-    window.location.href = "index.html";
+    window.location.href = "home.html";
   });
 
   gameTypeSelect.addEventListener("change", function () {
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .post(`${baseUrl}/api/teams`, requestData)
       .then((response) => {
         console.log("Team created:", response.data);
-        window.location.href = "index.html";
+        window.location.href = "home.html";
       })
       .catch((error) => {
         console.error("Error creating team:", error);
