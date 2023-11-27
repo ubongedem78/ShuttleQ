@@ -275,9 +275,9 @@ User.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });
 Team.belongsTo(User, { foreignKey: "player1Id", as: "Player1" });
 Team.belongsTo(User, { foreignKey: "player2Id", as: "Player2" });
 
-Guest.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });
-Team.belongsTo(Guest, { foreignKey: "player1Id", as: "Player1" });
-Team.belongsTo(Guest, { foreignKey: "player2Id", as: "Player2" });
+Guest.hasOne(Team, { foreignKey: "playerId", as: "GuestTeam" });
+Team.belongsTo(Guest, { foreignKey: "player1Id", as: "GuestPlayer1" });
+Team.belongsTo(Guest, { foreignKey: "player2Id", as: "GuestPlayer2" });
 
 Court.hasOne(Queue, { foreignKey: "courtId", as: "Queue" });
 Queue.belongsTo(Court, { foreignKey: "courtId", as: "Court" });

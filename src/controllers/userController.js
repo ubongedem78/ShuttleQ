@@ -1,4 +1,4 @@
-const { User, Queue, Team } = require("../model");
+const { User, Team } = require("../model");
 
 // Get All Users
 const getAllUsers = async (req, res) => {
@@ -31,7 +31,15 @@ const getUserById = async (req, res) => {
 // Create User
 const createUser = async (req, res) => {
   try {
-    const { email, userName, avatar, passwordHash, role } = req.body;
+    const { email, userName, avatar, password, role } = req.body;
+
+    if (!email || !userName || !password) {
+      return res
+        .status(400)
+        .json({ error: "Please provide all required fields" });
+    }
+
+    
     const user = await User.create({
       email,
       avatar,
