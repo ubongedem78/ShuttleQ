@@ -1,14 +1,24 @@
 const baseUrl = "http://localhost:3000";
 
+const isValidEmail = (email) => {
+  console.log("email: ", email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const containsSpecialCharacters = (userName) => {
+  const specialCharacters = "!@#$%^&*()_+<>?:{}|[]-=";
+  return Array.from(userName).some((char) => specialCharacters.includes(char));
+};
+
 const register = async () => {
-  const username = document.getElementById("username").value;
+  const userName = document.getElementById("username").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
 
   console.log("register clicked");
 
-  if (!username || !email || !password) {
+  if (!userName || !email || !password) {
     alert("Please fill out all fields");
     return;
   }
@@ -23,31 +33,24 @@ const register = async () => {
     return;
   }
 
-  if (isValidEmail(email)) {
+  if (!isValidEmail(email)) {
+    console.log("valid email check");
     alert("Please enter a valid email");
     return;
   }
 
   if (
-    username.length < 3 ||
-    username.length > 20 ||
-    username.includes(" ") ||
-    containsSpecialCharacters(username)
+    userName.length < 3 ||
+    userName.length > 20 ||
+    userName.includes(" ") ||
+    containsSpecialCharacters(userName)
   ) {
-    alert("Invalid username");
+    alert("Invalid userName");
     return;
   }
 
-  const specialCharacters = "!@#$%^&*()_+<>?:{}|[]-=";
-  for (let i = 0; i < username.length; i++) {
-    if (specialCharacters.includes(username[i])) {
-      alert("Username cannot contain special characters");
-      return;
-    }
-  }
-
   const userData = {
-    username,
+    userName,
     email,
     password,
   };
@@ -60,15 +63,4 @@ const register = async () => {
   } catch (error) {
     console.error("Error during registration:", error);
   }
-
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const containsSpecialCharacters = (username) => {
-    const specialCharacters = "!@#$%^&*()_+<>?:{}|[]-=";
-    return Array.from(username).some((char) =>
-      specialCharacters.includes(char)
-    );
-  };
 };

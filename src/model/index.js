@@ -1,6 +1,5 @@
 const { sequelize } = require("../config/database");
 const { DataTypes } = require("sequelize");
-const { Op } = require("sequelize");
 const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN } = DataTypes;
 
 const User = sequelize.define("User", {
@@ -27,20 +26,6 @@ const User = sequelize.define("User", {
   avatar: {
     type: STRING,
     allowNull: true,
-    set(value) {
-      if (!value) {
-        this.setDataValue(
-          "avatar",
-          this.getDataValue("firstName")[0].toUpperCase() ||
-            this.getDataValue("userName")[0].toUpperCase()
-        );
-      } else {
-        this.setDataValue(
-          "avatar",
-          "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
-        );
-      }
-    },
   },
   userName: {
     type: STRING,
@@ -58,10 +43,6 @@ const User = sequelize.define("User", {
   },
   passwordHash: {
     type: STRING,
-    allowNull: false,
-  },
-  role: {
-    type: ENUM("PLAYER", "UMPIRE", "ADMIN"),
     allowNull: false,
   },
 });
@@ -269,6 +250,13 @@ const Game = sequelize.define("Game", {
     type: UUID,
     allowNull: true,
   },
+});
+
+User.beforeCreate((user) => {
+  user.avatar = user.userName.charAt(0).toUpperCase();
+});
+User.beforeUpdate((user) => {
+  user.avatar = user.userName.charAt(0).toUpperCase();
 });
 
 User.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });

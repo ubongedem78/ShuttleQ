@@ -1,4 +1,5 @@
 const { User, Team } = require("../model");
+const bcrypt = require("bcrypt");
 
 // Get All Users
 const getAllUsers = async (req, res) => {
@@ -39,7 +40,17 @@ const createUser = async (req, res) => {
         .json({ error: "Please provide all required fields" });
     }
 
-    
+    const passwordHash = await bcrypt.hash(password, 10);
+    console.log(passwordHash);
+
+    const existingUser = await User.findOne({
+      where: { email: email, userName: userName },
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
     const user = await User.create({
       email,
       avatar,
