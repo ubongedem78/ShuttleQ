@@ -128,4 +128,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.log("Add player button clicked");
     window.location.href = "add-player.html";
   });
+  const addCourtButton = document.getElementById("addCourt");
+  addCourtButton.addEventListener("click", () => {
+    window.location.href = "court.html";
+  });
 });
