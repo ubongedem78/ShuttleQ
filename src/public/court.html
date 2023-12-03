@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Add Players</title>
+    <title>Add Court</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
   <body>
@@ -13,34 +13,33 @@
 
       <h1 class="text-3xl font-semibold mb-4">Add Court</h1>
       <form id="addCourtForm" class="max-w-md mx-auto">
-        <div id="playerFields">
-          <label
-            for="gameType"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Court Type:</label
-          >
-          <select id="gameType" name="gameType" class="form-input mb-4">
-            <option value="SINGLES">Beginner</option>
-            <option value="DOUBLES">Intermediate</option>
-            <option value="DOUBLES">Professional</option>
-          </select>
-          <label
-            for="courtName"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Court Name:</label
-          >
-          <input
-            type="text"
-            id="courtName"
-            name="courtName"
-            class="form-input mb-4"
-            required
-          />
-        </div>
+        <label
+          for="courtType"
+          class="block text-sm font-medium text-gray-700 mb-1"
+          >Court Type:</label
+        >
+        <select id="courtType" name="courtType" class="form-input mb-4">
+          <option value="BEGINNERS">BEGINNERS</option>
+          <option value="INTERMEDIATE">INTERMEDIATE</option>
+          <option value="ADVANCED">ADVANCED</option>
+        </select>
+
+        <label
+          for="courtName"
+          class="block text-sm font-medium text-gray-700 mb-1"
+          >Court Name:</label
+        >
+        <input
+          type="text"
+          id="courtName"
+          name="courtName"
+          class="form-input mb-4"
+          required
+        />
 
         <button type="submit" class="btn btn-blue">Save</button>
       </form>
     </div>
-    <script src="add-player.js"></script>
+    <script src="court.js"></script>
   </body>
 </html>

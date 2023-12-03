@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const baseUrl = "http://localhost:3000";
   // const baseUrl = "https://shuttleq.onrender.com";
-  const courtName = document.getElementById("courtName");
+  const addCourtForm = document.getElementById("addCourtForm");
   const goBackButton = document.getElementById("back");
 
   goBackButton.addEventListener("click", () => {
@@ -9,15 +9,25 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "home.html";
   });
 
-  courtNameData = "xyz";
+  addCourtForm.addEventListener("submit", function (event) {
+    event.preventDefault();
 
-  axios
-    .post(`${baseUrl}/api/courts`, courtNameData)
-    .then((response) => {
-      console.log("Court created:", response.data);
-      window.location.href = "home.html";
-    })
-    .catch((error) => {
-      console.error("Error creating court:", error);
-    });
+    const courtNameInput = document.getElementById("courtName");
+    const courtTypeSelect = document.getElementById("courtType");
+
+    const courtData = {
+      courtName: courtNameInput.value,
+      courtType: courtTypeSelect.value,
+    };
+
+    axios
+      .post(`${baseUrl}/api/courts`, courtData)
+      .then((response) => {
+        console.log("Court created:", response.data);
+        window.location.href = "home.html";
+      })
+      .catch((error) => {
+        console.error("Error creating court:", error);
+      });
+  });
 });
