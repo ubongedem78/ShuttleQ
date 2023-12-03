@@ -1,10 +1,11 @@
+/* General Styles */
 body {
-  background-color: #f0f4f8;
+  background-color: #eef3f8;
 }
 
 .container {
   background-color: #ffffff;
-  max-width: 400px;
+  max-width: 600px;
   margin: auto;
   padding: 20px;
   border-radius: 8px;
@@ -12,6 +13,7 @@ body {
   margin-top: 80px;
 }
 
+/* Form Styles */
 .form-input {
   width: 100%;
   padding: 10px;
@@ -46,6 +48,51 @@ body {
   text-align: center;
 }
 
+.btn-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Button Styles */
+.btn {
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  text-align: center;
+  font-weight: lighter;
+}
+
+.btn-blue {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.btn-green {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.btn-yellow {
+  background-color: #f39c12;
+  color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+/* Score Styles */
 .score-button {
   width: 2rem;
   height: 2rem;
@@ -64,6 +111,7 @@ body {
   margin: 0 0.2rem;
 }
 
+/* Header Styles */
 header {
   background-color: #3490dc;
 }
@@ -72,10 +120,12 @@ header div {
   font-family: "Roboto", sans-serif;
 }
 
+/* Footer Styles */
 footer {
   background-color: #3490dc;
 }
 
+/* Additional Styles */
 .info-bar {
   display: none;
   background-color: #3490dc;
