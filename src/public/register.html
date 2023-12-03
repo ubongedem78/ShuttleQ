@@ -7,46 +7,88 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <style>
+      body {
+        background-color: #f0f4f8; /* Light blue-gray background */
+      }
 
+      .container {
+        background-color: #ffffff; /* White container background */
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 80px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 1.5rem;
+        border: 1px solid #d1d5db; /* Light gray border */
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .form-input:focus {
+        border-color: #3490dc; /* Focus border color */
+      }
+
+      .form-button {
+        background-color: #3490dc; /* Blue button color */
+        width: 100%;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .form-button:hover {
+        background-color: #2779bd; /* Darker blue on hover */
+      }
+
+      .form-link {
+        display: block;
+        margin-top: 1rem;
+        text-align: center;
+      }
+    </style>
     <title>Register</title>
   </head>
   <body>
-    <div class="container mx-auto mt-8">
-      <h1 class="text-3xl font-bold mb-4">Register</h1>
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Register</h1>
       <input
         type="text"
         id="username"
         placeholder="Username"
-        class="mb-2 p-2 border border-gray-300 rounded"
+        class="form-input"
       />
-      <input
-        type="text"
-        id="email"
-        placeholder="Email"
-        class="mb-2 p-2 border border-gray-300 rounded"
-      />
+      <input type="text" id="email" placeholder="Email" class="form-input" />
       <input
         type="password"
         id="password"
         placeholder="Password"
-        class="mb-2 p-2 border border-gray-300 rounded"
+        class="form-input"
       />
       <input
         type="password"
         id="confirmPassword"
         placeholder="Confirm Password"
-        class="mb-2 p-2 border border-gray-300 rounded"
+        class="form-input"
       />
-      <button onclick="register()" class="bg-blue-500 text-white p-2 rounded">
-        Register
-      </button>
-      already have an account?
-      <a href="login.html" class="bg-green-500 text-white p-2 rounded">
-        Login</a
-      >
-      <a href="index.html" class="bg-yellow-500 text-white p-2 rounded">
-        Home</a
-      >
+      <button onclick="register()" class="form-button">Register</button>
+      <p class="text-center mt-4">
+        Already have an account?
+        <a href="login.html" class="form-link text-blue-500"> Login </a>
+      </p>
+      <p class="text-center mt-2">
+        <a href="index.html" class="form-link text-yellow-500"> Home </a>
+      </p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="register.js"></script>
