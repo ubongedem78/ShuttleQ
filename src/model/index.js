@@ -1,51 +1,67 @@
 const { sequelize } = require("../config/database");
 const { DataTypes } = require("sequelize");
 const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN } = DataTypes;
+const bcrypt = require("bcrypt");
 
-const User = sequelize.define("User", {
-  id: {
-    type: UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: UUIDV4,
-  },
-  email: {
-    type: STRING,
-    allowNull: false,
-    unique: {
-      args: true,
-      msg: "Email address already exists",
+const User = sequelize.define(
+  "User",
+  {
+    id: {
+      type: UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: UUIDV4,
     },
-    validate: {
-      isEmail: {
+    email: {
+      type: STRING,
+      allowNull: false,
+      unique: {
         args: true,
-        msg: "Please enter a valid email address",
+        msg: "Email address already exists",
+      },
+      validate: {
+        isEmail: {
+          args: true,
+          msg: "Please enter a valid email address",
+        },
       },
     },
-  },
-  avatar: {
-    type: STRING,
-    allowNull: true,
-  },
-  userName: {
-    type: STRING,
-    allowNull: false,
-    unique: {
-      args: true,
-      msg: "Username already exists",
+    avatar: {
+      type: STRING,
+      allowNull: true,
     },
-    validate: {
-      len: {
-        args: [3, 20],
-        msg: "Username must be between 3 and 20 characters",
+    userName: {
+      type: STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: "Username already exists",
+      },
+      validate: {
+        len: {
+          args: [3, 20],
+          msg: "Username must be between 3 and 20 characters",
+        },
       },
     },
+    passwordHash: {
+      type: STRING,
+      allowNull: false,
+    },
   },
-  passwordHash: {
-    type: STRING,
-    allowNull: false,
-  },
-});
+  {
+    hooks: {
+      beforeCreate: async (user) => {
+        user.avatar = user.userName.charAt(0).toUpperCase();
+        user.passwordHash = await bcrypt.hash(user.passwordHash, 10);
+      },
+      beforeUpdate: async (user) => {
+        user.avatar = user.userName.charAt(0).toUpperCase();
+        user.passwordHash = await bcrypt.hash(user.passwordHash, 10);
+      },
+    },
+  }
+);
 
 const Guest = sequelize.define("Guest", {
   id: {
@@ -250,13 +266,6 @@ const Game = sequelize.define("Game", {
     type: UUID,
     allowNull: true,
   },
-});
-
-User.beforeCreate((user) => {
-  user.avatar = user.userName.charAt(0).toUpperCase();
-});
-User.beforeUpdate((user) => {
-  user.avatar = user.userName.charAt(0).toUpperCase();
 });
 
 User.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });

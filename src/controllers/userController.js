@@ -1,5 +1,4 @@
 const { User, Team } = require("../model");
-const bcrypt = require("bcrypt");
 
 // Get All Users
 const getAllUsers = async (req, res) => {
@@ -40,9 +39,6 @@ const createUser = async (req, res) => {
         .json({ error: "Please provide all required fields" });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    console.log(passwordHash);
-
     const existingUser = await User.findOne({
       where: { email: email, userName: userName },
     });
@@ -55,7 +51,7 @@ const createUser = async (req, res) => {
       email,
       avatar,
       userName,
-      passwordHash,
+      passwordHash: password,
       role,
     });
     return res.status(201).json({ user });
@@ -69,7 +65,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { email, userName, avatar, passwordHash, role } = req.body;
+    const { email, userName, avatar, password, role } = req.body;
 
     const user = await User.findByPk(userId);
     if (!user) {
@@ -79,7 +75,7 @@ const updateUser = async (req, res) => {
     user.email = email;
     user.userName = userName;
     user.avatar = avatar;
-    user.passwordHash = passwordHash;
+    user.passwordHash = password;
     user.role = role;
 
     await user.save();
