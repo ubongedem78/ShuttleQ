@@ -7,33 +7,32 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="styles.css" />
     <title>Login</title>
   </head>
   <body>
-    <div class="container mx-auto mt-8">
-      <h1 class="text-3xl font-bold mb-4">Login</h1>
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Login</h1>
       <input
         type="text"
         id="username"
         placeholder="Username"
-        class="mb-2 p-2 border border-gray-300 rounded"
+        class="form-input"
       />
       <input
         type="password"
         id="password"
         placeholder="Password"
-        class="mb-2 p-2 border border-gray-300 rounded"
+        class="form-input"
       />
-      <button onclick="login()" class="bg-green-500 text-white p-2 rounded">
-        Login
-      </button>
-      don't have an account?
-      <a href="register.html" class="bg-blue-500 text-white p-2 rounded">
-        Register</a
-      >
-      <a href="index.html" class="bg-yellow-500 text-white p-2 rounded">
-        Home</a
-      >
+      <button onclick="login()" class="form-button bg-green-500">Login</button>
+      <p class="text-center mt-4">
+        Don't have an account?
+        <a href="register.html" class="form-link text-blue-500"> Register </a>
+      </p>
+      <p class="text-center mt-2">
+        <a href="index.html" class="form-link text-yellow-500"> Home </a>
+      </p>
     </div>
     <script src="login.js"></script>
   </body>
