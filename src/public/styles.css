@@ -154,3 +154,42 @@ footer {
     transform: rotate(360deg);
   }
 }
+
+/* ... (your existing styles) */
+
+/* Queue Page Styles */
+.queue-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.queue-entry:hover {
+  background-color: #f0f4f8;
+}
+
+.game-indicator {
+  background-color: #63b3ed;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.delete-button {
+  background-color: #e53e3e;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+  background-color: #c53030;
+}

@@ -40,9 +40,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       const gameType = entry.gameType;
 
       const queueEntryDiv = document.createElement("div");
+      queueEntryDiv.classList.add("queue-entry");
       queueEntryDiv.textContent = `${playerName}`;
 
       const deleteButton = document.createElement("button");
+      deleteButton.classList.add("delete-button");
       deleteButton.textContent = "Delete";
       deleteButton.addEventListener("click", () => {
         deleteTeam(entry.id);
@@ -77,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         try {
           const response = await axios.post(`${baseUrl}/api/games`, gameData);
-          console.log(response)
+          console.log(response);
 
           if (response.status === 201 && response.data && response.data.game) {
             const gameId = response.data.game.id;
