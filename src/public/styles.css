@@ -75,3 +75,32 @@ header div {
 footer {
   background-color: #3490dc;
 }
+
+.info-bar {
+  display: none;
+  background-color: #3490dc;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.show {
+  display: block;
+}
+
+.spiral {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
