@@ -7,28 +7,25 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
-
+    <link rel="stylesheet" href="styles.css" />
     <title>Play as Guest</title>
   </head>
   <body>
-    <div class="container mx-auto mt-8">
-      <h1 class="text-3xl font-bold mb-4">Play as Guest</h1>
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Play as Guest</h1>
       <input
         type="text"
         id="guestUsername"
         placeholder="Enter your username"
-        class="mb-2 p-2 border border-gray-300 rounded"
+        class="form-input"
       />
-      <button
-        onclick="playAsGuest()"
-        class="bg-yellow-500 text-white p-2 rounded"
-      >
+      <button onclick="playAsGuest()" class="form-button bg-green-200">
         Play as Guest
       </button>
 
-      <a href="index.html" class="bg-yellow-500 text-white p-2 rounded">
-        Home</a
-      >
+      <p class="text-center mt-2">
+        <a href="index.html" class="form-link text-yellow-500"> Home </a>
+      </p>
     </div>
     <script src="play-as-guest.js"></script>
   </body>
