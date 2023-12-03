@@ -7,44 +7,26 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="styles.css" />
     <title>Shuttlequeue</title>
-    <style>
-      .score-button {
-        width: 1.5rem;
-        height: 1.5rem;
-        text-align: center;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .score-space {
-        margin: 0 0.5rem;
-      }
-      .score-space-button {
-        margin: 0 0.2rem;
-      }
-    </style>
   </head>
   <body class="font-sans bg-gray-100 min-h-screen">
-    <header class="bg-gray-500 text-white py-10 text-center">
-      <h1 class="text-3xl">C</h1>
+    <header class="bg-gray-800 text-white py-4 text-center">
+      <div class="text-3xl font-bold">ShuttleQ</div>
     </header>
     <main class="bg-white my-5 p-4 text-center rounded-md shadow-md">
-      <h2 class="text-xl font-semibold mb-3">Game</h2>
+      <h2 class="text-2xl font-semibold mb-4">Game</h2>
 
       <div class="grid grid-cols-2 gap-4">
         <div class="border border-gray-300 p-4 rounded-md">
-          <h3 class="text-lg font-semibold mb-2">Team 1</h3>
           <div class="space-y-2" id="team1-players"></div>
         </div>
         <div class="border border-gray-300 p-4 rounded-md">
-          <h3 class="text-lg font-semibold mb-2">Team 2</h3>
           <div class="space-y-2" id="team2-players"></div>
         </div>
       </div>
 
-      <div class="mt-4 flex items-center justify-center">
+      <div class="mt-6 flex items-center justify-center">
         <button
           class="score-button bg-red-500 text-white hover:bg-red-600 focus:outline-none rounded-md"
           id="decrement-score-team1"
@@ -53,13 +35,13 @@
         </button>
         <span class="score-space-button"></span>
 
-        <span class="font-semibold text-6xl cursor-pointer mx-2">
+        <span class="font-semibold text-4xl cursor-pointer mx-2">
           <span id="team1-score">0</span>
         </span>
 
         <span class="score-space"></span>
 
-        <span class="font-semibold text-6xl cursor-pointer mx-2">
+        <span class="font-semibold text-4xl cursor-pointer mx-2">
           <span id="team2-score">0</span>
         </span>
 
@@ -72,31 +54,34 @@
         </button>
       </div>
 
-      <!-- <button
-        class="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-        id="startGame"
-      >
-        Start Game
-      </button> -->
-      <button class="bg-red-500 text-white px-4 py-2 rounded mt-4" id="endGame">
+      <button class="bg-red-500 text-white px-4 py-2 rounded mt-6" id="endGame">
         End Game
       </button>
 
-      <button id="back-button">back</button>
+      <button
+        class="bg-blue-500 text-white px-4 py-2 rounded mt-6"
+        id="back-button"
+      >
+        Back to Queue
+      </button>
 
-      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+      <div
+        id="deuce-message"
+        style="
+          display: none;
+          color: rgb(255, 47, 0);
+          font-size: 20px;
+          font-weight: bold;
+        "
+      ></div>
     </main>
-
-    <div
-      id="deuce-message"
-      style="display: none; color: rgb(255, 47, 0); font-size: 20px; font-weight: bold"
-    ></div>
 
     <footer
       class="bg-gray-800 text-white text-xs text-center py-3 bottom-0 w-full absolute"
     >
       <p>&copy; ShuttleQ</p>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="game.js"></script>
   </body>
 </html>

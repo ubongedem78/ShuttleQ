@@ -45,3 +45,33 @@ body {
   margin-top: 1rem;
   text-align: center;
 }
+
+.score-button {
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-space {
+  margin: 0 0.5rem;
+}
+
+.score-space-button {
+  margin: 0 0.2rem;
+}
+
+header {
+  background-color: #3490dc;
+}
+
+header div {
+  font-family: "Roboto", sans-serif;
+}
+
+footer {
+  background-color: #3490dc;
+}
