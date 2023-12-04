@@ -1,4 +1,4 @@
-const { Team, User, Queue, Court } = require("../model");
+const { Team, User, Queue, Court, Guest } = require("../model");
 const { Op } = require("sequelize");
 
 // Create a new team
@@ -66,6 +66,7 @@ const createTeam = async (req, res) => {
     }
 
     const userIDs = [];
+    const guestsToCreate = [];
     const users = await User.findAll({
       where: {
         userName: {
@@ -94,10 +95,24 @@ const createTeam = async (req, res) => {
       if (userID) {
         userIDs.push(userID);
       } else {
-        return res.status(400).json({
-          status: "error",
-          message: `Player with name ${playerName} does not exist`,
+        console.log("checking guest table");
+        const [existingGuest, created] = await Guest.findOrCreate({
+          where: {
+            userName: formattedPlayerName,
+          },
         });
+
+        if (existingGuest) {
+          console.log("seen an existing guest");
+          console.log("existingGuest", existingGuest);
+          userIDs.push(existingGuest.id);
+        } else if (created) {
+          // If the guest is created, use the ID
+          console.log("creating new guest");
+          guestsToCreate.push(existingGuest);
+          userIDs.push(existingGuest.id);
+          console.log("guestsToCreate", guestsToCreate);
+        }
       }
     }
 
@@ -111,16 +126,40 @@ const createTeam = async (req, res) => {
       isActive: true,
     });
 
-    // Update playerId in User table for all players
+    // Update playerId in User or Guest table for all players
     for (const userId of userIDs) {
-      await User.update(
-        { playerId: team.id },
-        {
-          where: {
-            id: userId,
-          },
+      console.log("i am here checking userIDs", userIDs);
+      try {
+        const isGuest = await Guest.findOne({ where: { id: userId } });
+
+        if (isGuest) {
+          // If it's a guest, update playerId in Guest table
+          await Guest.update(
+            { playerId: team.id },
+            {
+              where: {
+                id: userId,
+              },
+            }
+          );
+        } else {
+          // If it's a user, update playerId in User table
+          await User.update(
+            { playerId: team.id },
+            {
+              where: {
+                id: userId,
+              },
+            }
+          );
         }
-      );
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          status: "error",
+          message: "Something went wrong while updating the playerId",
+        });
+      }
     }
 
     // Check if any of the players are already in the queue with a different game type

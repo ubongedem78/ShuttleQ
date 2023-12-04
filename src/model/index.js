@@ -305,4 +305,4 @@ sequelize
     console.error("Database Sync Failed, error: ", err);
   });
 
-module.exports = { User, Court, Game, Queue, Team, RecentWinners };
+module.exports = { User, Court, Game, Queue, Team, RecentWinners, Guest };
