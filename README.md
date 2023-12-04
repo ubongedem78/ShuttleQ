@@ -19,14 +19,6 @@ ShuttleQ is a web application designed to manage the game of badminton. Badminto
 - Node.js
 - Express.js
 - Sequelize
-- RabbitMQ
-
-### Frontend
-
-- HTML
-- Tailwind CSS
-- Javascript
-- Axios
 
 ### Database
 
@@ -80,11 +72,7 @@ ShuttleQ provides a comprehensive solution for organizing and managing badminton
 
 ## Usage
 
-xyz
-
 ## API Documentation
-
-xyz
 
 ## Contributing
 
