@@ -164,14 +164,15 @@ footer {
   align-items: center;
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
-  padding: 16px;
+  padding: 10px;
   border-radius: 8px;
   transition: background-color 0.3s;
+  margin-bottom: 10px;
 }
 
-.queue-entry:hover {
+/* .queue-entry:hover {
   background-color: #f0f4f8;
-}
+} */
 
 .game-indicator {
   background-color: #63b3ed;
@@ -191,11 +192,10 @@ footer {
 }
 
 .delete-button:hover {
-  background-color: #dfbebe;
+  background-color: #f33c3c;
 }
 
 /* Add Players Page Styles */
-
 #back {
   display: block;
   margin-bottom: 20px;
