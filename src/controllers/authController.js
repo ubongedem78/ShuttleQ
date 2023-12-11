@@ -4,6 +4,7 @@ const { User, Guest } = require("../model");
 const register = async (req, res) => {
   try {
     const { email, userName, avatar, password, role } = req.body;
+    const formattedUserName = userName.toLowerCase();
 
     if (!email || !userName || !password) {
       return res
@@ -12,7 +13,7 @@ const register = async (req, res) => {
     }
 
     const existingUser = await User.findOne({
-      where: { email: email, userName: userName },
+      where: { email: email, userName: formattedUserName },
     });
 
     if (existingUser) {
@@ -22,7 +23,7 @@ const register = async (req, res) => {
     const user = await User.create({
       email,
       avatar,
-      userName,
+      formattedUserName,
       passwordHash: password,
       role,
     });
@@ -40,13 +41,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { userName, password } = req.body;
+    const formattedUserName = userName.toLowerCase();
 
     if (!userName || !password)
       return res
         .status(400)
         .json({ error: "Please provide all required fields" });
 
-    const user = await User.findOne({ where: { userName: userName } });
+    const user = await User.findOne({ where: { userName: formattedUserName } });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -82,6 +84,7 @@ const logout = async (req, res) => {
 const createGuest = async (req, res) => {
   try {
     const { guestName, avatar } = req.body;
+    const formattedGuestName = guestName.toLowerCase();
 
     if (!guestName) {
       return res
@@ -90,7 +93,7 @@ const createGuest = async (req, res) => {
     }
 
     const existingGuest = await Guest.findOne({
-      where: { userName: guestName },
+      where: { userName: formattedGuestName },
     });
 
     if (existingGuest) {
@@ -98,7 +101,7 @@ const createGuest = async (req, res) => {
     }
 
     const guest = await Guest.create({
-      userName: guestName,
+      userName: formattedGuestName,
       avatar,
     });
     const token = guest.createJWT();
@@ -111,4 +114,35 @@ const createGuest = async (req, res) => {
   }
 };
 
-module.exports = { register, login, logout, createGuest };
+const loginGuest = async (req, res) => {
+  try {
+    const { guestName } = req.body;
+    const formattedGuestName = guestName.toLowerCase();
+
+    if (!guestName) {
+      return res
+        .status(400)
+        .json({ error: "Please provide all required fields" });
+    }
+
+    const guest = await Guest.findOne({
+      where: { userName: formattedGuestName },
+    });
+
+    if (!guest) {
+      return res.status(404).json({ error: "Guest not found" });
+    }
+
+    const token = guest.createJWT();
+    req.session.user = guest;
+    console.log("req.session.user", req.session.user);
+    req.session.token = token;
+    console.log("req.session.token", req.session.token);
+    return res.json({ guest, token });
+  } catch (error) {
+    console.error("Error in logging in guest: ", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { register, login, logout, createGuest, loginGuest };

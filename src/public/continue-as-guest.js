@@ -5,11 +5,11 @@ const continueAsGuest = async () => {
   console.log(`Playing as guest with username: ${guestUsername}`);
 
   try {
-    const response = await axios.post(`${baseUrl}/api/v1/guests`, {
+    const response = await axios.post(`${baseUrl}/api/v1/loginGuest`, {
       guestName: guestUsername,
     });
 
-    if (response.status === 201 && response.data && response.data.token) {
+    if (response.status === 200 && response.data && response.data.token) {
       console.log("Login successful:", response.data);
       localStorage.setItem("jwt", response.data.token);
       console.log("JWT saved to localStorage", localStorage.getItem("jwt"));

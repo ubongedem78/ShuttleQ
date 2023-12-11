@@ -1,24 +1,31 @@
-const { Game, Queue, Team, RecentWinners } = require("../model/index");
+const { Game, Queue, Team, Court, RecentWinners } = require("../model/index");
 const { updateQueueAndTeams } = require("../utils/gameUtils");
 
 // Create Game
 const createAndStartGame = async (req, res) => {
   try {
-    // Get the first two pairs from the queue
+    // Get the first two pairs from the queue of a particular court
+    const courtId = req.body.courtId;
+    const gameType = req.body.gameType;
+    const court = await Court.findByPk(courtId);
+    if (!court) {
+      return res.status(404).json({ error: "Court not found." });
+    }
+
+    console.log("courtId", courtId);
+    console.log("gameType", gameType);
     const queuePairs = await Queue.findAll({
-      where: {
-        status: "PENDING",
-      },
+      where: { status: "PENDING", courtId: courtId },
       order: [["timestamp", "ASC"]],
       limit: 2,
     });
+    console.log("queuePairs", queuePairs);
 
     if (queuePairs.length < 2) {
-      return res
-        .status(400)
-        .json({ error: "Not enough players in the queue." });
+      console.log("I am in the queuePairs.length === 1 block");
+      res.status(400).json({ error: "Not enough players in the queue." });
+      return;
     }
-
     // Create a new game
     const game = await Game.create({
       gameType: queuePairs[0].gameType,
@@ -84,6 +91,7 @@ const endGame = async (req, res) => {
     // Update the game with winnerId & the game status to "ENDED"
     if (winnerId) {
       await game.update({ winnerId, teamAScore, teamBScore, status: "ENDED" });
+      console.log("i have updated status to ended");
     } else {
       await game.update({ status: "ENDED" });
     }

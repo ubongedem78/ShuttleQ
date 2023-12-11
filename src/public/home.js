@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // const baseUrl = "https://shuttleq.onrender.com";
   let queueData = [];
   let courtSelect = document.getElementById("courtSelect");
+  let gameData;
 
   async function fetchQueues(courtId) {
     try {
@@ -70,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const teamBName = queueData[1] ? queueData[1].playerName : null;
       const courtId = queueData[0].courtId;
 
-      const gameData = {
+      gameData = {
         gameType: gameType,
         teamAId: teamAId,
         teamBId: teamBId,
@@ -185,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (response.status === 200) {
         localStorage.removeItem("jwt");
         localStorage.removeItem("userId");
-        window.location.href = "login.html";
+        window.location.href = "index.html";
       } else {
         console.error("Error during logout:", response);
       }
