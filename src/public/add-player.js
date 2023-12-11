@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
   courtIdSelect.innerHTML = '<option value="">Select Court</option>';
 
   axios
-    .get(`${baseUrl}/api/courts`)
+    .get(`${baseUrl}/api/v1/courts`)
     .then((response) => {
       console.log(response);
       const courts = response.data.data;
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     axios
-      .post(`${baseUrl}/api/teams`, requestData)
+      .post(`${baseUrl}/api/v1/teams`, requestData)
       .then((response) => {
         console.log("Team created:", response.data);
         window.location.href = "home.html";

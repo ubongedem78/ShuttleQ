@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     axios
-      .post(`${baseUrl}/api/courts`, courtData)
+      .post(`${baseUrl}/api/v1/courts`, courtData)
       .then((response) => {
         console.log("Court created:", response.data);
         window.location.href = "home.html";

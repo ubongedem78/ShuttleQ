@@ -3,6 +3,7 @@ const app = express();
 require("dotenv").config();
 const { readdirSync } = require("fs");
 const { sequelize } = require("./src/config/database");
+const authentication = require("./src/middlewares/auth");
 const cors = require("cors");
 
 app.use(express.json());
@@ -13,9 +14,10 @@ app.use(
     credentials: true,
   })
 );
+app.use("api/v1", authentication);
 
 readdirSync("./src/routes").map((path) => {
-  app.use("/api", require(`./src/routes/${path}`));
+  app.use("/api/v1", require(`./src/routes/${path}`));
 });
 
 app.get("/", (req, res) => {

@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const MAX_SCORE = 30;
 
   axios
-    .get(`${baseUrl}/api/games/${gameId}`)
+    .get(`${baseUrl}/api/v1/games/${gameId}`)
     .then((response) => {
       console.log("response", response);
       game = response.data.game;
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log("team1Score", team1Score);
           console.log("team2Score", team2Score);
           axios
-            .put(`${baseUrl}/api/games/${gameId}`, {
+            .put(`${baseUrl}/api/v1/games/${gameId}`, {
               winnerId: winnerId,
               teamAScore: team1Score,
               teamBScore: team2Score,

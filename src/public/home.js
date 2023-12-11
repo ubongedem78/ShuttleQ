@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function fetchQueues(courtId) {
     try {
-      const response = await axios.get(`${baseUrl}/api/queues/${courtId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/queues/${courtId}`);
       if (response.status === 200) {
         console.log("Queues fetched:", response.data);
         queueData = response.data.data;
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   function deleteTeam(teamId) {
     axios
-      .delete(`${baseUrl}/api/queues/${teamId}`)
+      .delete(`${baseUrl}/api/v1/queues/${teamId}`)
       .then((response) => {
         if (response.status === 200) {
           console.log("Team deleted:", teamId);
@@ -78,7 +78,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("Create game button clicked");
 
         try {
-          const response = await axios.post(`${baseUrl}/api/games`, gameData);
+          const response = await axios.post(
+            `${baseUrl}/api/v1/games`,
+            gameData
+          );
           console.log(response);
 
           if (response.status === 201 && response.data && response.data.game) {
@@ -102,7 +105,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch the list of courts
   try {
-    const response = await axios.get(`${baseUrl}/api/courts`);
+    const response = await axios.get(`${baseUrl}/api/v1/courts`);
     console.log(response);
     const courts = response.data.data;
 

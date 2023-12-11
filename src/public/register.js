@@ -62,7 +62,7 @@ const register = async () => {
   console.log(userData);
 
   try {
-    const response = await axios.post(`${baseUrl}/api/register`, userData);
+    const response = await axios.post(`${baseUrl}/api/v1/register`, userData);
     console.log("Registration successful:", response.data);
     window.location.href = "home.html";
   } catch (error) {
