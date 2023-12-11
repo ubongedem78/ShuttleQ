@@ -1,4 +1,3 @@
-const { Game, Queue, Team, Court, RecentWinners } = require("../model/index");
 const {
   findCourtById,
   findPendingQueuePairs,
