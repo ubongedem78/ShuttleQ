@@ -2,7 +2,8 @@ const { sequelize } = require("../config/database");
 const { DataTypes } = require("sequelize");
 const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN } = DataTypes;
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 const User = sequelize.define(
   "User",
   {
@@ -52,12 +53,14 @@ const User = sequelize.define(
   {
     hooks: {
       beforeCreate: async (user) => {
+        const salt = await bcrypt.genSalt(10);
+        user.passwordHash = await bcrypt.hash(user.passwordHash, salt);
         user.avatar = user.userName.charAt(0).toUpperCase();
-        user.passwordHash = await bcrypt.hash(user.passwordHash, 10);
       },
       beforeUpdate: async (user) => {
+        const salt = await bcrypt.genSalt(10);
+        user.passwordHash = await bcrypt.hash(user.passwordHash, salt);
         user.avatar = user.userName.charAt(0).toUpperCase();
-        user.passwordHash = await bcrypt.hash(user.passwordHash, 10);
       },
     },
   }
@@ -267,6 +270,19 @@ const Game = sequelize.define("Game", {
     allowNull: true,
   },
 });
+
+User.prototype.createJWT = function () {
+  return jwt.sign(
+    { userId: this.id, username: this.userName },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_LIFETIME }
+  );
+};
+
+User.prototype.comparePassword = async function (password) {
+  const isMatch = await bcrypt.compare(password, this.passwordHash);
+  return isMatch;
+};
 
 User.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });
 Team.belongsTo(User, { foreignKey: "player1Id", as: "Player1" });

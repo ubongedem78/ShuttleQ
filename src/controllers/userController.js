@@ -28,39 +28,6 @@ const getUserById = async (req, res) => {
   }
 };
 
-// Create User
-const createUser = async (req, res) => {
-  try {
-    const { email, userName, avatar, password, role } = req.body;
-
-    if (!email || !userName || !password) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
-    }
-
-    const existingUser = await User.findOne({
-      where: { email: email, userName: userName },
-    });
-
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
-    }
-
-    const user = await User.create({
-      email,
-      avatar,
-      userName,
-      passwordHash: password,
-      role,
-    });
-    return res.status(201).json({ user });
-  } catch (error) {
-    console.error("Error in creating user: ", error);
-    return res.status(500).json({ error: error.message });
-  }
-};
-
 // Update User
 const updateUser = async (req, res) => {
   try {
@@ -109,7 +76,6 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getAllUsers,
   getUserById,
-  createUser,
   updateUser,
   deleteUser,
 };
