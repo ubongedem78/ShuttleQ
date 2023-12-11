@@ -65,9 +65,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (queueData.length > 0) {
       const gameType = queueData[0].gameType;
       const teamAId = queueData[0].teamId;
-      const teamBId = queueData[1].teamId;
+      const teamBId = queueData[1] ? queueData[1].teamId : null;
       const teamAName = queueData[0].playerName;
-      const teamBName = queueData[1].playerName;
+      const teamBName = queueData[1] ? queueData[1].playerName : null;
       const courtId = queueData[0].courtId;
 
       const gameData = {
