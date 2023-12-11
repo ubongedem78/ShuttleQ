@@ -11,9 +11,9 @@ const containsSpecialCharacters = (userName) => {
 };
 
 const register = async () => {
-  const userName = document.getElementById("username").value;
+  const userName = document.getElementById("registerUsername").value;
   const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const password = document.getElementById("registerPassword").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
   const loader = document.getElementById("loader");
 

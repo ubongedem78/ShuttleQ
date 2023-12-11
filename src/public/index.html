@@ -8,16 +8,149 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <title>ShuttleQ</title>
+    <title>User Authentication</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
-  <body>
-    <div class="container mx-auto mt-8 text-center">
-      <h1 class="text-4xl font-bold mb-8">SHUTTLEQ</h1>
-      <div class="flex justify-center space-x-4">
-        <a href="register.html" class="btn btn-blue">Register</a>
-        <a href="login.html" class="btn btn-green">Login</a>
-        <a href="play-as-guest.html" class="btn btn-yellow">Play as Guest</a>
-      </div>
+
+  <div class="container" id="dynamicContent">
+    <h1 class="text-3xl font-bold mb-4 text-center">User Authentication</h1>
+  </div>
+
+  <div id="loader" class="info-bar">
+    <div class="spiral">🌀</div>
+  </div>
+
+  <script>
+    // Function to dynamically load content into the container
+    function loadContent(contentId) {
+      var container = document.getElementById("dynamicContent");
+      container.innerHTML = "";
+
+      switch (contentId) {
+        case "register":
+          container.innerHTML =
+            document.getElementById("registerContent").innerHTML;
+          break;
+        case "login":
+          container.innerHTML =
+            document.getElementById("loginContent").innerHTML;
+          break;
+        case "playAsGuest":
+          container.innerHTML =
+            document.getElementById("playAsGuestContent").innerHTML;
+          break;
+        case "continueAsGuest":
+          container.innerHTML = document.getElementById(
+            "continueAsGuestContent"
+          ).innerHTML;
+          break;
+        default:
+          // Load default content or handle errors
+          container.innerHTML = "Invalid contentId";
+      }
+    }
+  </script>
+
+  <!-- Register Content -->
+  <div id="registerContent" style="display: none">
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Register</h1>
+      <input
+        type="text"
+        id="registerUsername"
+        placeholder="Username"
+        class="form-input"
+      />
+      <input type="text" id="email" placeholder="Email" class="form-input" />
+      <input
+        type="password"
+        id="registerPassword"
+        placeholder="Password"
+        class="form-input"
+      />
+      <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm Password"
+        class="form-input"
+      />
+      <button onclick="register()" class="form-button bg-green-500">
+        Register
+      </button>
     </div>
-  </body>
+
+    <div id="loader" class="info-bar">
+      <div class="spiral">🌀</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="register.js"></script>
+  </div>
+
+  <!-- Login Content -->
+  <div id="loginContent" style="display: none">
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Login</h1>
+      <input
+        type="text"
+        id="username"
+        placeholder="Username"
+        class="form-input"
+      />
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        class="form-input"
+      />
+      <button onclick="login()" class="form-button bg-green-500">Login</button>
+    </div>
+    <script src="login.js"></script>
+  </div>
+
+  <!-- Play as Guest Content -->
+  <div id="playAsGuestContent" style="display: none">
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Play as Guest</h1>
+      <input
+        type="text"
+        id="guestUsernameInput"
+        placeholder="Enter your username"
+        class="form-input"
+      />
+      <button onclick="playAsGuest()" class="form-button bg-green-200">
+        Play as Guest
+      </button>
+    </div>
+    <script src="play-as-guest.js"></script>
+  </div>
+
+  <!-- Continue as Guest Content -->
+  <div id="continueAsGuestContent" style="display: none">
+    <div class="container">
+      <h1 class="text-3xl font-bold mb-4 text-center">Continue as Guest</h1>
+      <input
+        type="text"
+        id="guestUsername"
+        placeholder="Enter your username"
+        class="form-input"
+      />
+      <button onclick="continueAsGuest()" class="form-button bg-green-200">
+        Continue as Guest
+      </button>
+    </div>
+    <script src="continue-as-guest.js"></script>
+  </div>
+
+  <!-- Navigation links -->
+  <div class="text-center mt-4">
+    <a href="#" onclick="loadContent('register')">Register</a> |
+    <a href="#" onclick="loadContent('login')">Login</a> |
+    <a href="#" onclick="loadContent('playAsGuest')">Play as Guest</a> |
+    <a href="#" onclick="loadContent('continueAsGuest')">Continue as Guest</a>
+  </div>
+
+  <p class="text-center mt-2">
+    <a href="index.html" class="form-link text-yellow-500"> Home </a>
+  </p>
 </html>
