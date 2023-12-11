@@ -4,6 +4,7 @@ const { STRING, INTEGER, DATE, ENUM, UUID, UUIDV4, BOOLEAN } = DataTypes;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
 const User = sequelize.define(
   "User",
   {
@@ -151,6 +152,7 @@ const Team = sequelize.define("Team", {
       model: Court,
       key: "courtId",
     },
+    onDelete: "CASCADE",
   },
   consecutiveWins: {
     type: INTEGER,
@@ -194,6 +196,7 @@ const Queue = sequelize.define("Queue", {
       model: Court,
       key: "courtId",
     },
+    onDelete: "CASCADE",
   },
   teamId: {
     type: UUID,
@@ -281,6 +284,7 @@ const Game = sequelize.define("Game", {
       model: Court,
       key: "courtId",
     },
+    onDelete: "CASCADE",
   },
   winnerId: {
     type: UUID,
@@ -309,32 +313,52 @@ User.prototype.comparePassword = async function (password) {
   return isMatch;
 };
 
-Guest.hasOne(Team, { foreignKey: "playerId", as: "GuestTeam" });
+Guest.hasOne(Team, {
+  foreignKey: "playerId",
+  as: "GuestTeam",
+  onDelete: "CASCADE",
+});
 Team.belongsTo(Guest, { foreignKey: "player1Id", as: "GuestPlayer1" });
 Team.belongsTo(Guest, { foreignKey: "player2Id", as: "GuestPlayer2" });
 
-User.hasOne(Team, { foreignKey: "playerId", as: "PlayerTeam" });
+User.hasOne(Team, {
+  foreignKey: "playerId",
+  as: "PlayerTeam",
+  onDelete: "CASCADE",
+});
 Team.belongsTo(User, { foreignKey: "player1Id", as: "Player1" });
 Team.belongsTo(User, { foreignKey: "player2Id", as: "Player2" });
 
-Court.hasOne(Queue, { foreignKey: "courtId", as: "Queue" });
+Court.hasOne(Queue, {
+  foreignKey: "courtId",
+  as: "Queue",
+  onDelete: "CASCADE",
+});
 Queue.belongsTo(Court, { foreignKey: "courtId", as: "Court" });
 
-Team.hasMany(Game, { foreignKey: "teamAId", as: "TeamA" });
-Team.hasMany(Game, { foreignKey: "teamBId", as: "TeamB" });
+Team.hasMany(Game, { foreignKey: "teamAId", as: "TeamA", onDelete: "CASCADE" });
+Team.hasMany(Game, { foreignKey: "teamBId", as: "TeamB", onDelete: "CASCADE" });
 Game.belongsTo(Team, { foreignKey: "teamAId", as: "TeamA" });
 Game.belongsTo(Team, { foreignKey: "teamBId", as: "TeamB" });
 
-Team.hasMany(RecentWinners, { foreignKey: "teamId", as: "RecentWinners" });
+Team.hasMany(RecentWinners, {
+  foreignKey: "teamId",
+  as: "RecentWinners",
+  onDelete: "CASCADE",
+});
 RecentWinners.belongsTo(Team, { foreignKey: "teamId", as: "Team" });
 
-Queue.hasMany(RecentWinners, { foreignKey: "queueId", as: "RecentWinners" });
+Queue.hasMany(RecentWinners, {
+  foreignKey: "queueId",
+  as: "RecentWinners",
+  onDelete: "CASCADE",
+});
 RecentWinners.belongsTo(Queue, { foreignKey: "queueId", as: "Queue" });
 
-Court.hasMany(Game, { foreignKey: "courtId", as: "Game" });
+Court.hasMany(Game, { foreignKey: "courtId", as: "Game", onDelete: "CASCADE" });
 Game.belongsTo(Court, { foreignKey: "courtId", as: "Court" });
 
-Queue.belongsTo(Team, { foreignKey: "teamId" });
+Queue.belongsTo(Team, { foreignKey: "teamId", onDelete: "CASCADE" });
 Team.hasOne(Queue, { foreignKey: "teamId" });
 
 sequelize
