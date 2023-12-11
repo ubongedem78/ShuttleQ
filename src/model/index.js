@@ -66,28 +66,45 @@ const User = sequelize.define(
   }
 );
 
-const Guest = sequelize.define("Guest", {
-  id: {
-    type: UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: UUIDV4,
-  },
-  userName: {
-    type: STRING,
-    allowNull: false,
-    unique: {
-      args: true,
-      msg: "Username already exists",
+const Guest = sequelize.define(
+  "Guest",
+  {
+    id: {
+      type: UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: UUIDV4,
     },
-    validate: {
-      len: {
-        args: [3, 20],
-        msg: "Username must be between 3 and 20 characters",
+    userName: {
+      type: STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: "Username already exists",
+      },
+      validate: {
+        len: {
+          args: [3, 20],
+          msg: "Username must be between 3 and 20 characters",
+        },
       },
     },
+    avatar: {
+      type: STRING,
+      allowNull: true,
+    },
   },
-});
+  {
+    hooks: {
+      beforeCreate: async (guest) => {
+        guest.avatar = guest.userName.charAt(0).toUpperCase();
+      },
+      beforeUpdate: async (guest) => {
+        guest.avatar = guest.userName.charAt(0).toUpperCase();
+      },
+    },
+  }
+);
 
 const Court = sequelize.define("Court", {
   courtId: {

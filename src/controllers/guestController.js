@@ -11,36 +11,6 @@ const getGuests = async (req, res) => {
   }
 };
 
-// Create Guest
-const createGuest = async (req, res) => {
-  try {
-    const { guestName } = req.body;
-
-    if (!guestName) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
-    }
-
-    const existingGuest = await Guest.findOne({
-      where: { guestName: guestName },
-    });
-
-    if (existingGuest) {
-      return res.status(400).json({ error: "Guest already exists" });
-    }
-
-    const guest = await Guest.create({
-      guestName,
-      guestAvatar,
-    });
-    return res.status(201).json({ guest });
-  } catch (error) {
-    console.error("Error in creating guest: ", error);
-    return res.status(500).json({ error: error.message });
-  }
-};
-
 // Get Guest By Id
 const getGuestDetails = async (req, res) => {
   try {
@@ -93,7 +63,6 @@ const deleteGuest = async (req, res) => {
 
 module.exports = {
   getGuests,
-  createGuest,
   getGuestDetails,
   updateGuest,
   deleteGuest,

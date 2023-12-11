@@ -1,4 +1,4 @@
-const { User } = require("../model");
+const { User, Guest } = require("../model");
 
 // Create User
 const register = async (req, res) => {
@@ -78,4 +78,34 @@ const logout = async (req, res) => {
   } catch (error) {}
 };
 
-module.exports = { register, login, logout };
+// Create Guest
+const createGuest = async (req, res) => {
+  try {
+    const { guestName, avatar } = req.body;
+
+    if (!guestName) {
+      return res
+        .status(400)
+        .json({ error: "Please provide all required fields" });
+    }
+
+    const existingGuest = await Guest.findOne({
+      where: { userName: guestName },
+    });
+
+    if (existingGuest) {
+      return res.status(400).json({ error: "Guest already exists" });
+    }
+
+    const guest = await Guest.create({
+      userName: guestName,
+      avatar,
+    });
+    return res.status(201).json({ guest });
+  } catch (error) {
+    console.error("Error in creating guest: ", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { register, login, logout, createGuest };

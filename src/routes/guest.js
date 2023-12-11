@@ -3,13 +3,12 @@ const router = express.Router();
 
 const {
   getGuests,
-  createGuest,
   getGuestDetails,
   updateGuest,
   deleteGuest,
 } = require("../controllers/guestController");
 
-router.route("/guests").get(getGuests).post(createGuest);
+router.route("/guests").get(getGuests)
 router
   .route("/guests/:id")
   .get(getGuestDetails)
