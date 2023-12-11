@@ -1,4 +1,9 @@
 const { Court } = require("../model");
+const {
+  findCourtByName,
+  createNewCourt,
+  getAllCourts,
+} = require("../utils/courtUtils");
 
 // Create a new court and associate it with a Queue
 const createCourt = async (req, res) => {
@@ -12,12 +17,7 @@ const createCourt = async (req, res) => {
       });
     }
 
-    // Check if the court already exists
-    const existingCourt = await Court.findOne({
-      where: {
-        courtName,
-      },
-    });
+    const existingCourt = await findCourtByName(courtName);
 
     if (existingCourt) {
       return res.status(400).json({
@@ -27,10 +27,7 @@ const createCourt = async (req, res) => {
     }
 
     // Create the Court
-    const court = await Court.create({
-      courtName,
-      courtType,
-    });
+    const court = await createNewCourt(courtName, courtType);
 
     res.status(201).json({
       status: "success",
@@ -45,7 +42,7 @@ const createCourt = async (req, res) => {
 // Get all courts
 const getCourts = async (req, res) => {
   try {
-    const courts = await Court.findAll();
+    const courts = await getAllCourts();
 
     res.status(200).json({
       status: "success",
