@@ -1,4 +1,3 @@
-const { Queue } = require("../model");
 const {
   getAllTeamsInQueue,
   getQueueForSpecificCourt,
