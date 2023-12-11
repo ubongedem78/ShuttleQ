@@ -1,5 +1,12 @@
 const { Team, User, Queue, Court, Guest } = require("../model");
 const { Op } = require("sequelize");
+const {
+  validateGameType,
+  validatePlayerNames,
+  updateUserOrGuestIds,
+  updatePlayerIdInTables,
+  checkQueueAndPlayingStatus,
+} = require("../utils/teamUtils");
 
 // Create a new team
 const createTeam = async (req, res) => {
@@ -7,63 +14,9 @@ const createTeam = async (req, res) => {
     const { gameType, playerNames, courtId } = req.body;
 
     // Validation for gameType
-    const formattedGameType = gameType && gameType.toUpperCase();
+    const formattedGameType = await validateGameType(gameType);
 
-    if (
-      !formattedGameType ||
-      !["SINGLES", "DOUBLES"].includes(formattedGameType)
-    ) {
-      return res.status(400).json({
-        status: "error",
-        message: "Invalid gameType",
-      });
-    }
-
-    // Validation for playerNames
-    if (typeof playerNames !== "string") {
-      return res.status(400).json({
-        status: "error",
-        message: "Player Names must be a string",
-      });
-    }
-
-    // Split player names by commas and trim whitespace for each player
-    const players = playerNames
-      .split(",")
-      .map((playerName) => playerName.trim());
-
-    // Get the total number of players
-    const numberOfPlayers = players.length;
-
-    // Check the formattedGameType and validate the number of players accordingly
-    switch (formattedGameType) {
-      case "DOUBLES":
-        // Check if the number of players for DOUBLES is exactly 2
-        if (numberOfPlayers !== 2) {
-          return res.status(400).json({
-            status: "error",
-            message: "For DOUBLES, you must provide exactly 2 players",
-          });
-        }
-        break;
-
-      case "SINGLES":
-        // Check if the number of players for SINGLES is exactly 1
-        if (numberOfPlayers !== 1) {
-          return res.status(400).json({
-            status: "error",
-            message: "For SINGLES, you must provide exactly 1 player",
-          });
-        }
-        break;
-
-      default:
-        // Return an error for invalid gameType
-        return res.status(400).json({
-          status: "error",
-          message: "Invalid gameType",
-        });
-    }
+    const players = await validatePlayerNames(playerNames, formattedGameType);
 
     const userIDs = [];
     const guestsToCreate = [];
