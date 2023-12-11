@@ -27,7 +27,11 @@ document.addEventListener("DOMContentLoaded", function () {
   courtIdSelect.innerHTML = '<option value="">Select Court</option>';
 
   axios
-    .get(`${baseUrl}/api/v1/courts`)
+    .get(`${baseUrl}/api/v1/courts`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    })
     .then((response) => {
       console.log(response);
       const courts = response.data.data;
