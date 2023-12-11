@@ -15,10 +15,14 @@ const register = async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
+  const loader = document.getElementById("loader");
 
   console.log("register clicked");
 
+  loader.classList.add("show");
+
   if (!userName || !email || !password) {
+    loader.classList.remove("show");
     alert("Please fill out all fields");
     return;
   }
@@ -60,7 +64,10 @@ const register = async () => {
   try {
     const response = await axios.post(`${baseUrl}/api/users`, userData);
     console.log("Registration successful:", response.data);
+    window.location.href = "home.html";
   } catch (error) {
     console.error("Error during registration:", error);
+  } finally {
+    loader.classList.remove("show");
   }
 };

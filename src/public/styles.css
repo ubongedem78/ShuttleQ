@@ -126,7 +126,8 @@ footer {
 }
 
 /* Additional Styles */
-.info-bar {
+
+#loader {
   display: none;
   background-color: #3490dc;
   color: #fff;
@@ -138,7 +139,7 @@ footer {
   transform: translate(-50%, -50%);
 }
 
-.show {
+#loader.show {
   display: block;
 }
 
@@ -154,8 +155,6 @@ footer {
     transform: rotate(360deg);
   }
 }
-
-/* ... (your existing styles) */
 
 /* Queue Page Styles */
 .queue-entry {
