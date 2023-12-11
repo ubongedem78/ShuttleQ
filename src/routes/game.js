@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  createAndStartGame,
+  startGameController,
   fetchGameDetails,
-  endGame,
+  endGameController,
 } = require("../controllers/gameController");
 
 router.get("/games/:gameId", fetchGameDetails);
-router.post("/games", createAndStartGame);
-router.put("/games/:gameId", endGame);
+router.post("/games", startGameController);
+router.put("/games/:gameId", endGameController);
 
 module.exports = router;
