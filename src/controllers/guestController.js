@@ -1,4 +1,3 @@
-const { Guest, Team } = require("../model");
 const {
   getAllGuests,
   findGuestById,

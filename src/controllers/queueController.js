@@ -1,14 +1,14 @@
 const { Queue } = require("../model");
+const {
+  getAllTeamsInQueue,
+  getQueueForSpecificCourt,
+  deleteTeamFromQueueById,
+} = require("../utils/queueUtils");
 
 // Get all teams on the queue
 const getQueue = async (req, res) => {
   try {
-    const queue = await Queue.findAll({
-      where: {
-        status: "PENDING",
-      },
-      order: [["timestamp", "ASC"]],
-    });
+    const queue = await getAllTeamsInQueue();
 
     res.status(200).json({
       status: "success",
@@ -25,12 +25,7 @@ const getQueueForCourt = async (req, res) => {
   try {
     const { courtId } = req.params;
 
-    const queue = await Queue.findAll({
-      where: {
-        courtId,
-      },
-      order: [["timestamp", "ASC"]],
-    });
+    const queue = await getQueueForSpecificCourt(courtId);
 
     res.status(200).json({
       status: "success",
@@ -47,20 +42,14 @@ const deleteTeamFromQueue = async (req, res) => {
   try {
     const { teamId } = req.params;
 
-    const team = await Queue.findOne({
-      where: {
-        id: teamId,
-      },
-    });
+    const teamDeleted = await deleteTeamFromQueueById(teamId);
 
-    if (!team) {
+    if (!teamDeleted) {
       return res.status(404).json({
         status: "error",
-        message: "Team not found",
+        message: "Team not found in the queue",
       });
     }
-
-    await team.destroy();
 
     res.status(200).json({
       status: "success",
