@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const baseUrl = "http://localhost:3000";
   // const baseUrl = "https://shuttleq.onrender.com";
   const gameTypeSelect = document.getElementById("gameType");
-  const playerFields = document.getElementById("playerFields");
   const player2NameLabel = document.getElementById("player2NameLabel");
   const player2NameInput = document.getElementById("player2Name");
   const courtIdSelect = document.getElementById("courtId");
@@ -10,18 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const goBackButton = document.getElementById("back");
 
   goBackButton.addEventListener("click", () => {
-    console.log("Go back button clicked");
     window.location.href = "home.html";
   });
 
   gameTypeSelect.addEventListener("change", function () {
-    if (gameTypeSelect.value === "DOUBLES") {
-      player2NameLabel.style.display = "block";
-      player2NameInput.style.display = "block";
-    } else {
-      player2NameLabel.style.display = "none";
-      player2NameInput.style.display = "none";
-    }
+    const isDoubles = gameTypeSelect.value === "DOUBLES";
+    player2NameLabel.style.display = isDoubles ? "block" : "none";
+    player2NameInput.style.display = isDoubles ? "block" : "none";
   });
 
   courtIdSelect.innerHTML = '<option value="">Select Court</option>';
@@ -33,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     })
     .then((response) => {
-      console.log(response);
       const courts = response.data.data;
 
       courts.forEach((court) => {
@@ -47,34 +40,38 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching courts:", error);
     });
 
-  addPlayerForm.addEventListener("submit", function (event) {
+  addPlayerForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const formData = new FormData(addPlayerForm);
-    const gameType = formData.get("gameType");
-    const player1Name = formData.get("player1Name");
-    const player2Name = formData.get("player2Name");
-    const courtId = formData.get("courtId");
+    try {
+      const formData = new FormData(addPlayerForm);
+      const gameType = formData.get("gameType");
+      const player1Name = formData.get("player1Name");
+      const player2Name = formData.get("player2Name");
+      const courtId = formData.get("courtId");
 
-    const requestData = {
-      gameType,
-      playerNames:
-        gameType === "DOUBLES" ? `${player1Name}, ${player2Name}` : player1Name,
-      courtId,
-    };
+      const requestData = {
+        gameType,
+        playerNames:
+          gameType === "DOUBLES"
+            ? `${player1Name}, ${player2Name}`
+            : player1Name,
+        courtId,
+      };
 
-    axios
-      .post(`${baseUrl}/api/v1/teams`, requestData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-      })
-      .then((response) => {
-        console.log("Team created:", response.data);
-        window.location.href = "home.html";
-      })
-      .catch((error) => {
-        console.error("Error creating team:", error);
-      });
+      const response = await axios.post(
+        `${baseUrl}/api/v1/teams`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
+
+      window.location.href = "home.html";
+    } catch (error) {
+      console.error("Error creating team:", error);
+    }
   });
 });

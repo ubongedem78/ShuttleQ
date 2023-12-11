@@ -1,7 +1,6 @@
 const baseUrl = "http://localhost:3000";
 // const baseUrl = "https://shuttleq.onrender.com";
 const isValidEmail = (email) => {
-  console.log("email: ", email);
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
@@ -16,8 +15,6 @@ const register = async () => {
   const password = document.getElementById("registerPassword").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
   const loader = document.getElementById("loader");
-
-  console.log("register clicked");
 
   loader.classList.add("show");
 
@@ -38,7 +35,6 @@ const register = async () => {
   }
 
   if (!isValidEmail(email)) {
-    console.log("valid email check");
     alert("Please enter a valid email");
     return;
   }
@@ -59,13 +55,11 @@ const register = async () => {
     password,
   };
 
-  console.log(userData);
-
   try {
     const response = await axios.post(`${baseUrl}/api/v1/register`, userData);
-    console.log("Registration successful:", response.data);
+
     localStorage.setItem("jwt", response.data.token);
-    console.log("JWT saved to localStorage", localStorage.getItem("jwt"));
+
     const userId = localStorage.setItem("userId", response.data.user.id);
     window.location.href = "home.html";
   } catch (error) {

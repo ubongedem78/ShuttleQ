@@ -10,11 +10,11 @@ const login = async () => {
     });
 
     if (response.status === 200 && response.data && response.data.token) {
-      console.log("Login successful:", response.data);
+
       localStorage.setItem("jwt", response.data.token);
-      console.log("JWT saved to localStorage", localStorage.getItem("jwt"));
+
       const userId = localStorage.setItem("userId", response.data.user.id);
-      console.log("userId", userId);
+
       window.location.href = "home.html";
     } else {
       console.error("Error during login: Unexpected server response", response);

@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const backButton = document.getElementById("back-button");
 
   const gameId = new URLSearchParams(window.location.search).get("gameId");
-  console.log("gameId", gameId);
   let winnerId = null;
   let deuce = false;
   let confirmWinnerCheck = false;
@@ -28,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     })
     .then((response) => {
-      console.log("response", response);
       game = response.data.game;
       teamA.textContent = game.teamAName;
       teamB.textContent = game.teamBName;
@@ -131,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const deuceMessage = document.getElementById("deuce-message");
         deuceMessage.textContent = "Deuce!";
         deuceMessage.style.display = "block";
-        console.log("Deuce!");
 
         setTimeout(() => {
           deuceMessage.style.display = "none";
@@ -139,12 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       endGameButton.addEventListener("click", () => {
-        console.log("End Game button clicked");
-
         if (winnerId) {
-          // log both teams scores
-          console.log("team1Score", team1Score);
-          console.log("team2Score", team2Score);
           axios
             .put(
               `${baseUrl}/api/v1/games/${gameId}`,
@@ -163,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
               console.log("response", response);
             })
             .catch((error) => {
-              console.log("error", error);
+              console.error("error", error);
             });
         } else {
           alert("Please confirm the winner before ending the game.");
@@ -171,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     })
     .catch((error) => {
-      console.log("error", error);
+      console.error("error", error);
     });
 
   backButton.addEventListener("click", () => {

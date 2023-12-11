@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
       });
       if (response.status === 200) {
-        console.log("Queues fetched:", response.data);
         queueData = response.data.data;
         updateQueueUI();
       }
@@ -31,7 +30,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       })
       .then((response) => {
         if (response.status === 200) {
-          console.log("Team deleted:", teamId);
           fetchQueues(courtSelect.value);
         }
       })
@@ -62,7 +60,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       queueEntryDiv.appendChild(deleteButton);
       queueList.appendChild(queueEntryDiv);
     });
-    console.log("queueData", queueData);
+
     if (queueData.length > 0) {
       const gameType = queueData[0].gameType;
       const teamAId = queueData[0].teamId;
@@ -84,8 +82,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Create a game
       createGameButton.addEventListener("click", async () => {
-        console.log("Create game button clicked");
-
         try {
           const response = await axios.post(
             `${baseUrl}/api/v1/games`,
@@ -96,11 +92,9 @@ document.addEventListener("DOMContentLoaded", async function () {
               },
             }
           );
-          console.log(response);
 
           if (response.status === 201 && response.data && response.data.game) {
             const gameId = response.data.game.id;
-            console.log("Game ID:", gameId);
 
             // Redirect to the game page
             window.location.href = `game.html?gameId=${gameId}`;
@@ -124,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         Authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
     });
-    console.log(response);
+
     const courts = response.data.data;
 
     courts.forEach((court) => {
@@ -146,7 +140,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const addPlayerButton = document.getElementById("addPlayer");
   addPlayerButton.addEventListener("click", () => {
-    console.log("Add player button clicked");
     window.location.href = "add-player.html";
   });
   const addCourtButton = document.getElementById("addCourt");
@@ -157,7 +150,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function fetchUserData() {
     try {
       const id = localStorage.getItem("userId");
-      console.log("id", id);
       const response = await axios.get(`${baseUrl}/api/v1/users/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -213,10 +205,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.error("Error fetching user information:", error);
   }
 
-  // Add an event listener to the logout button
   const logoutButton = document.getElementById("logoutButton");
   logoutButton.addEventListener("click", (event) => {
-    event.preventDefault(); // Prevent the default behavior of the link
+    event.preventDefault();
     logout();
   });
 });
