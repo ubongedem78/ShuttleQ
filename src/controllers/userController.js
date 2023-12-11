@@ -18,16 +18,19 @@ const getUserById = async (req, res) => {
     const user = await User.findByPk(userId, {
       include: [{ model: Team, as: "PlayerTeam" }],
     });
+
     if (!user) {
-      console.log("User not found, checking if guest...");
       const guest = await Guest.findByPk(userId, {
         include: [{ model: Team, as: "GuestTeam" }],
       });
+
       if (!guest) {
         return res.status(404).json({ error: "User not found" });
       }
+
       return res.json({ guest });
     }
+
     return res.json({ user });
   } catch (error) {
     console.error("Error in fetching single user: ", error);
@@ -42,6 +45,7 @@ const updateUser = async (req, res) => {
     const { email, userName, avatar, password, role } = req.body;
 
     const user = await User.findByPk(userId);
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -73,7 +77,6 @@ const deleteUser = async (req, res) => {
     await user.destroy();
 
     res.status(204).json({ message: "User deleted successfully" });
-    console.log("User deleted successfully");
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to delete user" });

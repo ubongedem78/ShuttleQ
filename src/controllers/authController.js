@@ -23,7 +23,7 @@ const register = async (req, res) => {
     const user = await User.create({
       email,
       avatar,
-      formattedUserName,
+      userName: formattedUserName,
       passwordHash: password,
       role,
     });
@@ -62,9 +62,7 @@ const login = async (req, res) => {
 
     const token = user.createJWT();
     req.session.user = user;
-    console.log("req.session.user", req.session.user);
     req.session.token = token;
-    console.log("req.session.token", req.session.token);
     return res.json({ user, token });
   } catch (error) {
     console.error("Error in logging in user: ", error);
@@ -72,12 +70,15 @@ const login = async (req, res) => {
   }
 };
 
-// logout User
+// Logout User
 const logout = async (req, res) => {
   try {
     req.session.destroy();
     res.status(200).json({ message: "User logged out successfully" });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error in logging out user: ", error);
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 // Create Guest
@@ -135,9 +136,7 @@ const loginGuest = async (req, res) => {
 
     const token = guest.createJWT();
     req.session.user = guest;
-    console.log("req.session.user", req.session.user);
     req.session.token = token;
-    console.log("req.session.token", req.session.token);
     return res.json({ guest, token });
   } catch (error) {
     console.error("Error in logging in guest: ", error);

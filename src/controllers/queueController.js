@@ -42,7 +42,7 @@ const getQueueForCourt = async (req, res) => {
   }
 };
 
-//Delete a team from the queue
+// Delete a team from the queue
 const deleteTeamFromQueue = async (req, res) => {
   try {
     const { teamId } = req.params;

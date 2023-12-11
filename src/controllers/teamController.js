@@ -76,25 +76,21 @@ const createTeam = async (req, res) => {
         },
       },
     });
-    console.log("users", users);
 
     const userMap = new Map(
       users.map((user) => [user.userName.toUpperCase(), user.id])
     );
-    console.log("userMap", userMap);
 
     // Iterate over each player name in the 'players' array
     for (const playerName of players) {
       const formattedPlayerName = playerName.toUpperCase();
-      console.log("formattedPlayerName", formattedPlayerName);
       // Retrieve the user ID from the map based on the player name
       const userID = userMap.get(formattedPlayerName);
-      console.log("userID", userID);
+
       // Check if a user ID was found for the current player
       if (userID) {
         userIDs.push(userID);
       } else {
-        console.log("checking guest table");
         const [existingGuest, created] = await Guest.findOrCreate({
           where: {
             userName: playerName,
@@ -102,17 +98,11 @@ const createTeam = async (req, res) => {
         });
 
         if (existingGuest) {
-          console.log("seen an existing guest");
-          console.log("existingGuest", existingGuest);
           userIDs.push(existingGuest.id);
-          console.log("userIDs created", userIDs);
         } else if (created) {
           // If the guest is created, use the ID
-          console.log("creating new guest");
           guestsToCreate.push(existingGuest);
           userIDs.push(existingGuest.id);
-          console.log("userIDs created 2", userIDs);
-          console.log("guestsToCreate", guestsToCreate);
         }
       }
     }
@@ -129,7 +119,6 @@ const createTeam = async (req, res) => {
 
     // Update playerId in User or Guest table for all players
     for (const userId of userIDs) {
-      console.log("i am here checking userIDs", userIDs);
       try {
         const isGuest = await Guest.findOne({ where: { id: userId } });
 
@@ -155,7 +144,6 @@ const createTeam = async (req, res) => {
           );
         }
       } catch (error) {
-        console.log(error);
         return res.status(500).json({
           status: "error",
           message: "Something went wrong while updating the playerId",
@@ -248,7 +236,6 @@ const createTeam = async (req, res) => {
 
     return res.status(201).json({ team });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: "error",
       message: "Something went wrong while creating the team",
@@ -291,7 +278,6 @@ const getTeamDetails = async (req, res) => {
       data: team,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: "error",
       message: "Something went wrong while fetching the team details",

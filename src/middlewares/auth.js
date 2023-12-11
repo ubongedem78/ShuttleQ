@@ -13,7 +13,6 @@ const auth = (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     req.user = payload;
-    console.log("payload", payload);
     next();
   } catch (error) {
     return res.status(401).json({ error: "Invalid Authentication" });

@@ -32,8 +32,6 @@ const createCourt = async (req, res) => {
       courtType,
     });
 
-    console.log("Court created successfully");
-
     res.status(201).json({
       status: "success",
       data: { court },
@@ -44,7 +42,7 @@ const createCourt = async (req, res) => {
   }
 };
 
-//Get all courts
+// Get all courts
 const getCourts = async (req, res) => {
   try {
     const courts = await Court.findAll();
@@ -59,7 +57,7 @@ const getCourts = async (req, res) => {
   }
 };
 
-//Delete a court
+// Delete a court
 const deleteCourt = async (req, res) => {
   try {
     const { courtId } = req.params;
