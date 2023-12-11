@@ -1,4 +1,4 @@
-const { User, Team } = require("../model");
+const { User, Team, Guest } = require("../model");
 
 // Get All Users
 const getAllUsers = async (req, res) => {
@@ -19,7 +19,14 @@ const getUserById = async (req, res) => {
       include: [{ model: Team, as: "PlayerTeam" }],
     });
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      console.log("User not found, checking if guest...");
+      const guest = await Guest.findByPk(userId, {
+        include: [{ model: Team, as: "GuestTeam" }],
+      });
+      if (!guest) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      return res.json({ guest });
     }
     return res.json({ user });
   } catch (error) {

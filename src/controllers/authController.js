@@ -101,7 +101,10 @@ const createGuest = async (req, res) => {
       userName: guestName,
       avatar,
     });
-    return res.status(201).json({ guest });
+    const token = guest.createJWT();
+    req.session.user = guest;
+    req.session.token = token;
+    return res.status(201).json({ guest, token });
   } catch (error) {
     console.error("Error in creating guest: ", error);
     return res.status(500).json({ error: error.message });

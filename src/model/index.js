@@ -296,6 +296,14 @@ User.prototype.createJWT = function () {
   );
 };
 
+Guest.prototype.createJWT = function () {
+  return jwt.sign(
+    { userId: this.id, username: this.userName },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_LIFETIME }
+  );
+};
+
 User.prototype.comparePassword = async function (password) {
   const isMatch = await bcrypt.compare(password, this.passwordHash);
   return isMatch;
