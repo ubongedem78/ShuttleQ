@@ -78,7 +78,6 @@ const createTeam = async (req, res) => {
     });
     console.log("users", users);
 
-    // Here I will create a map that associates user first names with their IDs
     const userMap = new Map(
       users.map((user) => [user.userName.toUpperCase(), user.id])
     );
@@ -98,7 +97,7 @@ const createTeam = async (req, res) => {
         console.log("checking guest table");
         const [existingGuest, created] = await Guest.findOrCreate({
           where: {
-            userName: formattedPlayerName,
+            userName: playerName,
           },
         });
 
@@ -106,11 +105,13 @@ const createTeam = async (req, res) => {
           console.log("seen an existing guest");
           console.log("existingGuest", existingGuest);
           userIDs.push(existingGuest.id);
+          console.log("userIDs created", userIDs);
         } else if (created) {
           // If the guest is created, use the ID
           console.log("creating new guest");
           guestsToCreate.push(existingGuest);
           userIDs.push(existingGuest.id);
+          console.log("userIDs created 2", userIDs);
           console.log("guestsToCreate", guestsToCreate);
         }
       }
