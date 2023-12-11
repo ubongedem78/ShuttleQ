@@ -3,8 +3,9 @@ const app = express();
 require("dotenv").config();
 const { readdirSync } = require("fs");
 const { sequelize } = require("./src/config/database");
-const authentication = require("./src/middlewares/auth");
+const authenticate = require("./src/middlewares/auth");
 const cors = require("cors");
+const session = require("express-session");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -14,10 +15,19 @@ app.use(
     credentials: true,
   })
 );
-app.use("api/v1", authentication);
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 readdirSync("./src/routes").map((path) => {
-  app.use("/api/v1", require(`./src/routes/${path}`));
+  if (path === "auth.js") {
+    return app.use("/api/v1", require(`./src/routes/${path}`));
+  }
+  app.use("/api/v1", authenticate, require(`./src/routes/${path}`));
 });
 
 app.get("/", (req, res) => {

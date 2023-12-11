@@ -1,5 +1,4 @@
-const { User, Team } = require("../model");
-const jwt = require("jsonwebtoken");
+const { User } = require("../model");
 
 // Create User
 const register = async (req, res) => {
@@ -28,6 +27,8 @@ const register = async (req, res) => {
       role,
     });
     const token = user.createJWT();
+    req.session.user = user;
+    req.session.token = token;
     return res.status(201).json({ user, token });
   } catch (error) {
     console.error("Error in creating user: ", error);
@@ -58,7 +59,10 @@ const login = async (req, res) => {
     }
 
     const token = user.createJWT();
-
+    req.session.user = user;
+    console.log("req.session.user", req.session.user);
+    req.session.token = token;
+    console.log("req.session.token", req.session.token);
     return res.json({ user, token });
   } catch (error) {
     console.error("Error in logging in user: ", error);
@@ -66,4 +70,12 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+// logout User
+const logout = async (req, res) => {
+  try {
+    req.session.destroy();
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {}
+};
+
+module.exports = { register, login, logout };

@@ -2,10 +2,6 @@ const { User } = require("../model");
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-  if (req.path === "/api/login" || req.path === "/api/register") {
-    return next();
-  }
-
   const authenticationHeader = req.headers.authorization;
 
   if (!authenticationHeader || !authenticationHeader.startsWith("Bearer ")) {

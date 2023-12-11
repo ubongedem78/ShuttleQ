@@ -6,7 +6,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function fetchQueues(courtId) {
     try {
-      const response = await axios.get(`${baseUrl}/api/v1/queues/${courtId}`);
+      const response = await axios.get(`${baseUrl}/api/v1/queues/${courtId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      });
       if (response.status === 200) {
         console.log("Queues fetched:", response.data);
         queueData = response.data.data;
@@ -19,7 +23,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   function deleteTeam(teamId) {
     axios
-      .delete(`${baseUrl}/api/v1/queues/${teamId}`)
+      .delete(`${baseUrl}/api/v1/queues/${teamId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      })
       .then((response) => {
         if (response.status === 200) {
           console.log("Team deleted:", teamId);
@@ -80,7 +88,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
           const response = await axios.post(
             `${baseUrl}/api/v1/games`,
-            gameData
+            gameData,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+              },
+            }
           );
           console.log(response);
 
@@ -105,7 +118,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch the list of courts
   try {
-    const response = await axios.get(`${baseUrl}/api/v1/courts`);
+    const response = await axios.get(`${baseUrl}/api/v1/courts`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    });
     console.log(response);
     const courts = response.data.data;
 
@@ -134,5 +151,67 @@ document.addEventListener("DOMContentLoaded", async function () {
   const addCourtButton = document.getElementById("addCourt");
   addCourtButton.addEventListener("click", () => {
     window.location.href = "court.html";
+  });
+
+  async function fetchUserData() {
+    try {
+      const id = localStorage.getItem("userId");
+      console.log("id", id);
+      const response = await axios.get(`${baseUrl}/api/v1/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      });
+      const user = response.data.user;
+
+      if (user) {
+        const userGreeting = document.getElementById("userGreeting");
+        userGreeting.textContent = `Hello, ${user.userName}!`;
+      }
+    } catch (error) {
+      console.error("Error fetching user information:", error);
+    }
+  }
+  await fetchUserData();
+
+  async function logout() {
+    try {
+      const response = await axios.post(`${baseUrl}/api/v1/logout`);
+
+      if (response.status === 200) {
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("userId");
+        window.location.href = "login.html";
+      } else {
+        console.error("Error during logout:", response);
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  }
+
+  // Fetch user information and update the greeting
+  try {
+    const id = localStorage.getItem("userId");
+    const response = await axios.get(`${baseUrl}/api/v1/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    });
+    const user = response.data.user;
+
+    if (user) {
+      const userGreeting = document.getElementById("userGreeting");
+      userGreeting.textContent = `Hello, ${user.userName}!`;
+    }
+  } catch (error) {
+    console.error("Error fetching user information:", error);
+  }
+
+  // Add an event listener to the logout button
+  const logoutButton = document.getElementById("logoutButton");
+  logoutButton.addEventListener("click", (event) => {
+    event.preventDefault(); // Prevent the default behavior of the link
+    logout();
   });
 });

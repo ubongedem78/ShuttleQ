@@ -64,6 +64,9 @@ const register = async () => {
   try {
     const response = await axios.post(`${baseUrl}/api/v1/register`, userData);
     console.log("Registration successful:", response.data);
+    localStorage.setItem("jwt", response.data.token);
+    console.log("JWT saved to localStorage", localStorage.getItem("jwt"));
+    const userId = localStorage.setItem("userId", response.data.user.id);
     window.location.href = "home.html";
   } catch (error) {
     console.error("Error during registration:", error);

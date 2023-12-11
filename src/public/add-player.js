@@ -60,7 +60,11 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     axios
-      .post(`${baseUrl}/api/v1/teams`, requestData)
+      .post(`${baseUrl}/api/v1/teams`, requestData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      })
       .then((response) => {
         console.log("Team created:", response.data);
         window.location.href = "home.html";

@@ -20,8 +20,14 @@ document.addEventListener("DOMContentLoaded", function () {
       courtType: courtTypeSelect.value,
     };
 
+    console.log(localStorage.getItem("jwt"));
+
     axios
-      .post(`${baseUrl}/api/v1/courts`, courtData)
+      .post(`${baseUrl}/api/v1/courts`, courtData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      })
       .then((response) => {
         console.log("Court created:", response.data);
         window.location.href = "home.html";
