@@ -4,10 +4,13 @@ require("dotenv").config();
 const { readdirSync } = require("fs");
 const { sequelize } = require("./src/config/database");
 const authenticate = require("./src/middlewares/auth");
+const notFoundMiddleware = require("./src/middlewares/notFound");
 const cors = require("cors");
+const path = require("path");
 const session = require("express-session");
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
@@ -33,6 +36,8 @@ readdirSync("./src/routes").map((path) => {
 app.get("/", (req, res) => {
   res.send("I AM WORKING, BUT YOUVE GOTTA WORK TOO");
 });
+
+app.use(notFoundMiddleware);
 
 const PORT = process.env.PORT || 3000;
 
