@@ -163,10 +163,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         },
       });
       const user = response.data.user;
+      const guest = response.data.guest;
 
       if (user) {
         const userGreeting = document.getElementById("userGreeting");
         userGreeting.textContent = `Hello, ${user.userName}!`;
+      } else if (guest) {
+        const userGreeting = document.getElementById("userGreeting");
+        userGreeting.textContent = `Hello, ${guest.userName}!`;
       }
     } catch (error) {
       console.error("Error fetching user information:", error);
