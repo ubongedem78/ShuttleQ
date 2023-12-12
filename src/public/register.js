@@ -14,12 +14,8 @@ const register = async () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("registerPassword").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
-  const loader = document.getElementById("loader");
-
-  loader.classList.add("show");
 
   if (!userName || !email || !password) {
-    loader.classList.remove("show");
     alert("Please fill out all fields");
     return;
   }
@@ -68,8 +64,6 @@ const register = async () => {
     } else {
       console.error("Error during registration:", error);
     }
-  } finally {
-    loader.classList.remove("show");
   }
 };
 
