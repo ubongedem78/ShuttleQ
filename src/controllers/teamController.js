@@ -7,6 +7,7 @@ const {
   checkPlayersInQueueOrPlaying,
   updateTablesWithPlayerID,
   fetchTeamDetails,
+  typeOfGamesOnCourt,
 } = require("../utils/teamUtils");
 
 // Create a new team
