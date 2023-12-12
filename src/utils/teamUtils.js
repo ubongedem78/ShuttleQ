@@ -1,4 +1,4 @@
-const { Team, User, Queue, Court, Guest } = require("../model");
+const { Team, User, Queue, Guest } = require("../model");
 const { Op } = require("sequelize");
 
 async function validateGameType(gameType) {
@@ -165,6 +165,35 @@ async function updateTablesWithPlayerID(userIDs, team) {
   }
 }
 
+async function fetchTeamDetails(teamId) {
+  const team = await Team.findOne({
+    where: {
+      id: teamId,
+    },
+    include: [
+      {
+        model: User,
+        as: "Player1",
+        attributes: ["userName"],
+        foreignKey: "player1Id",
+      },
+      {
+        model: User,
+        as: "Player2",
+        attributes: ["userName"],
+        foreignKey: "player2Id",
+      },
+    ],
+  });
+
+  if (!team) {
+    return res.status(404).json({
+      status: "error",
+      message: `Team with id ${teamId} not found`,
+    });
+  }
+}
+
 module.exports = {
   validateGameType,
   validatePlayerNames,
@@ -172,4 +201,5 @@ module.exports = {
   checkPlayersInTeams,
   checkPlayersInQueueOrPlaying,
   updateTablesWithPlayerID,
+  fetchTeamDetails,
 };
