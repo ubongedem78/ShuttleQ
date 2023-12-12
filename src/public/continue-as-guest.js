@@ -1,5 +1,3 @@
-const baseUrl = "https://shuttleq.onrender.com";
-
 const continueAsGuest = async () => {
   const guestUsernameInput = document.getElementById("guestUsername");
   const guestUsername = guestUsernameInput.value.trim();
