@@ -1,4 +1,5 @@
 const { User, Team, Guest } = require("../model");
+const { NotFoundError, InternalServerError } = require("../errors");
 
 // Get All Users
 const getAllUsers = async (req, res) => {
@@ -7,7 +8,7 @@ const getAllUsers = async (req, res) => {
     return res.json({ users });
   } catch (error) {
     console.error("Error in getAllUsers: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -25,7 +26,7 @@ const getUserById = async (req, res) => {
       });
 
       if (!guest) {
-        return res.status(404).json({ error: "User not found" });
+        throw new NotFoundError("User not found");
       }
 
       return res.json({ guest });
@@ -34,7 +35,7 @@ const getUserById = async (req, res) => {
     return res.json({ user });
   } catch (error) {
     console.error("Error in fetching single user: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -47,7 +48,7 @@ const updateUser = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      throw new NotFoundError("User not found");
     }
 
     user.email = email;
@@ -60,7 +61,7 @@ const updateUser = async (req, res) => {
     res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
     console.error("Error in updating user: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -71,7 +72,7 @@ const deleteUser = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      throw new NotFoundError("User not found");
     }
 
     await user.destroy();
@@ -79,7 +80,7 @@ const deleteUser = async (req, res) => {
     res.status(204).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to delete user" });
+    throw new InternalServerError("Failed to delete user");
   }
 };
 

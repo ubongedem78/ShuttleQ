@@ -7,6 +7,12 @@ const {
   endGame,
 } = require("../utils/gameUtils");
 
+const {
+  NotFoundError,
+  BadRequestError,
+  InternalServerError,
+} = require("../errors");
+
 // Create Game
 const startGameController = async (req, res) => {
   try {
@@ -15,24 +21,22 @@ const startGameController = async (req, res) => {
     const court = await findCourtById(courtId);
 
     if (!court) {
-      return res.status(404).json({ error: "Court not found." });
+      throw new NotFoundError("Court not found");
     }
 
     const queuePairs = await findPendingQueuePairs(courtId);
 
     if (queuePairs.length < 2) {
-      res.status(400).json({ error: "Not enough players in the queue." });
-      return;
+      throw new BadRequestError("Not enough players in the queue");
     }
 
     const game = await createGame(queuePairs, gameType, courtId);
 
     await updateQueueAndTeams(queuePairs);
 
-    return res.status(201).json({ success: true, game });
+    res.status(201).json({ success: true, game });
   } catch (error) {
-    console.error("Error creating game:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -44,13 +48,12 @@ const fetchGameDetails = async (req, res) => {
     const game = await findGame(gameId);
 
     if (!game) {
-      return res.status(404).json({ error: "Game not found." });
+      throw new NotFoundError("Game not found");
     }
 
-    return res.status(200).json({ success: true, game });
+    res.status(200).json({ success: true, game });
   } catch (error) {
-    console.error("Error fetching game details:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -63,15 +66,14 @@ const endGameController = async (req, res) => {
     const game = await findGame(gameId);
 
     if (!game) {
-      return res.status(404).json({ error: "Game not found." });
+      throw new NotFoundError("Game not found");
     }
 
     await endGame(game, winnerId, teamAScore, teamBScore);
 
-    return res.status(200).json({ success: true, message: "Game ended." });
+    res.status(200).json({ success: true, message: "Game ended" });
   } catch (error) {
-    console.error("Error ending game:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    throw new InternalServerError(error.message);
   }
 };
 

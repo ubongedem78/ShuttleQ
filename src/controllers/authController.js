@@ -1,4 +1,9 @@
 const { User, Guest } = require("../model");
+const {
+  BadRequestError,
+  NotFoundError,
+  InternalServerError,
+} = require("../errors");
 
 // Create User
 const register = async (req, res) => {
@@ -7,9 +12,7 @@ const register = async (req, res) => {
     const formattedUserName = userName.toLowerCase();
 
     if (!email || !userName || !password) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
+      throw new BadRequestError("Please provide all required fields");
     }
 
     const existingUser = await User.findOne({
@@ -17,7 +20,7 @@ const register = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      throw new BadRequestError("User already exists");
     }
 
     const user = await User.create({
@@ -32,8 +35,7 @@ const register = async (req, res) => {
     req.session.token = token;
     return res.status(201).json({ user, token });
   } catch (error) {
-    console.error("Error in creating user: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -43,21 +45,20 @@ const login = async (req, res) => {
     const { userName, password } = req.body;
     const formattedUserName = userName.toLowerCase();
 
-    if (!userName || !password)
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
+    if (!userName || !password) {
+      throw new BadRequestError("Please provide all required fields");
+    }
 
     const user = await User.findOne({ where: { userName: formattedUserName } });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      throw new NotFoundError("User not found");
     }
 
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      throw new BadRequestError("Invalid credentials");
     }
 
     const token = user.createJWT();
@@ -65,8 +66,7 @@ const login = async (req, res) => {
     req.session.token = token;
     return res.json({ user, token });
   } catch (error) {
-    console.error("Error in logging in user: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -77,7 +77,7 @@ const logout = async (req, res) => {
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
     console.error("Error in logging out user: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -88,9 +88,7 @@ const createGuest = async (req, res) => {
     const formattedGuestName = guestName.toLowerCase();
 
     if (!guestName) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
+      throw new BadRequestError("Please provide all required fields");
     }
 
     const existingGuest = await Guest.findOne({
@@ -98,7 +96,7 @@ const createGuest = async (req, res) => {
     });
 
     if (existingGuest) {
-      return res.status(400).json({ error: "Guest already exists" });
+      throw new BadRequestError("Guest already exists");
     }
 
     const guest = await Guest.create({
@@ -110,8 +108,7 @@ const createGuest = async (req, res) => {
     req.session.token = token;
     return res.status(201).json({ guest, token });
   } catch (error) {
-    console.error("Error in creating guest: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -121,9 +118,7 @@ const loginGuest = async (req, res) => {
     const formattedGuestName = guestName.toLowerCase();
 
     if (!guestName) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields" });
+      throw new BadRequestError("Please provide all required fields");
     }
 
     const guest = await Guest.findOne({
@@ -131,7 +126,7 @@ const loginGuest = async (req, res) => {
     });
 
     if (!guest) {
-      return res.status(404).json({ error: "Guest not found" });
+      throw new NotFoundError("Guest not found");
     }
 
     const token = guest.createJWT();
@@ -139,8 +134,7 @@ const loginGuest = async (req, res) => {
     req.session.token = token;
     return res.json({ guest, token });
   } catch (error) {
-    console.error("Error in logging in guest: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 

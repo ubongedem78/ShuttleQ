@@ -5,14 +5,16 @@ const {
   deleteGuestById,
 } = require("../utils/guestUtils");
 
+const { NotFoundError, InternalServerError } = require("../errors");
+
 // Get All Guests
 const getGuests = async (req, res) => {
   try {
     const guests = await getAllGuests();
-    return res.json({ guests });
+    res.json({ guests });
   } catch (error) {
     console.error("Error in getGuests: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -24,12 +26,12 @@ const getGuestDetails = async (req, res) => {
     const guest = await findGuestById(guestId);
 
     if (!guest) {
-      return res.status(404).json({ error: "Guest not found" });
+      throw new NotFoundError("Guest not found");
     }
-    return res.json({ guest });
+    res.json({ guest });
   } catch (error) {
     console.error("Error in fetching single guest: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -42,15 +44,15 @@ const updateGuest = async (req, res) => {
     const guest = await findGuestById(guestId);
 
     if (!guest) {
-      return res.status(404).json({ error: "Guest not found" });
+      throw new NotFoundError("Guest not found");
     }
 
     const updatedGuest = await updateGuestDetails(guestId, guestName);
 
-    return res.status(200).json({ guest: updatedGuest });
+    res.status(200).json({ guest: updatedGuest });
   } catch (error) {
     console.error("Error in updating guest: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -62,13 +64,13 @@ const deleteGuest = async (req, res) => {
     const guestDeleted = await deleteGuestById(guestId);
 
     if (!guestDeleted) {
-      return res.status(404).json({ error: "Guest not found" });
+      throw new NotFoundError("Guest not found");
     }
 
-    return res.status(204).json({ message: "Guest deleted successfully" });
+    res.status(204).json({ message: "Guest deleted successfully" });
   } catch (error) {
     console.error("Error in deleting guest: ", error);
-    return res.status(500).json({ error: error.message });
+    throw new InternalServerError(error.message);
   }
 };
 

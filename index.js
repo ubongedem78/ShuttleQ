@@ -4,6 +4,7 @@ require("dotenv").config();
 const { readdirSync } = require("fs");
 const { sequelize } = require("./src/config/database");
 const authenticate = require("./src/middlewares/auth");
+const errorHandlerMiddleware = require("./src/middlewares/error-handler");
 const notFoundMiddleware = require("./src/middlewares/notFound");
 const cors = require("cors");
 const path = require("path");
@@ -37,6 +38,7 @@ app.get("/", (req, res) => {
   res.send("I AM WORKING, BUT YOUVE GOTTA WORK TOO");
 });
 
+app.use(errorHandlerMiddleware);
 app.use(notFoundMiddleware);
 
 const PORT = process.env.PORT || 3000;

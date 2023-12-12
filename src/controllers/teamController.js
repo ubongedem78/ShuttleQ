@@ -9,6 +9,8 @@ const {
   fetchTeamDetails,
 } = require("../utils/teamUtils");
 
+const { InternalServerError } = require("../errors");
+
 // Create a new team
 const createTeam = async (req, res) => {
   try {
@@ -53,10 +55,8 @@ const createTeam = async (req, res) => {
 
     return res.status(201).json({ team });
   } catch (error) {
-    return res.status(500).json({
-      status: "error",
-      message: "Something went wrong while creating the team",
-    });
+    console.error("Error in createTeam: ", error);
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -70,10 +70,8 @@ const getTeamDetails = async (req, res) => {
       data: team,
     });
   } catch (error) {
-    return res.status(500).json({
-      status: "error",
-      message: "Something went wrong while fetching the team details",
-    });
+    console.error("Error in getTeamDetails: ", error);
+    throw new InternalServerError(error.message);
   }
 };
 

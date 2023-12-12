@@ -5,25 +5,25 @@ const {
   getAllCourts,
 } = require("../utils/courtUtils");
 
+const {
+  BadRequestError,
+  NotFoundError,
+  InternalServerError,
+} = require("../errors");
+
 // Create a new court and associate it with a Queue
 const createCourt = async (req, res) => {
   try {
     const { courtName, courtType } = req.body;
 
     if (!courtName || !courtType) {
-      return res.status(400).json({
-        status: "error",
-        message: "Invalid courtName or courtType",
-      });
+      throw new BadRequestError("Invalid courtName or courtType");
     }
 
     const existingCourt = await findCourtByName(courtName);
 
     if (existingCourt) {
-      return res.status(400).json({
-        status: "error",
-        message: "Court already exists",
-      });
+      throw new BadRequestError("Court already exists");
     }
 
     // Create the Court
@@ -34,8 +34,7 @@ const createCourt = async (req, res) => {
       data: { court },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -49,8 +48,7 @@ const getCourts = async (req, res) => {
       data: courts,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -66,10 +64,7 @@ const deleteCourt = async (req, res) => {
     });
 
     if (!court) {
-      return res.status(404).json({
-        status: "error",
-        message: "Court not found",
-      });
+      throw new NotFoundError("Court not found");
     }
 
     await court.destroy();
@@ -79,8 +74,7 @@ const deleteCourt = async (req, res) => {
       message: "Court deleted successfully",
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    throw new InternalServerError(error.message);
   }
 };
 

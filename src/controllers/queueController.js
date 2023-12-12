@@ -4,6 +4,8 @@ const {
   deleteTeamFromQueueById,
 } = require("../utils/queueUtils");
 
+const { NotFoundError, InternalServerError } = require("../errors");
+
 // Get all teams on the queue
 const getQueue = async (req, res) => {
   try {
@@ -14,8 +16,8 @@ const getQueue = async (req, res) => {
       data: queue,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in getQueue: ", error);
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -31,8 +33,8 @@ const getQueueForCourt = async (req, res) => {
       data: queue,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in getQueueForCourt: ", error);
+    throw new InternalServerError(error.message);
   }
 };
 
@@ -44,10 +46,7 @@ const deleteTeamFromQueue = async (req, res) => {
     const teamDeleted = await deleteTeamFromQueueById(teamId);
 
     if (!teamDeleted) {
-      return res.status(404).json({
-        status: "error",
-        message: "Team not found in the queue",
-      });
+      throw new NotFoundError("Team not found in the queue");
     }
 
     res.status(200).json({
@@ -55,8 +54,8 @@ const deleteTeamFromQueue = async (req, res) => {
       message: "Team deleted successfully",
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in deleteTeamFromQueue: ", error);
+    throw new InternalServerError(error.message);
   }
 };
 
