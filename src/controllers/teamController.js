@@ -1,12 +1,6 @@
 const { Team, User, Queue, Court, Guest } = require("../model");
 const { Op } = require("sequelize");
-const {
-  validateGameType,
-  validatePlayerNames,
-  updateUserOrGuestIds,
-  updatePlayerIdInTables,
-  checkQueueAndPlayingStatus,
-} = require("../utils/teamUtils");
+const { validateGameType, validatePlayerNames } = require("../utils/teamUtils");
 
 // Create a new team
 const createTeam = async (req, res) => {
@@ -19,7 +13,6 @@ const createTeam = async (req, res) => {
     const players = await validatePlayerNames(playerNames, formattedGameType);
 
     const userIDs = [];
-    const guestsToCreate = [];
     const users = await User.findAll({
       where: {
         userName: {
@@ -33,6 +26,7 @@ const createTeam = async (req, res) => {
     const userMap = new Map(
       users.map((user) => [user.userName.toUpperCase(), user.id])
     );
+    console.log("userMap", userMap);
 
     // Iterate over each player name in the 'players' array
     for (const playerName of players) {
@@ -42,22 +36,78 @@ const createTeam = async (req, res) => {
 
       // Check if a user ID was found for the current player
       if (userID) {
+        console.log("I found a userID");
         userIDs.push(userID);
       } else {
-        const [existingGuest, created] = await Guest.findOrCreate({
+        const existingGuest = await Guest.findOne({
           where: {
             userName: playerName,
           },
         });
 
         if (existingGuest) {
+          console.log("i found an existing guest");
           userIDs.push(existingGuest.id);
-        } else if (created) {
-          // If the guest is created, use the ID
-          guestsToCreate.push(existingGuest);
-          userIDs.push(existingGuest.id);
+          console.log("I have pushed the existing guest ID");
+        } else if (!existingGuest) {
+          console.log("I am using a created guest");
+          const createdGuest = await Guest.create({
+            userName: playerName,
+          });
+          userIDs.push(createdGuest.id);
         }
       }
+    }
+    console.log("userIDs", userIDs);
+
+    // Check if any of the players are already in a team with a different game type
+    const playersInTeamWithDifferentGameType = await Team.findOne({
+      where: {
+        [Op.or]: [
+          { player1Id: userIDs, gameType: { [Op.not]: formattedGameType } },
+          { player2Id: userIDs, gameType: { [Op.not]: formattedGameType } },
+        ],
+      },
+    });
+
+    if (playersInTeamWithDifferentGameType) {
+      console.log(
+        `Player(s) with id ${userIDs.join(
+          " or "
+        )} is already in a team with a different gameType (${
+          playersInTeamWithDifferentGameType.gameType
+        })`
+      );
+      return res.status(400).json({
+        status: "error",
+        message: `Player(s) with id ${userIDs.join(
+          " or "
+        )} is already in a team with a different gameType (${
+          playersInTeamWithDifferentGameType.gameType
+        })`,
+      });
+    }
+
+    // Check if any of the players are already in the queue or playing
+    const playersInQueueOrPlaying = await Queue.findOne({
+      where: {
+        playerId: userIDs,
+        status: { [Op.in]: ["PENDING", "PLAYING"] },
+      },
+    });
+
+    if (playersInQueueOrPlaying) {
+      console.log(
+        `Player(s) with id ${userIDs.join(
+          " or "
+        )} is already ${playersInQueueOrPlaying.status.toLowerCase()}`
+      );
+      return res.status(400).json({
+        status: "error",
+        message: `Player(s) with id ${userIDs.join(
+          " or "
+        )} is already ${playersInQueueOrPlaying.status.toLowerCase()}`,
+      });
     }
 
     // Create Team
@@ -69,6 +119,7 @@ const createTeam = async (req, res) => {
       playerId: userIDs[0],
       isActive: true,
     });
+    console.log("team", team);
 
     // Update playerId in User or Guest table for all players
     for (const userId of userIDs) {
@@ -102,76 +153,6 @@ const createTeam = async (req, res) => {
           message: "Something went wrong while updating the playerId",
         });
       }
-    }
-
-    // Check if any of the players are already in the queue with a different game type
-    const playersInQueueWithDifferentGameType = await Queue.findOne({
-      where: {
-        courtId,
-        playerId: userIDs,
-        gameType: { [Op.not]: formattedGameType },
-      },
-      include: {
-        model: Court,
-        as: "Court",
-        where: {
-          courtId,
-        },
-        required: true,
-      },
-    });
-
-    if (playersInQueueWithDifferentGameType) {
-      return res.status(400).json({
-        status: "error",
-        message: `Player(s) are already in the queue with a different gameType (${playersInQueueWithDifferentGameType.gameType}). Please wait until they finish playing.`,
-      });
-    }
-
-    // You want to check if the team or any of its players are already in the queue to avoid creating duplicates in the queue
-    const teamInQueue = await Queue.findOne({
-      where: {
-        [Op.or]: [
-          { teamId: team.id, status: { [Op.in]: ["PENDING", "PLAYING"] } },
-          { playerId: userIDs, status: { [Op.in]: ["PENDING", "PLAYING"] } },
-        ],
-        courtId,
-      },
-    });
-
-    if (teamInQueue) {
-      const teamMessage =
-        teamInQueue.teamId === team.id
-          ? `Team with id ${team.id} is already in the queue`
-          : `Player(s) with id ${userIDs.join(" or ")} is already in the queue`;
-
-      return res.status(400).json({
-        status: "error",
-        message: teamMessage,
-      });
-    }
-
-    // You also want to check if the team or any of its players are already playing to avoid creating duplicates in the queue
-    const teamPlaying = await Queue.findOne({
-      where: {
-        [Op.or]: [
-          { teamId: team.id, status: "PLAYING" },
-          { playerId: userIDs, status: "PLAYING" },
-        ],
-        courtId,
-      },
-    });
-
-    if (teamPlaying) {
-      const teamMessage =
-        teamPlaying.teamId === team.id
-          ? `Team with id ${team.id} is already playing`
-          : `Player(s) with id ${userIDs.join(" or ")} is already playing`;
-
-      return res.status(400).json({
-        status: "error",
-        message: teamMessage,
-      });
     }
 
     // Make an entry into the queue
