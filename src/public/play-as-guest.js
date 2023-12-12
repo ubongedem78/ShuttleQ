@@ -1,4 +1,5 @@
-// const baseUrl = "https://shuttleq.onrender.com";
+const baseUrl = "https://shuttleq.onrender.com";
+
 const playAsGuest = async () => {
   const guestUsername = document.getElementById("guestUsernameInput").value;
 

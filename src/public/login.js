@@ -1,4 +1,6 @@
 const login = async () => {
+  const baseUrl = "https://shuttleq.onrender.com";
+
   const userName = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
