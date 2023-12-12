@@ -1,6 +1,10 @@
 const { Team, User, Queue, Court, Guest } = require("../model");
 const { Op } = require("sequelize");
-const { validateGameType, validatePlayerNames } = require("../utils/teamUtils");
+const {
+  validateGameType,
+  validatePlayerNames,
+  findUserIDs,
+} = require("../utils/teamUtils");
 
 // Create a new team
 const createTeam = async (req, res) => {
@@ -12,52 +16,7 @@ const createTeam = async (req, res) => {
 
     const players = await validatePlayerNames(playerNames, formattedGameType);
 
-    const userIDs = [];
-    const users = await User.findAll({
-      where: {
-        userName: {
-          [Op.or]: players.map((playerName) => ({
-            [Op.iLike]: `%${playerName}`,
-          })),
-        },
-      },
-    });
-
-    const userMap = new Map(
-      users.map((user) => [user.userName.toUpperCase(), user.id])
-    );
-    console.log("userMap", userMap);
-
-    // Iterate over each player name in the 'players' array
-    for (const playerName of players) {
-      const formattedPlayerName = playerName.toUpperCase();
-      // Retrieve the user ID from the map based on the player name
-      const userID = userMap.get(formattedPlayerName);
-
-      // Check if a user ID was found for the current player
-      if (userID) {
-        console.log("I found a userID");
-        userIDs.push(userID);
-      } else {
-        const existingGuest = await Guest.findOne({
-          where: {
-            userName: playerName,
-          },
-        });
-
-        if (existingGuest) {
-          console.log("i found an existing guest");
-          userIDs.push(existingGuest.id);
-          console.log("I have pushed the existing guest ID");
-        } else if (!existingGuest) {
-          console.log("I am using a created guest");
-          const createdGuest = await Guest.create({
-            userName: playerName,
-          });
-          userIDs.push(createdGuest.id);
-        }
-      }
-    }
+    const userIDs = await findUserIDs(players);
     console.log("userIDs", userIDs);
 
     // Check if any of the players are already in a team with a different game type
