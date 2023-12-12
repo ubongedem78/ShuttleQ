@@ -57,7 +57,6 @@ async function findUserIDs(players) {
   const userMap = new Map(
     users.map((user) => [user.userName.toUpperCase(), user.id])
   );
-  console.log("userMap", userMap);
 
   // Iterate over each player name in the 'players' array
   for (const playerName of players) {
@@ -67,7 +66,6 @@ async function findUserIDs(players) {
 
     // Check if a user ID was found for the current player
     if (userID) {
-      console.log("I found a userID");
       userIDs.push(userID);
     } else {
       const existingGuest = await Guest.findOne({
@@ -77,11 +75,8 @@ async function findUserIDs(players) {
       });
 
       if (existingGuest) {
-        console.log("i found an existing guest");
         userIDs.push(existingGuest.id);
-        console.log("I have pushed the existing guest ID");
       } else if (!existingGuest) {
-        console.log("I am using a created guest");
         const createdGuest = await Guest.create({
           userName: playerName,
         });

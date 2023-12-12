@@ -20,7 +20,6 @@ const createTeam = async (req, res) => {
     const players = await validatePlayerNames(playerNames, formattedGameType);
 
     const userIDs = await findUserIDs(players);
-    console.log("userIDs", userIDs);
 
     await checkPlayersInTeams(userIDs, formattedGameType);
 
@@ -35,7 +34,6 @@ const createTeam = async (req, res) => {
       playerId: userIDs[0],
       isActive: true,
     });
-    console.log("team", team);
 
     // Update playerId in User or Guest table for all players
     await updateTablesWithPlayerID(userIDs, team);
@@ -55,7 +53,6 @@ const createTeam = async (req, res) => {
 
     return res.status(201).json({ team });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: "error",
       message: "Something went wrong while creating the team",
