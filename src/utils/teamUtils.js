@@ -92,8 +92,84 @@ async function findUserIDs(players) {
   return userIDs;
 }
 
+// Check if any of the players are already in the queue or playing
+async function checkPlayersInQueueOrPlaying(userIDs) {
+  const playersInQueueOrPlaying = await Queue.findOne({
+    where: {
+      playerId: userIDs,
+      status: { [Op.in]: ["PENDING", "PLAYING"] },
+    },
+  });
+
+  if (playersInQueueOrPlaying) {
+    throw new Error(
+      `Player(s) with id ${userIDs.join(" or ")} is already ${
+        playersInQueueOrPlaying.status
+      }`
+    );
+  }
+}
+
+async function checkPlayersInTeams(userIDs, formattedGameType) {
+  // Check if any of the players are already in a team with a different game type
+  const playersInTeamWithDifferentGameType = await Team.findOne({
+    where: {
+      [Op.or]: [
+        { player1Id: userIDs, gameType: { [Op.not]: formattedGameType } },
+        { player2Id: userIDs, gameType: { [Op.not]: formattedGameType } },
+      ],
+    },
+  });
+
+  if (playersInTeamWithDifferentGameType) {
+    throw new Error(
+      `Player(s) with id ${userIDs.join(
+        " or "
+      )} is already in a team with a different gameType (${
+        playersInTeamWithDifferentGameType.gameType
+      })`
+    );
+  }
+}
+
+async function updateTablesWithPlayerID(userIDs, team) {
+  // Update playerId in User or Guest table for all players
+  for (const userId of userIDs) {
+    try {
+      const isGuest = await Guest.findOne({ where: { id: userId } });
+
+      if (isGuest) {
+        // If it's a guest, update playerId in Guest table
+        await Guest.update(
+          { playerId: team.id },
+          {
+            where: {
+              id: userId,
+            },
+          }
+        );
+      } else {
+        // If it's a user, update playerId in User table
+        await User.update(
+          { playerId: team.id },
+          {
+            where: {
+              id: userId,
+            },
+          }
+        );
+      }
+    } catch (error) {
+      throw new Error("Something went wrong while updating the playerId");
+    }
+  }
+}
+
 module.exports = {
   validateGameType,
   validatePlayerNames,
   findUserIDs,
+  checkPlayersInTeams,
+  checkPlayersInQueueOrPlaying,
+  updateTablesWithPlayerID,
 };

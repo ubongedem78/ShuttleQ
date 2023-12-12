@@ -4,6 +4,9 @@ const {
   validateGameType,
   validatePlayerNames,
   findUserIDs,
+  checkPlayersInTeams,
+  checkPlayersInQueueOrPlaying,
+  updateTablesWithPlayerID,
 } = require("../utils/teamUtils");
 
 // Create a new team
@@ -19,55 +22,9 @@ const createTeam = async (req, res) => {
     const userIDs = await findUserIDs(players);
     console.log("userIDs", userIDs);
 
-    // Check if any of the players are already in a team with a different game type
-    const playersInTeamWithDifferentGameType = await Team.findOne({
-      where: {
-        [Op.or]: [
-          { player1Id: userIDs, gameType: { [Op.not]: formattedGameType } },
-          { player2Id: userIDs, gameType: { [Op.not]: formattedGameType } },
-        ],
-      },
-    });
+    await checkPlayersInTeams(userIDs, formattedGameType);
 
-    if (playersInTeamWithDifferentGameType) {
-      console.log(
-        `Player(s) with id ${userIDs.join(
-          " or "
-        )} is already in a team with a different gameType (${
-          playersInTeamWithDifferentGameType.gameType
-        })`
-      );
-      return res.status(400).json({
-        status: "error",
-        message: `Player(s) with id ${userIDs.join(
-          " or "
-        )} is already in a team with a different gameType (${
-          playersInTeamWithDifferentGameType.gameType
-        })`,
-      });
-    }
-
-    // Check if any of the players are already in the queue or playing
-    const playersInQueueOrPlaying = await Queue.findOne({
-      where: {
-        playerId: userIDs,
-        status: { [Op.in]: ["PENDING", "PLAYING"] },
-      },
-    });
-
-    if (playersInQueueOrPlaying) {
-      console.log(
-        `Player(s) with id ${userIDs.join(
-          " or "
-        )} is already ${playersInQueueOrPlaying.status.toLowerCase()}`
-      );
-      return res.status(400).json({
-        status: "error",
-        message: `Player(s) with id ${userIDs.join(
-          " or "
-        )} is already ${playersInQueueOrPlaying.status.toLowerCase()}`,
-      });
-    }
+    await checkPlayersInQueueOrPlaying(userIDs);
 
     // Create Team
     const team = await Team.create({
@@ -81,38 +38,7 @@ const createTeam = async (req, res) => {
     console.log("team", team);
 
     // Update playerId in User or Guest table for all players
-    for (const userId of userIDs) {
-      try {
-        const isGuest = await Guest.findOne({ where: { id: userId } });
-
-        if (isGuest) {
-          // If it's a guest, update playerId in Guest table
-          await Guest.update(
-            { playerId: team.id },
-            {
-              where: {
-                id: userId,
-              },
-            }
-          );
-        } else {
-          // If it's a user, update playerId in User table
-          await User.update(
-            { playerId: team.id },
-            {
-              where: {
-                id: userId,
-              },
-            }
-          );
-        }
-      } catch (error) {
-        return res.status(500).json({
-          status: "error",
-          message: "Something went wrong while updating the playerId",
-        });
-      }
-    }
+    await updateTablesWithPlayerID(userIDs, team);
 
     // Make an entry into the queue
     await Queue.create({
@@ -129,6 +55,7 @@ const createTeam = async (req, res) => {
 
     return res.status(201).json({ team });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: "error",
       message: "Something went wrong while creating the team",
