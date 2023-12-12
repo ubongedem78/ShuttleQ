@@ -7,7 +7,7 @@ const {
 const { NotFoundError, InternalServerError } = require("../errors");
 
 // Get all teams on the queue
-const getQueue = async (req, res) => {
+const getQueue = async (req, res, next) => {
   try {
     const queue = await getAllTeamsInQueue();
 
@@ -17,12 +17,12 @@ const getQueue = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getQueue: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Get the queue for a specific court
-const getQueueForCourt = async (req, res) => {
+const getQueueForCourt = async (req, res, next) => {
   try {
     const { courtId } = req.params;
 
@@ -34,12 +34,12 @@ const getQueueForCourt = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getQueueForCourt: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Delete a team from the queue
-const deleteTeamFromQueue = async (req, res) => {
+const deleteTeamFromQueue = async (req, res, next) => {
   try {
     const { teamId } = req.params;
 
@@ -55,7 +55,7 @@ const deleteTeamFromQueue = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in deleteTeamFromQueue: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 

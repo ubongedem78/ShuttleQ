@@ -12,7 +12,7 @@ const {
 const { InternalServerError } = require("../errors");
 
 // Create a new team
-const createTeam = async (req, res) => {
+const createTeam = async (req, res, next) => {
   try {
     const { gameType, playerNames, courtId } = req.body;
 
@@ -56,11 +56,11 @@ const createTeam = async (req, res) => {
     return res.status(201).json({ team });
   } catch (error) {
     console.error("Error in createTeam: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
-const getTeamDetails = async (req, res) => {
+const getTeamDetails = async (req, res, next) => {
   try {
     const { teamId } = req.params;
     const team = await fetchTeamDetails(teamId);
@@ -71,7 +71,7 @@ const getTeamDetails = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getTeamDetails: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 

@@ -63,8 +63,37 @@ const register = async () => {
     const userId = localStorage.setItem("userId", response.data.user.id);
     window.location.href = "home.html";
   } catch (error) {
-    console.error("Error during registration:", error);
+    if (error.response && error.response.data && error.response.data.msg) {
+      showError(error.response.data.msg);
+    } else {
+      console.error("Error during registration:", error);
+    }
   } finally {
     loader.classList.remove("show");
   }
+};
+
+const showError = (message) => {
+  const errorContainer = document.createElement("div");
+  errorContainer.className = "error-container";
+  errorContainer.textContent = message;
+
+  // Styling for the error container
+  errorContainer.style.position = "fixed";
+  errorContainer.style.top = "10px";
+  errorContainer.style.left = "50%";
+  errorContainer.style.transform = "translateX(-50%)";
+  errorContainer.style.backgroundColor = "#ffc4c4";
+  errorContainer.style.color = "#721c24";
+  errorContainer.style.padding = "10px";
+  errorContainer.style.borderRadius = "5px";
+  errorContainer.style.textAlign = "center";
+  errorContainer.style.zIndex = "9999";
+
+  document.body.appendChild(errorContainer);
+
+  // Remove the error message after 3 seconds (adjust the time as needed)
+  setTimeout(() => {
+    errorContainer.remove();
+  }, 3000);
 };

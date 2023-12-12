@@ -8,18 +8,18 @@ const {
 const { NotFoundError, InternalServerError } = require("../errors");
 
 // Get All Guests
-const getGuests = async (req, res) => {
+const getGuests = async (req, res, next) => {
   try {
     const guests = await getAllGuests();
     res.json({ guests });
   } catch (error) {
     console.error("Error in getGuests: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Get Guest By Id
-const getGuestDetails = async (req, res) => {
+const getGuestDetails = async (req, res, next) => {
   try {
     const guestId = req.params.id;
 
@@ -31,12 +31,12 @@ const getGuestDetails = async (req, res) => {
     res.json({ guest });
   } catch (error) {
     console.error("Error in fetching single guest: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Update Guest
-const updateGuest = async (req, res) => {
+const updateGuest = async (req, res, next) => {
   try {
     const { guestName } = req.body;
     const guestId = req.params.id;
@@ -52,12 +52,12 @@ const updateGuest = async (req, res) => {
     res.status(200).json({ guest: updatedGuest });
   } catch (error) {
     console.error("Error in updating guest: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Delete Guest
-const deleteGuest = async (req, res) => {
+const deleteGuest = async (req, res, next) => {
   try {
     const guestId = req.params.id;
 
@@ -70,7 +70,7 @@ const deleteGuest = async (req, res) => {
     res.status(204).json({ message: "Guest deleted successfully" });
   } catch (error) {
     console.error("Error in deleting guest: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 

@@ -6,7 +6,7 @@ const {
 } = require("../errors");
 
 // Create User
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { email, userName, avatar, password, role } = req.body;
     const formattedUserName = userName.toLowerCase();
@@ -35,12 +35,12 @@ const register = async (req, res) => {
     req.session.token = token;
     return res.status(201).json({ user, token });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Login User
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { userName, password } = req.body;
     const formattedUserName = userName.toLowerCase();
@@ -66,23 +66,22 @@ const login = async (req, res) => {
     req.session.token = token;
     return res.json({ user, token });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Logout User
-const logout = async (req, res) => {
+const logout = async (req, res, next) => {
   try {
     req.session.destroy();
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    console.error("Error in logging out user: ", error);
-    throw new InternalServerError(error.message);
+    return next(error);
   }
 };
 
 // Create Guest
-const createGuest = async (req, res) => {
+const createGuest = async (req, res, next) => {
   try {
     const { guestName, avatar } = req.body;
     const formattedGuestName = guestName.toLowerCase();
@@ -108,11 +107,11 @@ const createGuest = async (req, res) => {
     req.session.token = token;
     return res.status(201).json({ guest, token });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
-const loginGuest = async (req, res) => {
+const loginGuest = async (req, res, next) => {
   try {
     const { guestName } = req.body;
     const formattedGuestName = guestName.toLowerCase();
@@ -134,7 +133,7 @@ const loginGuest = async (req, res) => {
     req.session.token = token;
     return res.json({ guest, token });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 

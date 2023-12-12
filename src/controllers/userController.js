@@ -2,18 +2,18 @@ const { User, Team, Guest } = require("../model");
 const { NotFoundError, InternalServerError } = require("../errors");
 
 // Get All Users
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.findAll();
     return res.json({ users });
   } catch (error) {
     console.error("Error in getAllUsers: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Get User By Id
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await User.findByPk(userId, {
@@ -35,12 +35,12 @@ const getUserById = async (req, res) => {
     return res.json({ user });
   } catch (error) {
     console.error("Error in fetching single user: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Update User
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const { email, userName, avatar, password, role } = req.body;
@@ -61,12 +61,12 @@ const updateUser = async (req, res) => {
     res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
     console.error("Error in updating user: ", error);
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Delete User
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await User.findByPk(userId);
@@ -79,8 +79,7 @@ const deleteUser = async (req, res) => {
 
     res.status(204).json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error(error);
-    throw new InternalServerError("Failed to delete user");
+    next(error);
   }
 };
 

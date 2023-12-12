@@ -14,7 +14,7 @@ const {
 } = require("../errors");
 
 // Create Game
-const startGameController = async (req, res) => {
+const startGameController = async (req, res, next) => {
   try {
     const { courtId, gameType } = req.body;
 
@@ -36,12 +36,12 @@ const startGameController = async (req, res) => {
 
     res.status(201).json({ success: true, game });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Fetch Game Details
-const fetchGameDetails = async (req, res) => {
+const fetchGameDetails = async (req, res, next) => {
   try {
     const gameId = req.params.gameId;
 
@@ -53,12 +53,12 @@ const fetchGameDetails = async (req, res) => {
 
     res.status(200).json({ success: true, game });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // End Game
-const endGameController = async (req, res) => {
+const endGameController = async (req, res, next) => {
   try {
     const gameId = req.params.gameId;
     const { winnerId, teamAScore, teamBScore } = req.body;
@@ -73,7 +73,7 @@ const endGameController = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Game ended" });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 

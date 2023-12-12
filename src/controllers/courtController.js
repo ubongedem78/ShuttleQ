@@ -12,7 +12,7 @@ const {
 } = require("../errors");
 
 // Create a new court and associate it with a Queue
-const createCourt = async (req, res) => {
+const createCourt = async (req, res, next) => {
   try {
     const { courtName, courtType } = req.body;
 
@@ -34,12 +34,12 @@ const createCourt = async (req, res) => {
       data: { court },
     });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Get all courts
-const getCourts = async (req, res) => {
+const getCourts = async (req, res, next) => {
   try {
     const courts = await getAllCourts();
 
@@ -48,12 +48,12 @@ const getCourts = async (req, res) => {
       data: courts,
     });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 
 // Delete a court
-const deleteCourt = async (req, res) => {
+const deleteCourt = async (req, res, next) => {
   try {
     const { courtId } = req.params;
 
@@ -74,7 +74,7 @@ const deleteCourt = async (req, res) => {
       message: "Court deleted successfully",
     });
   } catch (error) {
-    throw new InternalServerError(error.message);
+    next(error);
   }
 };
 

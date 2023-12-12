@@ -38,8 +38,8 @@ app.get("/", (req, res) => {
   res.send("I AM WORKING, BUT YOUVE GOTTA WORK TOO");
 });
 
-app.use(errorHandlerMiddleware);
 app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 const PORT = process.env.PORT || 3000;
 
