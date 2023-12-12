@@ -8,7 +8,6 @@ const {
 const {
   BadRequestError,
   NotFoundError,
-  InternalServerError,
 } = require("../errors");
 
 // Create a new court and associate it with a Queue

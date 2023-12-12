@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const baseUrl = "https://shuttleq.onrender.com";
 
+  // const baseUrl = "http://localhost:3000";
+
   const addCourtForm = document.getElementById("addCourtForm");
   const goBackButton = document.getElementById("back");
 

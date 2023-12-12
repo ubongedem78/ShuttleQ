@@ -4,7 +4,7 @@ const {
   deleteTeamFromQueueById,
 } = require("../utils/queueUtils");
 
-const { NotFoundError, InternalServerError } = require("../errors");
+const { NotFoundError } = require("../errors");
 
 // Get all teams on the queue
 const getQueue = async (req, res, next) => {

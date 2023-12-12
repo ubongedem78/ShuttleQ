@@ -2,7 +2,6 @@ const { User, Guest } = require("../model");
 const {
   BadRequestError,
   NotFoundError,
-  InternalServerError,
 } = require("../errors");
 
 // Create User

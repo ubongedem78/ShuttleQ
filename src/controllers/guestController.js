@@ -5,7 +5,7 @@ const {
   deleteGuestById,
 } = require("../utils/guestUtils");
 
-const { NotFoundError, InternalServerError } = require("../errors");
+const { NotFoundError } = require("../errors");
 
 // Get All Guests
 const getGuests = async (req, res, next) => {

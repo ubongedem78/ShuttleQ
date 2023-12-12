@@ -21,7 +21,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.statusCode = 400; // Bad Request
   } else if (err.name === "SequelizeDatabaseError") {
     // Other Sequelize database errors
-    customError.msg = "Database error occurred";
+    customError.msg = "Error occurred"; // Database Error
     customError.statusCode = 500; // Internal Server Error
   }
 

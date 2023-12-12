@@ -10,7 +10,6 @@ const {
 const {
   NotFoundError,
   BadRequestError,
-  InternalServerError,
 } = require("../errors");
 
 // Create Game

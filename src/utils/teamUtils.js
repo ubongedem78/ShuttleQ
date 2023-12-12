@@ -1,4 +1,4 @@
-const { Team, User, Queue, Guest } = require("../model");
+const { Team, User, Queue, Guest, Court } = require("../model");
 const { Op } = require("sequelize");
 
 /**
@@ -109,12 +109,14 @@ async function findUserIDs(players) {
 }
 
 /**
- * Checks if players are already in the queue or playing.
+ * Checks if players with the specified user IDs are already in a queue or playing a game.
  *
- * @param {number[]} userIDs - An array of user IDs.
- * @throws {Error} If any player is already in the queue or playing.
+ * @param {number[]} userIDs - An array of user IDs to check for queue or playing status.
+ * @throws {Error} If any player in the provided user IDs is already in a queue or playing a game.
  */
 async function checkPlayersInQueueOrPlaying(userIDs) {
+  // Query the database to find a queue entry where any of the specified user IDs is a player,
+  // and the status is "PENDING" or "PLAYING".
   const playersInQueueOrPlaying = await Queue.findOne({
     where: {
       playerId: userIDs,
@@ -122,6 +124,7 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
     },
   });
 
+  // If players in a queue or playing are found, throw an error.
   if (playersInQueueOrPlaying) {
     throw new Error(
       `Player(s) with id ${userIDs.join(" or ")} is already ${
@@ -139,6 +142,7 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
  * @throws {Error} If any player is already in a team with a different game type.
  */
 async function checkPlayersInTeams(userIDs, formattedGameType) {
+  // Query the database to find a team where any of the specified user IDs is a player, and the game type is not the same as the specified formatted game type.
   const playersInTeamWithDifferentGameType = await Team.findOne({
     where: {
       [Op.or]: [
@@ -148,6 +152,7 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
     },
   });
 
+  // If players with different game types are found in a team, throw an error.
   if (playersInTeamWithDifferentGameType) {
     throw new Error(
       `Player(s) with id ${userIDs.join(
@@ -224,8 +229,44 @@ async function fetchTeamDetails(teamId) {
     ],
   });
 
+  // If the team is not found, throw an error indicating that the team with the specified ID was not found.
   if (!team) {
     throw new Error(`Team with id ${teamId} not found`);
+  }
+}
+
+/**
+ * Checks if the specified court is currently occupied with games of a certain type.
+ * @param {number} courtId - The ID of the court to check.
+ * @param {string} formattedGameType - The formatted type of the game to check for.
+ * @throws {Error} Throws an error if the court is occupied with a different game type.
+ * @returns {Promise<void>} A Promise that resolves if the court is available for the specified game type.
+ */
+async function typeOfGamesOnCourt(courtId, formattedGameType) {
+  // Query the database to find any games on the specified court that are in "PENDING" or "PLAYING" status.
+  const gamesOnCourt = await Queue.findOne({
+    where: {
+      courtId,
+      status: { [Op.in]: ["PENDING", "PLAYING"] },
+    },
+  });
+
+  // Query the database to find information about the court using its ID.
+  const courtName = await Court.findOne({
+    where: {
+      courtId: courtId,
+    },
+  });
+
+  // If there are games on the court, check if their game type matches the specified formatted game type.
+  if (gamesOnCourt) {
+    const gameType = gamesOnCourt.gameType;
+    if (gameType !== formattedGameType) {
+      // Throw an error if the game type doesn't match, indicating that the court is being used for a different type of game.
+      throw new Error(
+        `Court ${courtName.courtName} is being used for ${gameType} games.`
+      );
+    }
   }
 }
 
@@ -237,4 +278,5 @@ module.exports = {
   checkPlayersInQueueOrPlaying,
   updateTablesWithPlayerID,
   fetchTeamDetails,
+  typeOfGamesOnCourt,
 };

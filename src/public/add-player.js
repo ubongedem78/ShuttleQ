@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // const baseUrl = "http://localhost:3000";
   const baseUrl = "https://shuttleq.onrender.com";
   const gameTypeSelect = document.getElementById("gameType");
   const player2NameLabel = document.getElementById("player2NameLabel");
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
       window.location.href = "home.html";
     } catch (error) {
       console.error("Error creating team:", error);
-      displayErrorMessage("Error creating team. Please try again.");
+      displayErrorMessage(error.response.data.error.msg);
     }
   });
 });

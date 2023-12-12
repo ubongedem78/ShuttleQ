@@ -9,8 +9,6 @@ const {
   fetchTeamDetails,
 } = require("../utils/teamUtils");
 
-const { InternalServerError } = require("../errors");
-
 // Create a new team
 const createTeam = async (req, res, next) => {
   try {
@@ -26,6 +24,8 @@ const createTeam = async (req, res, next) => {
     await checkPlayersInTeams(userIDs, formattedGameType);
 
     await checkPlayersInQueueOrPlaying(userIDs);
+
+    await typeOfGamesOnCourt(courtId, formattedGameType);
 
     // Create Team
     const team = await Team.create({
