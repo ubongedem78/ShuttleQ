@@ -1,6 +1,13 @@
 const { Team, User, Queue, Guest } = require("../model");
 const { Op } = require("sequelize");
 
+/**
+ * Validates the game type and converts it to uppercase.
+ *
+ * @param {string} gameType - The game type to validate.
+ * @returns {Promise<string>} A Promise that resolves to the formatted and validated game type.
+ * @throws {Error} If the game type is invalid.
+ */
 async function validateGameType(gameType) {
   const formattedGameType = gameType && gameType.toUpperCase();
 
@@ -14,6 +21,14 @@ async function validateGameType(gameType) {
   return formattedGameType;
 }
 
+/**
+ * Validates player names based on the game type.
+ *
+ * @param {string} playerNames - A comma-separated string of player names.
+ * @param {string} formattedGameType - The formatted and validated game type.
+ * @returns {Promise<string[]>} A Promise that resolves to an array of validated player names.
+ * @throws {Error} If player names or game type is invalid.
+ */
 async function validatePlayerNames(playerNames, formattedGameType) {
   if (typeof playerNames !== "string") {
     throw new Error("Player Names must be a string");
@@ -42,6 +57,12 @@ async function validatePlayerNames(playerNames, formattedGameType) {
   return players;
 }
 
+/**
+ * Finds user IDs based on player names.
+ *
+ * @param {string[]} players - An array of validated player names.
+ * @returns {Promise<number[]>} A Promise that resolves to an array of user IDs.
+ */
 async function findUserIDs(players) {
   const userIDs = [];
   const users = await User.findAll({
@@ -87,7 +108,12 @@ async function findUserIDs(players) {
   return userIDs;
 }
 
-// Check if any of the players are already in the queue or playing
+/**
+ * Checks if players are already in the queue or playing.
+ *
+ * @param {number[]} userIDs - An array of user IDs.
+ * @throws {Error} If any player is already in the queue or playing.
+ */
 async function checkPlayersInQueueOrPlaying(userIDs) {
   const playersInQueueOrPlaying = await Queue.findOne({
     where: {
@@ -105,8 +131,14 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
   }
 }
 
+/**
+ * Checks if players are already in teams with a different game type.
+ *
+ * @param {number[]} userIDs - An array of user IDs.
+ * @param {string} formattedGameType - The formatted and validated game type.
+ * @throws {Error} If any player is already in a team with a different game type.
+ */
 async function checkPlayersInTeams(userIDs, formattedGameType) {
-  // Check if any of the players are already in a team with a different game type
   const playersInTeamWithDifferentGameType = await Team.findOne({
     where: {
       [Op.or]: [
@@ -127,14 +159,19 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
   }
 }
 
+/**
+ * Updates tables with player ID based on user IDs and team information.
+ *
+ * @param {number[]} userIDs - An array of user IDs.
+ * @param {import('../model/Team')} team - The team information.
+ * @throws {Error} If something goes wrong during the update.
+ */
 async function updateTablesWithPlayerID(userIDs, team) {
-  // Update playerId in User or Guest table for all players
   for (const userId of userIDs) {
     try {
       const isGuest = await Guest.findOne({ where: { id: userId } });
 
       if (isGuest) {
-        // If it's a guest, update playerId in Guest table
         await Guest.update(
           { playerId: team.id },
           {
@@ -144,7 +181,6 @@ async function updateTablesWithPlayerID(userIDs, team) {
           }
         );
       } else {
-        // If it's a user, update playerId in User table
         await User.update(
           { playerId: team.id },
           {
@@ -160,6 +196,13 @@ async function updateTablesWithPlayerID(userIDs, team) {
   }
 }
 
+/**
+ * Fetches team details based on the team ID.
+ *
+ * @param {number} teamId - The ID of the team to fetch details for.
+ * @returns {Promise<void>} A Promise that resolves when the team details are fetched.
+ * @throws {Error} If the team is not found.
+ */
 async function fetchTeamDetails(teamId) {
   const team = await Team.findOne({
     where: {
@@ -182,10 +225,7 @@ async function fetchTeamDetails(teamId) {
   });
 
   if (!team) {
-    return res.status(404).json({
-      status: "error",
-      message: `Team with id ${teamId} not found`,
-    });
+    throw new Error(`Team with id ${teamId} not found`);
   }
 }
 
