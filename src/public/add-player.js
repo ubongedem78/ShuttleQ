@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch((error) => {
       console.error("Error fetching courts:", error);
+      displayErrorMessage("Error fetching courts. Please try again.");
     });
 
   addPlayerForm.addEventListener("submit", async function (event) {
@@ -72,6 +73,18 @@ document.addEventListener("DOMContentLoaded", function () {
       window.location.href = "home.html";
     } catch (error) {
       console.error("Error creating team:", error);
+      displayErrorMessage("Error creating team. Please try again.");
     }
   });
 });
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}

@@ -156,17 +156,32 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch((error) => {
               console.error("error", error);
+              displayErrorMessage("Error ending the game. Please try again.");
             });
         } else {
-          alert("Please confirm the winner before ending the game.");
+          displayErrorMessage(
+            "Please confirm the winner before ending the game."
+          );
         }
       });
     })
     .catch((error) => {
       console.error("error", error);
+      displayErrorMessage("Error fetching game information. Please try again.");
     });
 
   backButton.addEventListener("click", () => {
     window.location.href = "home.html";
   });
 });
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}

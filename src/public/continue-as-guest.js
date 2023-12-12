@@ -5,7 +5,7 @@ const continueAsGuest = async () => {
   const guestUsername = guestUsernameInput.value.trim();
 
   if (!guestUsername) {
-    console.error("Guest username is required");
+    displayErrorMessage("Guest username is required");
     return;
   }
 
@@ -23,8 +23,21 @@ const continueAsGuest = async () => {
       window.location.href = "home.html";
     } else {
       console.error("Error during login: Unexpected server response", response);
+      displayErrorMessage("Unexpected server response during login");
     }
   } catch (error) {
     console.error("Error while registering guest:", error.message);
+    displayErrorMessage("Error while registering guest. Please try again.");
   }
 };
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}

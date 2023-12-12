@@ -2,6 +2,11 @@
 const playAsGuest = async () => {
   const guestUsername = document.getElementById("guestUsernameInput").value;
 
+  if (!guestUsername) {
+    displayErrorMessage("Please enter a username");
+    return;
+  }
+
   try {
     const response = await axios.post(`${baseUrl}/api/v1/guests`, {
       guestName: guestUsername,
@@ -20,3 +25,14 @@ const playAsGuest = async () => {
     console.error("Error whilst registering guest: ", error);
   }
 };
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}

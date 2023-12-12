@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     if (!courtData.courtName || !courtData.courtType) {
-      console.error("Court name and type are required");
+      displayErrorMessage("Court name and type are required");
       return;
     }
 
@@ -39,9 +39,22 @@ document.addEventListener("DOMContentLoaded", function () {
           "Error creating court. Unexpected server response",
           response
         );
+        displayErrorMessage("Unexpected server response while creating court");
       }
     } catch (error) {
       console.error("Error creating court:", error.message);
+      displayErrorMessage("Error creating court. Please try again.");
     }
   });
 });
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}

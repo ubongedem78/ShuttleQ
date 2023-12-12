@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     } catch (error) {
       console.error("Error fetching queues:", error);
+      displayErrorMessage("Error fetching queues. Please try again.");
     }
   }
 
@@ -167,6 +168,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     } catch (error) {
       console.error("Error fetching user information:", error);
+      displayErrorMessage("Error fetching user information. Please try again.");
     }
   }
   await fetchUserData();
@@ -203,6 +205,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   } catch (error) {
     console.error("Error fetching user information:", error);
+    displayErrorMessage("Error during logout. Please try again.");
   }
 
   const logoutButton = document.getElementById("logoutButton");
@@ -211,3 +214,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     logout();
   });
 });
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}

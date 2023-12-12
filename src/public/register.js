@@ -16,22 +16,22 @@ const register = async () => {
   const confirmPassword = document.getElementById("confirmPassword").value;
 
   if (!userName || !email || !password) {
-    alert("Please fill out all fields");
+    displayErrorMessage("Please fill out all fields");
     return;
   }
 
   if (password.length < 8) {
-    alert("Password must be at least 8 characters");
+    displayErrorMessage("Password must be at least 8 characters");
     return;
   }
 
   if (password !== confirmPassword) {
-    alert("Passwords do not match");
+    displayErrorMessage("Passwords do not match");
     return;
   }
 
   if (!isValidEmail(email)) {
-    alert("Please enter a valid email");
+    displayErrorMessage("Please enter a valid email");
     return;
   }
 
@@ -41,7 +41,7 @@ const register = async () => {
     userName.includes(" ") ||
     containsSpecialCharacters(userName)
   ) {
-    alert("Invalid userName");
+    displayErrorMessage("Invalid userName");
     return;
   }
 
@@ -59,35 +59,25 @@ const register = async () => {
     const userId = localStorage.setItem("userId", response.data.user.id);
     window.location.href = "home.html";
   } catch (error) {
-    if (error.response && error.response.data && error.response.data.msg) {
-      showError(error.response.data.msg);
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.error.msg
+    ) {
+      displayErrorMessage(error.response.data.error.msg);
     } else {
       console.error("Error during registration:", error);
     }
   }
 };
 
-const showError = (message) => {
-  const errorContainer = document.createElement("div");
-  errorContainer.className = "error-container";
-  errorContainer.textContent = message;
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
 
-  // Styling for the error container
-  errorContainer.style.position = "fixed";
-  errorContainer.style.top = "10px";
-  errorContainer.style.left = "50%";
-  errorContainer.style.transform = "translateX(-50%)";
-  errorContainer.style.backgroundColor = "#ffc4c4";
-  errorContainer.style.color = "#721c24";
-  errorContainer.style.padding = "10px";
-  errorContainer.style.borderRadius = "5px";
-  errorContainer.style.textAlign = "center";
-  errorContainer.style.zIndex = "9999";
-
-  document.body.appendChild(errorContainer);
-
-  // Remove the error message after 3 seconds (adjust the time as needed)
   setTimeout(() => {
-    errorContainer.remove();
-  }, 3000);
-};
+    errorMessageElement.remove();
+  }, 2000);
+}

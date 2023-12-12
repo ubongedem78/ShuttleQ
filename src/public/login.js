@@ -1,7 +1,11 @@
-// const baseUrl = "https://shuttleq.onrender.com";
 const login = async () => {
   const userName = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+
+  if (!userName || !password) {
+    displayErrorMessage("Please fill out all fields");
+    return;
+  }
 
   try {
     const response = await axios.post(`${baseUrl}/api/v1/login`, {
@@ -10,16 +14,35 @@ const login = async () => {
     });
 
     if (response.status === 200 && response.data && response.data.token) {
-
       localStorage.setItem("jwt", response.data.token);
 
       const userId = localStorage.setItem("userId", response.data.user.id);
 
       window.location.href = "home.html";
     } else {
-      console.error("Error during login: Unexpected server response", response);
+      displayErrorMessage("Unexpected server response");
     }
   } catch (error) {
-    console.error("Error during login:", error);
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.error.msg
+    ) {
+      displayErrorMessage(error.response.data.error.msg);
+    } else {
+      displayErrorMessage("Error during login. Please try again.");
+      console.error("Error during login:", error);
+    }
   }
 };
+
+function displayErrorMessage(message) {
+  const errorMessageElement = document.createElement("div");
+  errorMessageElement.classList.add("error-message");
+  errorMessageElement.innerText = message;
+  document.body.appendChild(errorMessageElement);
+
+  setTimeout(() => {
+    errorMessageElement.remove();
+  }, 2000);
+}
