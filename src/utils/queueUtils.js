@@ -44,7 +44,6 @@ async function getQueueForSpecificCourt(courtId) {
  * @returns {Promise<boolean>} A Promise that resolves to true if the team is deleted, or false if the team is not found.
  */
 async function deleteTeamFromQueueById(teamId) {
-  console.log("teamId: ", teamId);
   // Query the database to find the team in the queue by its ID.
   const teamEntryOnQueue = await Queue.findOne({
     where: {
@@ -53,7 +52,6 @@ async function deleteTeamFromQueueById(teamId) {
   });
 
   const playerId = teamEntryOnQueue.playerId;
-  console.log("playerId: ", playerId);
 
   const teamEntryOnTeam = await Team.findOne({
     where: {
