@@ -126,19 +126,6 @@ footer {
   background-color: #3490dc;
 }
 
-/* Queue Page Styles */
-.queue-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-  margin-bottom: 10px;
-}
-
 .game-indicator {
   background-color: #63b3ed;
   color: #fff;
@@ -147,7 +134,7 @@ footer {
 }
 
 .delete-button {
-  background-color: #dba0a0;
+  background-color: #de1717;
   color: #fff;
   padding: 8px 16px;
   border: none;
@@ -156,23 +143,19 @@ footer {
   transition: background-color 0.3s;
 }
 
-.delete-button:hover {
-  background-color: #f33c3c;
-}
-
 /* Error */
 .error-message {
   position: fixed;
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #ff4d4d; /* Red background color */
-  color: #fff; /* White text color */
+  background-color: #ff4d4d;
+  color: #fff;
   padding: 10px;
   border-radius: 8px;
-  font-weight: bold; /* Bolder text */
+  font-weight: bold;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional box shadow */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Add Players Page Styles */
@@ -223,4 +206,54 @@ button {
 
 .bg-red-500:hover {
   background-color: #c53030;
+}
+
+#queueList {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.queue-entry-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.court-text {
+  flex: 1;
+  margin-bottom: 8px;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.edit-button,
+.delete-button {
+  background-color: #de1717;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover,
+.delete-button:hover {
+  background-color: #9f6960;
+}
+
+.edit-button {
+  margin-right: 8px;
 }

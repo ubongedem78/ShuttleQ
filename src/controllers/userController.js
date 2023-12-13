@@ -1,10 +1,15 @@
-const { User, Team, Guest } = require("../model");
-const { NotFoundError, InternalServerError } = require("../errors");
+const {
+  fetchAllUsers,
+  fetchAllUsersById,
+  updateUserDetails,
+  deleteUserById,
+} = require("../utils/userUtils");
 
 // Get All Users
 const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.findAll();
+    const users = await fetchAllUsers();
+
     return res.json({ users });
   } catch (error) {
     console.error("Error in getAllUsers: ", error);
@@ -16,21 +21,8 @@ const getAllUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    const user = await User.findByPk(userId, {
-      include: [{ model: Team, as: "PlayerTeam" }],
-    });
 
-    if (!user) {
-      const guest = await Guest.findByPk(userId, {
-        include: [{ model: Team, as: "GuestTeam" }],
-      });
-
-      if (!guest) {
-        throw new NotFoundError("User not found");
-      }
-
-      return res.json({ guest });
-    }
+    const user = await fetchAllUsersById(userId);
 
     return res.json({ user });
   } catch (error) {
@@ -42,23 +34,13 @@ const getUserById = async (req, res, next) => {
 // Update User
 const updateUser = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    const { email, userName, avatar, password, role } = req.body;
+    //update either user or guest
+    const userOrGuestId = req.params.id;
+    const userData = req.body;
 
-    const user = await User.findByPk(userId);
+    const user = await updateUserDetails(userOrGuestId, userData);
 
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-
-    user.email = email;
-    user.userName = userName;
-    user.avatar = avatar;
-    user.passwordHash = password;
-    user.role = role;
-
-    await user.save();
-    res.status(200).json({ message: "User updated successfully", user });
+    return res.json({ user });
   } catch (error) {
     console.error("Error in updating user: ", error);
     next(error);
@@ -69,13 +51,8 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    const user = await User.findByPk(userId);
 
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-
-    await user.destroy();
+    const user = await deleteUserById(userId);
 
     res.status(204).json({ message: "User deleted successfully" });
   } catch (error) {

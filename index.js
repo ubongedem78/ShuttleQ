@@ -15,10 +15,12 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "https://shuttleq.vercel.app",
+    origin: "http://localhost:5500",
     credentials: true,
   })
 );
+
+// "https://shuttleq.vercel.app"
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -31,7 +33,7 @@ readdirSync("./src/routes").map((path) => {
   if (path === "auth.js") {
     return app.use("/api/v1", require(`./src/routes/${path}`));
   }
-  app.use("/api/v1", authenticate, require(`./src/routes/${path}`));
+  app.use("/api/v1", /*authenticate,*/ require(`./src/routes/${path}`));
 });
 
 app.get("/", (req, res) => {

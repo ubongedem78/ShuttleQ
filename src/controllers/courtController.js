@@ -5,10 +5,7 @@ const {
   getAllCourts,
 } = require("../utils/courtUtils");
 
-const {
-  BadRequestError,
-  NotFoundError,
-} = require("../errors");
+const { BadRequestError, NotFoundError } = require("../errors");
 
 // Create a new court and associate it with a Queue
 const createCourt = async (req, res, next) => {
@@ -51,6 +48,36 @@ const getCourts = async (req, res, next) => {
   }
 };
 
+// update a court
+const updateCourt = async (req, res, next) => {
+  try {
+    const { courtId } = req.params;
+    const { courtName, courtType } = req.body;
+
+    const court = await Court.findOne({
+      where: {
+        courtId,
+      },
+    });
+
+    if (!court) {
+      throw new NotFoundError("Court not found");
+    }
+
+    court.courtName = courtName;
+    court.courtType = courtType;
+
+    await court.save();
+
+    res.status(200).json({
+      status: "success",
+      data: { court },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Delete a court
 const deleteCourt = async (req, res, next) => {
   try {
@@ -77,4 +104,4 @@ const deleteCourt = async (req, res, next) => {
   }
 };
 
-module.exports = { createCourt, getCourts, deleteCourt };
+module.exports = { createCourt, getCourts, updateCourt, deleteCourt };

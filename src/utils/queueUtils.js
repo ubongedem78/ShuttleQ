@@ -1,4 +1,4 @@
-const { Queue } = require("../model");
+const { Queue, Team } = require("../model");
 
 /**
  * Gets all teams currently in the pending queue.
@@ -6,12 +6,15 @@ const { Queue } = require("../model");
  * @returns {Promise<import('../model/Queue')[]>} A Promise that resolves to an array of teams in the pending queue.
  */
 async function getAllTeamsInQueue() {
+  // Query the database to find all teams in the pending queue, ordered by timestamp in ascending order.
   const teams = await Queue.findAll({
     where: {
       status: "PENDING",
     },
     order: [["timestamp", "ASC"]],
   });
+
+  // Return the array of teams.
   return teams;
 }
 
@@ -22,12 +25,15 @@ async function getAllTeamsInQueue() {
  * @returns {Promise<import('../model/Queue')[]>} A Promise that resolves to an array representing the queue for the specified court.
  */
 async function getQueueForSpecificCourt(courtId) {
+  // Query the database to find the queue for the specified court, ordered by timestamp in ascending order.
   const queue = await Queue.findAll({
     where: {
       courtId,
     },
     order: [["timestamp", "ASC"]],
   });
+
+  // Return the array representing the queue for the specified court.
   return queue;
 }
 
@@ -38,17 +44,34 @@ async function getQueueForSpecificCourt(courtId) {
  * @returns {Promise<boolean>} A Promise that resolves to true if the team is deleted, or false if the team is not found.
  */
 async function deleteTeamFromQueueById(teamId) {
-  const team = await Queue.findOne({
+  console.log("teamId: ", teamId);
+  // Query the database to find the team in the queue by its ID.
+  const teamEntryOnQueue = await Queue.findOne({
     where: {
       id: teamId,
     },
   });
 
-  if (team) {
-    await team.destroy();
+  const playerId = teamEntryOnQueue.playerId;
+  console.log("playerId: ", playerId);
+
+  const teamEntryOnTeam = await Team.findOne({
+    where: {
+      playerId: playerId,
+    },
+  });
+
+  if (teamEntryOnTeam) {
+    await teamEntryOnTeam.destroy();
+  }
+
+  // If the team is found in the queue, destroy it and return true.
+  if (teamEntryOnQueue) {
+    await teamEntryOnQueue.destroy();
     return true;
   }
 
+  // If the team is not found in either the queue or the Team model, return false.
   return false;
 }
 

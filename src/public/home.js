@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function () {
-  const baseUrl = "https://shuttleq.onrender.com";
-  // const baseUrl = "http://localhost:3000";
+  // const baseUrl = "https://shuttleq.onrender.com";
+  const baseUrl = "http://localhost:3000";
   let queueData = [];
   let courtSelect = document.getElementById("courtSelect");
   let gameData;
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const gameType = entry.gameType;
 
       const queueEntryDiv = document.createElement("div");
-      queueEntryDiv.classList.add("queue-entry");
+      queueEntryDiv.classList.add("queue-entry-container");
       queueEntryDiv.textContent = `${playerName}`;
 
       const deleteButton = document.createElement("button");
@@ -212,6 +212,28 @@ document.addEventListener("DOMContentLoaded", async function () {
   logoutButton.addEventListener("click", (event) => {
     event.preventDefault();
     logout();
+  });
+
+  const endSession = document.getElementById("endSession");
+  endSession.addEventListener("click", async () => {
+    try {
+      // end session for a particular court
+      const courtId = courtSelect.value;
+      console.log(courtId);
+      const response = await axios.delete(
+        `${baseUrl}/api/v1/sessions/${courtId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        window.location.href = "home.html";
+      }
+    } catch (error) {
+      displayErrorMessage("Failed to end session. Please try again");
+    }
   });
 });
 
