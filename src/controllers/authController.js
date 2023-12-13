@@ -1,8 +1,5 @@
 const { User, Guest } = require("../model");
-const {
-  BadRequestError,
-  NotFoundError,
-} = require("../errors");
+const { BadRequestError, NotFoundError } = require("../errors");
 
 // Create User
 const register = async (req, res, next) => {
@@ -43,6 +40,7 @@ const login = async (req, res, next) => {
   try {
     const { userName, password } = req.body;
     const formattedUserName = userName.toLowerCase();
+    console.log(formattedUserName);
 
     if (!userName || !password) {
       throw new BadRequestError("Please provide all required fields");
@@ -55,6 +53,7 @@ const login = async (req, res, next) => {
     }
 
     const isPasswordValid = await user.comparePassword(password);
+    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       throw new BadRequestError("Invalid credentials");

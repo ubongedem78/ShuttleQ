@@ -59,8 +59,6 @@ const User = sequelize.define(
         user.avatar = user.userName.charAt(0).toUpperCase();
       },
       beforeUpdate: async (user) => {
-        const salt = await bcrypt.genSalt(10);
-        user.passwordHash = await bcrypt.hash(user.passwordHash, salt);
         user.avatar = user.userName.charAt(0).toUpperCase();
       },
     },

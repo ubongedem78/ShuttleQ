@@ -45,9 +45,15 @@ async function updateUserDetails(userId, userData) {
         throw new NotFoundError("User not found");
       }
 
+      const userName = userData.userName.toLowerCase();
+      userData.userName = userName;
+
       await guest.update(userData);
       return guest;
     }
+
+    const userName = userData.userName.toLowerCase();
+    userData.userName = userName;
 
     await user.update(userData);
     return user;
