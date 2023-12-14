@@ -106,7 +106,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function determineWinner() {
         const confirmWinner = confirm(
-          `Is Team ${team1Score > team2Score ? "A" : "B"} the winner?`
+          `Confirm ${
+            team1Score > team2Score ? game.teamAName : game.teamBName
+          } as the winner?`
         );
 
         if (!confirmWinner) {
