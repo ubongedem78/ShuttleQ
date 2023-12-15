@@ -47,8 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       const formData = new FormData(addPlayerForm);
       const gameType = formData.get("gameType");
-      const player1Name = formData.get("player1Name");
-      const player2Name = formData.get("player2Name");
+      const player1Name = formData.get("player1Name").toLowerCase();
+      const player2Name = formData.get("player2Name").toLowerCase();
       const courtId = formData.get("courtId");
 
       const requestData = {

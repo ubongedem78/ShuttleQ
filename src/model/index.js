@@ -57,9 +57,11 @@ const User = sequelize.define(
         const salt = await bcrypt.genSalt(10);
         user.passwordHash = await bcrypt.hash(user.passwordHash, salt);
         user.avatar = user.userName.charAt(0).toUpperCase();
+        user.username = user.userName.toLowerCase();
       },
       beforeUpdate: async (user) => {
         user.avatar = user.userName.charAt(0).toUpperCase();
+        user.username = user.userName.toLowerCase();
       },
     },
   }
@@ -97,9 +99,11 @@ const Guest = sequelize.define(
     hooks: {
       beforeCreate: async (guest) => {
         guest.avatar = guest.userName.charAt(0).toUpperCase();
+        guest.username = guest.userName.toLowerCase();
       },
       beforeUpdate: async (guest) => {
         guest.avatar = guest.userName.charAt(0).toUpperCase();
+        guest.username = guest.userName.toLowerCase();
       },
     },
   }
