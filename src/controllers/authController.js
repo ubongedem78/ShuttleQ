@@ -13,6 +13,8 @@ const register = async (req, res, next) => {
 
     const user = await registerUser(email, userName, avatar, password, role);
 
+    const token = user.createJWT();
+
     req.session.user = user;
     req.session.token = token;
     return res.status(201).json({ user, token });
@@ -27,6 +29,8 @@ const login = async (req, res, next) => {
     const { userName, password } = req.body;
 
     const user = await loginUser(userName, password);
+
+    const token = user.createJWT();
 
     req.session.user = user;
     req.session.token = token;
@@ -55,7 +59,11 @@ const createGuest = async (req, res, next) => {
 
     const guest = await createGuestUser(guestName, avatar);
 
+    const token = guest.createJWT();
+
     req.session.user = guest;
+    req.session.token = token;
+
     return res.status(201).json({ guest });
   } catch (error) {
     next(error);
@@ -68,6 +76,9 @@ const loginGuest = async (req, res, next) => {
 
     const guest = await loginUserAsGuest(guestName);
 
+    const token = guest.createJWT();
+
+    req.session.token = token;
     req.session.user = guest;
     return res.json({ guest });
   } catch (error) {

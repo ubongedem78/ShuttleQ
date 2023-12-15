@@ -23,8 +23,8 @@ async function registerUser(email, userName, avatar, password, role) {
     passwordHash: password,
     role,
   });
-  const token = user.createJWT();
-  return { user, token };
+
+  return user;
 }
 
 async function loginUser(userName, password) {
@@ -46,8 +46,7 @@ async function loginUser(userName, password) {
     throw new BadRequestError("Invalid credentials");
   }
 
-  const token = user.createJWT();
-  return { user, token };
+  return user;
 }
 
 async function logoutUser(req) {

@@ -1,7 +1,14 @@
 const { Team, User, Queue, Court } = require("../model");
 const { Op } = require("sequelize");
-const { BadRequestError, NotFoundError } = require("../errors");
-
+const {
+  BadRequestError,
+  NotFoundError,
+  InvalidGameTypeError,
+  InvalidPlayerNamesError,
+  QueueOrPlayingError,
+  TeamGameTypeError,
+  CourtOccupiedError,
+} = require("../errors");
 
 /**
  * Validates the game type and converts it to uppercase.
@@ -17,7 +24,7 @@ async function validateGameType(gameType) {
     !formattedGameType ||
     !["SINGLES", "DOUBLES"].includes(formattedGameType)
   ) {
-    throw new Error("Invalid gameType");
+    throw new InvalidGameTypeError();
   }
 
   return formattedGameType;
@@ -33,7 +40,7 @@ async function validateGameType(gameType) {
  */
 async function validatePlayerNames(playerNames, formattedGameType) {
   if (typeof playerNames !== "string") {
-    throw new Error("Player Names must be a string");
+    throw new InvalidPlayerNamesError();
   }
 
   const players = playerNames.split(",").map((playerName) => playerName.trim());
@@ -43,18 +50,22 @@ async function validatePlayerNames(playerNames, formattedGameType) {
   switch (formattedGameType) {
     case "DOUBLES":
       if (numberOfPlayers !== 2) {
-        throw new Error("For DOUBLES, you must provide exactly 2 players");
+        throw new BadRequestError(
+          "For DOUBLES, you must provide exactly 2 players"
+        );
       }
       break;
 
     case "SINGLES":
       if (numberOfPlayers !== 1) {
-        throw new Error("For SINGLES, you must provide exactly 1 player");
+        throw new BadRequestError(
+          "For SINGLES, you must provide exactly 1 player"
+        );
       }
       break;
 
     default:
-      throw new Error("Invalid gameType");
+      throw new InvalidGameTypeError();
   }
   console.log("formattedGameType: ", formattedGameType);
   return players;
@@ -92,7 +103,7 @@ async function findUserIDs(players) {
     if (userID) {
       console.log("There is a userID");
       userIDs.push(userID);
-      console.log("Ihave pushed");
+      console.log("I have pushed");
       console.log("userIDs: ", userIDs);
     } else if (!userID) {
       console.log("There is no userID");
@@ -131,11 +142,7 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
 
   // If players in a queue or playing are found, throw an error.
   if (playersInQueueOrPlaying) {
-    throw new Error(
-      `Player(s) with id ${userIDs.join(" or ")} is already in a ${
-        playersInQueueOrPlaying.gameType
-      } team`
-    );
+    throw new QueueOrPlayingError(playersInQueueOrPlaying, userIDs);
   }
 }
 
@@ -164,13 +171,7 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
 
   // If players with different game types are found in a team, throw an error.
   if (playersInTeamWithDifferentGameType) {
-    throw new Error(
-      `Player(s) with id ${userIDs.join(
-        " or "
-      )} is already in a team with a different gameType (${
-        playersInTeamWithDifferentGameType.gameType
-      })`
-    );
+    throw new TeamGameTypeError(playersInTeamWithDifferentGameType, userIDs);
   }
 }
 
@@ -203,7 +204,9 @@ async function updateTablesWithPlayerID(userIDs, team) {
     }
   } catch (error) {
     console.error("Error in updateTablesWithPlayerID: ", error);
-    throw new Error("Something went wrong while updating the playerId");
+    throw new BadRequestError(
+      "Something went wrong while updating the playerId"
+    );
   }
 }
 
@@ -237,7 +240,7 @@ async function fetchTeamDetails(teamId) {
 
   // If the team is not found, throw an error indicating that the team with the specified ID was not found.
   if (!team) {
-    throw new Error(`Team with id ${teamId} not found`);
+    throw new NotFoundError(`Team with id ${teamId} not found`);
   }
 }
 
@@ -269,9 +272,7 @@ async function typeOfGamesOnCourt(courtId, formattedGameType) {
     const gameType = gamesOnCourt.gameType;
     if (gameType !== formattedGameType) {
       // Throw an error if the game type doesn't match, indicating that the court is being used for a different type of game.
-      throw new Error(
-        `Court ${courtName.courtName} is being used for ${gameType} games.`
-      );
+      throw new CourtOccupiedError(courtName.courtName, gameType);
     }
   }
 }
@@ -299,7 +300,7 @@ async function createTeamfromPlayerNames(formattedGameType, userIDs, courtId) {
     return team;
   } catch (error) {
     console.error("Error in createTeamfromPlayerNames: ", error);
-    throw error; // Propagate the error for handling in the calling code if needed
+    throw new BadRequestError(error.message); // Propagate the error for handling in the calling code if needed
   }
 }
 
@@ -334,7 +335,7 @@ async function createTeamEntryIntoQueue(
     });
   } catch (error) {
     console.error("Error in createTeamEntryIntoQueue: ", error);
-    throw error; // Propagate the error for handling in the calling code if needed
+    throw new BadRequestError(error.message); // Propagate the error for handling in the calling code if needed
   }
 }
 

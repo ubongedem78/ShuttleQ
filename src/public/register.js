@@ -56,7 +56,7 @@ const register = async () => {
 
     localStorage.setItem("jwt", response.data.token);
 
-    const userId = localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("userId", response.data.user.id);
     window.location.href = "home.html";
   } catch (error) {
     if (

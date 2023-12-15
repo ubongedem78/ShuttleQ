@@ -1,7 +1,7 @@
 const CustomAPIError = require("./custom");
 
 class InternalServerError extends CustomAPIError {
-  constructor(message) {
+  constructor(message = "Internal Server Error") {
     super(message);
     this.statusCode = 500;
   }

@@ -18,7 +18,7 @@ const login = async () => {
     if (response.status === 200 && response.data && response.data.token) {
       localStorage.setItem("jwt", response.data.token);
 
-      const userId = localStorage.setItem("userId", response.data.user.id);
+      localStorage.setItem("userId", response.data.user.id);
 
       window.location.href = "home.html";
     } else {

@@ -14,7 +14,7 @@ const playAsGuest = async () => {
     if (response.status === 201 && response.data && response.data.token) {
       localStorage.setItem("jwt", response.data.token);
 
-      const userId = localStorage.setItem("userId", response.data.guest.id);
+      localStorage.setItem("userId", response.data.guest.id);
 
       window.location.href = "home.html";
     } else {
