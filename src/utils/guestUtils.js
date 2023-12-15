@@ -1,4 +1,5 @@
 const { User, Team } = require("../model");
+const { NotFoundError } = require("../errors");
 
 /**
  * Gets all guests.
@@ -20,6 +21,10 @@ async function findGuestById(guestId) {
   const guest = await User.findByPk(guestId, {
     include: [{ model: Team, as: "PlayerTeam" }],
   });
+
+  if (!guest) {
+    throw new NotFoundError("Guest not found");
+  }
   return guest;
 }
 
@@ -50,6 +55,7 @@ async function updateGuestDetails(guestId, guestName) {
  */
 async function deleteGuestById(guestId) {
   const guest = await User.findByPk(guestId);
+  
   if (guest) {
     await guest.destroy();
     return true;

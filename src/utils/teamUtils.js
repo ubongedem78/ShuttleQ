@@ -1,5 +1,7 @@
 const { Team, User, Queue, Court } = require("../model");
 const { Op } = require("sequelize");
+const { BadRequestError, NotFoundError } = require("../errors");
+
 
 /**
  * Validates the game type and converts it to uppercase.

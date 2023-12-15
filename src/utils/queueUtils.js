@@ -1,4 +1,5 @@
 const { Queue, Team } = require("../model");
+const { NotFoundError } = require("../errors");
 
 /**
  * Gets all teams currently in the pending queue.
@@ -42,6 +43,7 @@ async function getQueueForSpecificCourt(courtId) {
  *
  * @param {number} teamId - The ID of the team to be deleted from the queue.
  * @returns {Promise<boolean>} A Promise that resolves to true if the team is deleted, or false if the team is not found.
+ * @throws {NotFoundError} If the team is not found.
  */
 async function deleteTeamFromQueueById(teamId) {
   // Query the database to find the team in the queue by its ID.
@@ -50,6 +52,10 @@ async function deleteTeamFromQueueById(teamId) {
       id: teamId,
     },
   });
+
+  if (!teamEntryOnQueue) {
+    throw new NotFoundError("Team not found in the queue");
+  }
 
   const playerId = teamEntryOnQueue.playerId;
 
@@ -64,13 +70,8 @@ async function deleteTeamFromQueueById(teamId) {
   }
 
   // If the team is found in the queue, destroy it and return true.
-  if (teamEntryOnQueue) {
-    await teamEntryOnQueue.destroy();
-    return true;
-  }
-
-  // If the team is not found in either the queue or the Team model, return false.
-  return false;
+  await teamEntryOnQueue.destroy();
+  return true;
 }
 
 module.exports = {

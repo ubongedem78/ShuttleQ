@@ -11,6 +11,7 @@ const { NotFoundError } = require("../errors");
 const getGuests = async (req, res, next) => {
   try {
     const guests = await getAllGuests();
+
     res.json({ guests });
   } catch (error) {
     console.error("Error in getGuests: ", error);
@@ -25,9 +26,6 @@ const getGuestDetails = async (req, res, next) => {
 
     const guest = await findGuestById(guestId);
 
-    if (!guest) {
-      throw new NotFoundError("Guest not found");
-    }
     res.json({ guest });
   } catch (error) {
     console.error("Error in fetching single guest: ", error);
@@ -41,11 +39,7 @@ const updateGuest = async (req, res, next) => {
     const { guestName } = req.body;
     const guestId = req.params.id;
 
-    const guest = await findGuestById(guestId);
-
-    if (!guest) {
-      throw new NotFoundError("Guest not found");
-    }
+    await findGuestById(guestId);
 
     const updatedGuest = await updateGuestDetails(guestId, guestName);
 
@@ -61,11 +55,7 @@ const deleteGuest = async (req, res, next) => {
   try {
     const guestId = req.params.id;
 
-    const guestDeleted = await deleteGuestById(guestId);
-
-    if (!guestDeleted) {
-      throw new NotFoundError("Guest not found");
-    }
+    await deleteGuestById(guestId);
 
     res.status(200).json({ message: "Guest deleted successfully" });
   } catch (error) {

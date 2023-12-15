@@ -1,4 +1,5 @@
 const { Court } = require("../model");
+const { BadRequestError, NotFoundError } = require("../errors");
 
 /**
  * Finds a court by its name.
@@ -23,6 +24,16 @@ async function findCourtByName(courtName) {
  * @returns {Promise<import('../model/Court')>} A Promise that resolves to the newly created court.
  */
 async function createNewCourt(courtName, courtType) {
+  if (!courtName || !courtType) {
+    throw new BadRequestError("Invalid courtName or courtType");
+  }
+
+  const existingCourt = await findCourtByName(courtName);
+
+  if (existingCourt) {
+    throw new BadRequestError("Court already exists");
+  }
+
   const court = await Court.create({
     courtName,
     courtType,
@@ -47,21 +58,20 @@ async function getAllCourts() {
  * @param {string} courtName - The new name of the court.
  * @param {string} courtType - The new type of the court.
  * @returns {Promise<import('../model/Court')>} A Promise that resolves to the updated court.
- * @throws {Error} If the court is not found.
- * @throws {Error} If the court name is already taken.
- * @throws {Error} If the court type is invalid.
+ * @throws {BadRequestError} If the court name or type is invalid.
+ * @throws {NotFoundError} If the court is not found.
  */
 async function updateCourtById(courtId, { courtName, courtType }) {
   if (!courtName) {
-    throw new Error("Court name is required");
+    throw new BadRequestError("Court name is required");
   }
 
   if (!courtType) {
-    throw new Error("Court type is required");
+    throw new BadRequestError("Court type is required");
   }
 
   if (!["ADVANCED", "INTERMEDIATE", "BEGINNERS"].includes(courtType)) {
-    throw new Error("Invalid court type");
+    throw new BadRequestError("Invalid court type");
   }
 
   const court = await Court.findOne({
@@ -71,7 +81,7 @@ async function updateCourtById(courtId, { courtName, courtType }) {
   });
 
   if (!court) {
-    throw new Error("Court not found");
+    throw new NotFoundError("Court not found");
   }
 
   await court.update({
@@ -87,11 +97,11 @@ async function updateCourtById(courtId, { courtName, courtType }) {
  *
  * @param {number} courtId - The ID of the court to delete.
  * @returns {Promise<void>} A Promise that resolves when the court is deleted.
- * @throws {Error} If the court is not found.
+ * @throws {NotFoundError} If the court is not found.
  */
 async function deleteCourtById(courtId) {
   if (!courtId) {
-    throw new Error("Court Id is required");
+    throw new BadRequestError("Court Id is required");
   }
 
   const court = await Court.findOne({
@@ -101,7 +111,7 @@ async function deleteCourtById(courtId) {
   });
 
   if (!court) {
-    throw new Error("Court not found");
+    throw new NotFoundError("Court not found");
   }
 
   await court.destroy();

@@ -4,8 +4,6 @@ const {
   deleteTeamFromQueueById,
 } = require("../utils/queueUtils");
 
-const { NotFoundError } = require("../errors");
-
 // Get all teams on the queue
 const getQueue = async (req, res, next) => {
   try {
@@ -43,11 +41,7 @@ const deleteTeamFromQueue = async (req, res, next) => {
   try {
     const { teamId } = req.params;
 
-    const teamDeleted = await deleteTeamFromQueueById(teamId);
-
-    if (!teamDeleted) {
-      throw new NotFoundError("Team not found in the queue");
-    }
+    await deleteTeamFromQueueById(teamId);
 
     res.status(200).json({
       status: "success",

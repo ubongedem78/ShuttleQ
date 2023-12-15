@@ -13,16 +13,6 @@ const createCourt = async (req, res, next) => {
   try {
     const { courtName, courtType } = req.body;
 
-    if (!courtName || !courtType) {
-      throw new BadRequestError("Invalid courtName or courtType");
-    }
-
-    const existingCourt = await findCourtByName(courtName);
-
-    if (existingCourt) {
-      throw new BadRequestError("Court already exists");
-    }
-
     // Create the Court
     const court = await createNewCourt(courtName, courtType);
 

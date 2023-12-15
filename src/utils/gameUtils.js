@@ -1,4 +1,5 @@
 const { Game, Queue, Team, Court, RecentWinners } = require("../model/index");
+const { NotFoundError, BadRequestError } = require("../errors");
 
 /**
  * Finds a court by its ID.
@@ -8,6 +9,9 @@ const { Game, Queue, Team, Court, RecentWinners } = require("../model/index");
  */
 async function findCourtById(courtId) {
   const court = await Court.findByPk(courtId);
+  if (!court) {
+    throw new NotFoundError("Court not found");
+  }
   return court;
 }
 
@@ -23,6 +27,10 @@ async function findPendingQueuePairs(courtId) {
     order: [["timestamp", "ASC"]],
     limit: 2,
   });
+
+  if (queuePairs.length < 2) {
+    throw new BadRequestError("Not enough players in the queue");
+  }
   return queuePairs;
 }
 
@@ -79,6 +87,10 @@ async function findGame(gameId) {
       { model: Team, as: "TeamB" },
     ],
   });
+
+  if (!game) {
+    throw new NotFoundError("Game not found");
+  }
   return game;
 }
 
