@@ -67,7 +67,7 @@ const deleteGuest = async (req, res, next) => {
       throw new NotFoundError("Guest not found");
     }
 
-    res.status(204).json({ message: "Guest deleted successfully" });
+    res.status(200).json({ message: "Guest deleted successfully" });
   } catch (error) {
     console.error("Error in deleting guest: ", error);
     next(error);

@@ -1,4 +1,3 @@
-const { Team, Queue } = require("../model");
 const {
   validateGameType,
   validatePlayerNames,
@@ -8,6 +7,8 @@ const {
   updateTablesWithPlayerID,
   fetchTeamDetails,
   typeOfGamesOnCourt,
+  createTeamfromPlayerNames,
+  createTeamEntryIntoQueue,
 } = require("../utils/teamUtils");
 
 // Create a new team
@@ -15,7 +16,6 @@ const createTeam = async (req, res, next) => {
   try {
     const { gameType, playerNames, courtId } = req.body;
 
-    // Validation for gameType
     const formattedGameType = await validateGameType(gameType);
 
     const players = await validatePlayerNames(playerNames, formattedGameType);
@@ -30,33 +30,15 @@ const createTeam = async (req, res, next) => {
 
     console.log("I am ready to create team");
 
-    // Create Team
-    const team = await Team.create({
-      gameType: formattedGameType,
-      player1Id: userIDs[0],
-      player2Id: userIDs[1] || null,
-      courtId: courtId || null,
-      playerId: userIDs[0],
-      isActive: true,
-    });
+    const team = await createTeamfromPlayerNames(
+      formattedGameType,
+      userIDs,
+      courtId
+    );
 
-    console.log("team: ", team);
-
-    // Update playerId in User or Guest table for all players
     await updateTablesWithPlayerID(userIDs, team);
 
-    // Make an entry into the queue
-    await Queue.create({
-      teamId: team.id,
-      gameType: formattedGameType,
-      status: "PENDING",
-      playerId: team.player1Id,
-      playerName:
-        playerNames.split(",")[0] +
-        (playerNames.split(",")[1] ? "/" + playerNames.split(",")[1] : ""),
-      courtId,
-      timestamp: new Date(),
-    });
+    await createTeamEntryIntoQueue(team, formattedGameType, playerNames, courtId);
 
     return res.status(201).json({ team });
   } catch (error) {

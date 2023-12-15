@@ -173,43 +173,35 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
 }
 
 /**
- * Updates tables with player ID based on user IDs and team information.
+ * Updates tables with the player ID for the given user IDs and team.
  *
- * @param {number[]} userIDs - An array of user IDs.
- * @param {import('../model/Team')} team - The team information.
- * @throws {Error} If something goes wrong during the update.
+ * @param {number[]} userIDs - An array of user IDs to update.
+ * @param {import('../model/Team')} team - The team containing the player ID to update for the users.
+ * @throws {Error} If an error occurs during the update process.
  */
 async function updateTablesWithPlayerID(userIDs, team) {
   console.log("I am here 5");
-  for (const userId of userIDs) {
-    try {
+  try {
+    for (const userId of userIDs) {
+      // Check if the user is a guest
       const isGuest = await User.findOne({
         where: { id: userId, isGuest: true },
       });
       console.log("isGuest: ", isGuest);
 
-      if (isGuest) {
-        await User.update(
-          { playerId: team.id },
-          {
-            where: {
-              id: userId,
-            },
-          }
-        );
-      } else {
-        await User.update(
-          { playerId: team.id },
-          {
-            where: {
-              id: userId,
-            },
-          }
-        );
-      }
-    } catch (error) {
-      throw new Error("Something went wrong while updating the playerId");
+      // Update the playerId for the user
+      await User.update(
+        { playerId: team.id },
+        {
+          where: {
+            id: userId,
+          },
+        }
+      );
     }
+  } catch (error) {
+    console.error("Error in updateTablesWithPlayerID: ", error);
+    throw new Error("Something went wrong while updating the playerId");
   }
 }
 
@@ -282,6 +274,68 @@ async function typeOfGamesOnCourt(courtId, formattedGameType) {
   }
 }
 
+/**
+ * Creates a new team from player names.
+ *
+ * @param {string} formattedGameType - The formatted type of the game.
+ * @param {number[]} userIDs - An array of user IDs representing the players in the team.
+ * @param {number} courtId - The ID of the court to which the team belongs.
+ * @returns {Promise<import('../model/Team')>} A Promise that resolves to the created team.
+ */
+async function createTeamfromPlayerNames(formattedGameType, userIDs, courtId) {
+  try {
+    // Create a new team with the provided information
+    const team = await Team.create({
+      gameType: formattedGameType,
+      player1Id: userIDs[0],
+      player2Id: userIDs[1] || null,
+      courtId: courtId || null,
+      playerId: userIDs[0],
+      isActive: true,
+    });
+
+    return team;
+  } catch (error) {
+    console.error("Error in createTeamfromPlayerNames: ", error);
+    throw error; // Propagate the error for handling in the calling code if needed
+  }
+}
+
+/**
+ * Creates a new team entry in the queue.
+ *
+ * @param {import('../model/Team')} team - The team for which to create the queue entry.
+ * @param {string} formattedGameType - The formatted type of the game.
+ * @param {string} playerNames - The names of the players in the team, separated by commas.
+ * @param {number} courtId - The ID of the court for which the team is queued.
+ * @returns {Promise<void>} A Promise that resolves when the team entry is created in the queue.
+ */
+async function createTeamEntryIntoQueue(
+  team,
+  formattedGameType,
+  playerNames,
+  courtId
+) {
+  try {
+    // Extract player names from the input string
+    const [player1Name, player2Name] = playerNames.split(",");
+
+    // Create a new entry in the queue with the provided information
+    await Queue.create({
+      teamId: team.id,
+      gameType: formattedGameType,
+      status: "PENDING",
+      playerId: team.player1Id,
+      playerName: `${player1Name}${player2Name ? "/" + player2Name : ""}`,
+      courtId,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    console.error("Error in createTeamEntryIntoQueue: ", error);
+    throw error; // Propagate the error for handling in the calling code if needed
+  }
+}
+
 module.exports = {
   validateGameType,
   validatePlayerNames,
@@ -291,4 +345,6 @@ module.exports = {
   updateTablesWithPlayerID,
   fetchTeamDetails,
   typeOfGamesOnCourt,
+  createTeamfromPlayerNames,
+  createTeamEntryIntoQueue,
 };
