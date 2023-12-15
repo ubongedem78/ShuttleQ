@@ -9,6 +9,8 @@ const notFoundMiddleware = require("./src/middlewares/notFound");
 const cors = require("cors");
 const path = require("path");
 const session = require("express-session");
+const swaggerUi = require("swagger-ui-express");
+const swaggerOptions = require("./src/utils/swaggerUtils");
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "src")));
@@ -27,6 +29,8 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
 readdirSync("./src/routes").map((path) => {
   if (path === "auth.js") {
