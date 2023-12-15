@@ -15,7 +15,7 @@ const {
  *
  * @param {string} gameType - The game type to validate.
  * @returns {Promise<string>} A Promise that resolves to the formatted and validated game type.
- * @throws {Error} If the game type is invalid.
+ * @throws {InvalidGameTypeError} If the game type is invalid.
  */
 async function validateGameType(gameType) {
   const formattedGameType = gameType && gameType.toUpperCase();
@@ -36,7 +36,8 @@ async function validateGameType(gameType) {
  * @param {string} playerNames - A comma-separated string of player names.
  * @param {string} formattedGameType - The formatted and validated game type.
  * @returns {Promise<string[]>} A Promise that resolves to an array of validated player names.
- * @throws {Error} If player names or game type is invalid.
+ * @throws {InvalidPlayerNamesError} If player names or game type is invalid.
+ * @throws {BadRequestError} If the number of players is incorrect for the specified game type.
  */
 async function validatePlayerNames(playerNames, formattedGameType) {
   if (typeof playerNames !== "string") {
@@ -116,7 +117,7 @@ async function findUserIDs(players) {
  * Checks if players with the specified user IDs are already in a queue or playing a game.
  *
  * @param {number[]} userIDs - An array of user IDs to check for queue or playing status.
- * @throws {Error} If any player in the provided user IDs is already in a queue or playing a game.
+ * @throws {QueueOrPlayingError} If any player in the provided user IDs is already in a queue or playing a game.
  */
 async function checkPlayersInQueueOrPlaying(userIDs) {
   // Query the database to find a queue entry where any of the specified user IDs is a player,
@@ -139,7 +140,7 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
  *
  * @param {number[]} userIDs - An array of user IDs.
  * @param {string} formattedGameType - The formatted and validated game type.
- * @throws {Error} If any player is already in a team with a different game type.
+ * @throws {TeamGameTypeError} If any player is already in a team with a different game type.
  */
 async function checkPlayersInTeams(userIDs, formattedGameType) {
   // Query the database to find a team where any of the specified user IDs is a player, and the game type is not the same as the specified formatted game type.
@@ -152,7 +153,6 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
     },
   });
 
-
   // If players with different game types are found in a team, throw an error.
   if (playersInTeamWithDifferentGameType) {
     throw new TeamGameTypeError(playersInTeamWithDifferentGameType, userIDs);
@@ -164,7 +164,7 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
  *
  * @param {number[]} userIDs - An array of user IDs to update.
  * @param {import('../model/Team')} team - The team containing the player ID to update for the users.
- * @throws {Error} If an error occurs during the update process.
+ * @throws {BadRequestError} If an error occurs during the update process.
  */
 async function updateTablesWithPlayerID(userIDs, team) {
   try {
@@ -197,7 +197,7 @@ async function updateTablesWithPlayerID(userIDs, team) {
  *
  * @param {number} teamId - The ID of the team to fetch details for.
  * @returns {Promise<void>} A Promise that resolves when the team details are fetched.
- * @throws {Error} If the team is not found.
+ * @throws {NotFoundError} If the team is not found.
  */
 async function fetchTeamDetails(teamId) {
   const team = await Team.findOne({
@@ -228,9 +228,10 @@ async function fetchTeamDetails(teamId) {
 
 /**
  * Checks if the specified court is currently occupied with games of a certain type.
+ *
  * @param {number} courtId - The ID of the court to check.
  * @param {string} formattedGameType - The formatted type of the game to check for.
- * @throws {Error} Throws an error if the court is occupied with a different game type.
+ * @throws {CourtOccupiedError} Throws an error if the court is occupied with a different game type.
  * @returns {Promise<void>} A Promise that resolves if the court is available for the specified game type.
  */
 async function typeOfGamesOnCourt(courtId, formattedGameType) {
@@ -266,6 +267,7 @@ async function typeOfGamesOnCourt(courtId, formattedGameType) {
  * @param {number[]} userIDs - An array of user IDs representing the players in the team.
  * @param {number} courtId - The ID of the court to which the team belongs.
  * @returns {Promise<import('../model/Team')>} A Promise that resolves to the created team.
+ * @throws {BadRequestError} If an error occurs during team creation.
  */
 async function createTeamfromPlayerNames(formattedGameType, userIDs, courtId) {
   try {
@@ -294,6 +296,7 @@ async function createTeamfromPlayerNames(formattedGameType, userIDs, courtId) {
  * @param {string} playerNames - The names of the players in the team, separated by commas.
  * @param {number} courtId - The ID of the court for which the team is queued.
  * @returns {Promise<void>} A Promise that resolves when the team entry is created in the queue.
+ * @throws {BadRequestError} If an error occurs during the queue entry creation.
  */
 async function createTeamEntryIntoQueue(
   team,
