@@ -87,8 +87,11 @@ async function findUserIDs(players) {
 
     // Check if a user ID was found for the current player
     if (userID) {
+      console.log("There is a userID")
       userIDs.push(userID);
+      console.log("Ihave pushed")
     } else {
+      console.log("There is no userID")
       const existingGuest = await Guest.findOne({
         where: {
           userName: playerName,
@@ -96,15 +99,19 @@ async function findUserIDs(players) {
       });
 
       if (existingGuest) {
+        console.log("There is an existing guest")
         userIDs.push(existingGuest.id);
       } else if (!existingGuest) {
+        console.log("There is no existing guest")
         const createdGuest = await Guest.create({
           userName: playerName,
         });
         userIDs.push(createdGuest.id);
+        console.log("I have pushed guestID to userID")
       }
     }
   }
+  console.log("I am here 6")
   return userIDs;
 }
 
@@ -172,6 +179,7 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
  * @throws {Error} If something goes wrong during the update.
  */
 async function updateTablesWithPlayerID(userIDs, team) {
+  console.log("I am here 5")
   for (const userId of userIDs) {
     try {
       const isGuest = await Guest.findOne({ where: { id: userId } });

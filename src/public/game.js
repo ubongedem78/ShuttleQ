@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // const baseUrl = "http://localhost:3000";
-  const baseUrl = "https://shuttleq.onrender.com";
+  const baseUrl = "http://localhost:3000";
+  // const baseUrl = "https://shuttleq.onrender.com";
   const decrementScoreTeam1 = document.getElementById("decrement-score-team1");
   const incrementScoreTeam1 = document.getElementById("team1-score");
   const decrementScoreTeam2 = document.getElementById("decrement-score-team2");
