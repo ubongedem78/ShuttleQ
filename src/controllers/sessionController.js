@@ -1,7 +1,7 @@
 const { endCurrentCourtSession } = require("../utils/sessionUtil");
 
 const endSession = async (req, res, next) => {
-  const courtId = req.params.id;
+  const courtId = req.params.courtId;
   try {
     await endCurrentCourtSession(courtId);
 

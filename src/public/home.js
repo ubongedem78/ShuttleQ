@@ -1,6 +1,7 @@
+// const baseUrl = "https://shuttleq.onrender.com";
+const baseUrl = "http://localhost:3000";
+
 document.addEventListener("DOMContentLoaded", async function () {
-  // const baseUrl = "https://shuttleq.onrender.com";
-  const baseUrl = "http://localhost:3000";
   let queueData = [];
   let courtSelect = document.getElementById("courtSelect");
   let gameData;
