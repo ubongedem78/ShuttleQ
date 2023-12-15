@@ -1,5 +1,5 @@
-// const baseUrl = "https://shuttleq.onrender.com";
-const baseUrl = "http://localhost:3000";
+const baseUrl = "https://shuttleq.onrender.com";
+
 
 document.addEventListener("DOMContentLoaded", async function () {
   let queueData = [];
@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       showLoader();
       // end session for a particular court
       const courtId = courtSelect.value;
-      console.log(courtId);
+
       const response = await axios.delete(
         `${baseUrl}/api/v1/sessions/${courtId}`,
         {

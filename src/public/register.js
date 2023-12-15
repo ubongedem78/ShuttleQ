@@ -1,5 +1,5 @@
-// const baseUrl = "https://shuttleq.onrender.com";
-const baseUrl = "http://localhost:3000";
+const baseUrl = "https://shuttleq.onrender.com";
+
 const loader = document.getElementById("loader");
 
 const isValidEmail = (email) => {

@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const baseUrl = "http://localhost:3000";
-  // const baseUrl = "https://shuttleq.onrender.com";
+  const baseUrl = "https://shuttleq.onrender.com";
   const decrementScoreTeam1 = document.getElementById("decrement-score-team1");
   const incrementScoreTeam1 = document.getElementById("team1-score");
   const decrementScoreTeam2 = document.getElementById("decrement-score-team2");
@@ -116,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         } else {
           winnerId = team1Score > team2Score ? game.teamAId : game.teamBId;
-          console.log("winnerId", winnerId);
           confirmWinnerCheck = true;
         }
       }
@@ -156,7 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
               }
             )
             .then((response) => {
-              console.log("response", response);
               if (response.status === 200) {
                 window.location.href = "home.html";
               }

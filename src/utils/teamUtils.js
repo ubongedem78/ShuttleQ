@@ -44,7 +44,6 @@ async function validatePlayerNames(playerNames, formattedGameType) {
   }
 
   const players = playerNames.split(",").map((playerName) => playerName.trim());
-  console.log("players: ", players);
   const numberOfPlayers = players.length;
 
   switch (formattedGameType) {
@@ -67,7 +66,6 @@ async function validatePlayerNames(playerNames, formattedGameType) {
     default:
       throw new InvalidGameTypeError();
   }
-  console.log("formattedGameType: ", formattedGameType);
   return players;
 }
 
@@ -88,11 +86,8 @@ async function findUserIDs(players) {
       },
     },
   });
-  console.log("users: ", users);
 
   const userMap = new Map(users.map((user) => [user.userName, user.id]));
-
-  console.log("userMap: ", userMap);
 
   // Iterate over each player name in the 'players' array
   for (const playerName of players) {
@@ -101,24 +96,19 @@ async function findUserIDs(players) {
 
     // Check if a user ID was found for the current player
     if (userID) {
-      console.log("There is a userID");
       userIDs.push(userID);
-      console.log("I have pushed");
-      console.log("userIDs: ", userIDs);
     } else if (!userID) {
-      console.log("There is no userID");
       const guest = await User.create({
         userName: playerName,
         isGuest: true,
       });
-      console.log("guest: ", guest);
+
       if (guest) {
         userIDs.push(guest.id);
       }
     }
   }
-  console.log("I am here 6");
-  console.log("userIDs: ", userIDs);
+
   return userIDs;
 }
 
@@ -137,8 +127,6 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
       status: { [Op.in]: ["PENDING", "PLAYING"] },
     },
   });
-
-  console.log("playersInQueueOrPlaying: ", playersInQueueOrPlaying);
 
   // If players in a queue or playing are found, throw an error.
   if (playersInQueueOrPlaying) {
@@ -164,10 +152,6 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
     },
   });
 
-  console.log(
-    "playersInTeamWithDifferentGameType: ",
-    playersInTeamWithDifferentGameType
-  );
 
   // If players with different game types are found in a team, throw an error.
   if (playersInTeamWithDifferentGameType) {
@@ -183,14 +167,12 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
  * @throws {Error} If an error occurs during the update process.
  */
 async function updateTablesWithPlayerID(userIDs, team) {
-  console.log("I am here 5");
   try {
     for (const userId of userIDs) {
       // Check if the user is a guest
       const isGuest = await User.findOne({
         where: { id: userId, isGuest: true },
       });
-      console.log("isGuest: ", isGuest);
 
       // Update the playerId for the user
       await User.update(

@@ -15,12 +15,11 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "http://localhost:5500",
+    origin: "https://shuttleq.vercel.app",
     credentials: true,
   })
 );
 
-// "https://shuttleq.vercel.app",
 app.use(
   session({
     secret: process.env.SESSION_SECRET,

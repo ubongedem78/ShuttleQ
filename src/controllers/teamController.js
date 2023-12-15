@@ -28,8 +28,6 @@ const createTeam = async (req, res, next) => {
 
     await typeOfGamesOnCourt(courtId, formattedGameType);
 
-    console.log("I am ready to create team");
-
     const team = await createTeamfromPlayerNames(
       formattedGameType,
       userIDs,
