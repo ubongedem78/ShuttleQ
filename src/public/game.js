@@ -139,6 +139,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       endGameButton.addEventListener("click", () => {
         if (winnerId) {
+          showLoader();
+
           axios
             .put(
               `${baseUrl}/api/v1/games/${gameId}`,
@@ -162,6 +164,9 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch((error) => {
               console.error("error", error);
               displayErrorMessage("Error ending the game. Please try again.");
+            })
+            .finally(() => {
+              hideLoader();
             });
         } else {
           displayErrorMessage(
@@ -189,4 +194,14 @@ function displayErrorMessage(message) {
   setTimeout(() => {
     errorMessageElement.remove();
   }, 2000);
+}
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "flex";
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "none";
 }

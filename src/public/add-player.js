@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     event.preventDefault();
 
     try {
+      showLoader();
       const formData = new FormData(addPlayerForm);
       const gameType = formData.get("gameType");
       const player1Name = formData.get("player1Name").toLowerCase();
@@ -74,6 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.error("Error creating team:", error);
       displayErrorMessage(error.response.data.error.msg);
+    } finally {
+      hideLoader();
     }
   });
 });
@@ -87,4 +90,14 @@ function displayErrorMessage(message) {
   setTimeout(() => {
     errorMessageElement.remove();
   }, 2000);
+}
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "flex";
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "none";
 }

@@ -1,5 +1,7 @@
 // const baseUrl = "https://shuttleq.onrender.com";
 const baseUrl = "http://localhost:3000";
+const loader = document.getElementById("loader");
+
 const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
@@ -52,6 +54,7 @@ const register = async () => {
   };
 
   try {
+    showLoader();
     const response = await axios.post(`${baseUrl}/api/v1/register`, userData);
 
     localStorage.setItem("jwt", response.data.token);
@@ -69,6 +72,8 @@ const register = async () => {
       displayErrorMessage(error.response.data.error.msg);
       console.error("Error during registration:", error);
     }
+  } finally {
+    hideLoader();
   }
 };
 
@@ -81,4 +86,14 @@ function displayErrorMessage(message) {
   setTimeout(() => {
     errorMessageElement.remove();
   }, 2000);
+}
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "flex";
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "none";
 }

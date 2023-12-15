@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function fetchCourts() {
     try {
+      showLoader();
       const response = await axios.get(`${baseUrl}/api/v1/courts`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -59,6 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.error("Error fetching courts:", error);
       displayErrorMessage("Error fetching courts. Please try again.");
+    } finally {
+      hideLoader();
     }
   }
 
@@ -84,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
       : `${baseUrl}/api/v1/courts`;
 
     try {
+      showLoader();
       const response = isEdit
         ? await axios.put(url, courtData, {
             headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
@@ -107,6 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.error("Error creating/editing court:", error.message);
       displayErrorMessage("Error creating/editing court. Please try again.");
+    } finally {
+      hideLoader();
     }
   });
 
@@ -151,4 +157,14 @@ function displayErrorMessage(message) {
   setTimeout(() => {
     errorMessageElement.remove();
   }, 2000);
+}
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "flex";
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "none";
 }

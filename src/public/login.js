@@ -10,6 +10,7 @@ const login = async () => {
   }
 
   try {
+    showLoader();
     const response = await axios.post(`${baseUrl}/api/v1/login`, {
       userName,
       password,
@@ -35,6 +36,8 @@ const login = async () => {
       displayErrorMessage("Error during login. Please try again.");
       console.error("Error during login:", error);
     }
+  } finally {
+    hideLoader();
   }
 };
 

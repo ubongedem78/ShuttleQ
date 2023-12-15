@@ -7,6 +7,7 @@ const playAsGuest = async () => {
   }
 
   try {
+    showLoader();
     const response = await axios.post(`${baseUrl}/api/v1/guests`, {
       guestName: guestUsername,
     });
@@ -24,6 +25,8 @@ const playAsGuest = async () => {
   } catch (error) {
     displayErrorMessage(error.response.data.error.msg);
     console.error("Error whilst registering guest: ", error);
+  } finally {
+    hideLoader();
   }
 };
 

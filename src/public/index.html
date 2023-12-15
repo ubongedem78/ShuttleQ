@@ -17,6 +17,14 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
 
+  <div id="loader" class="loader-overlay" style="display: none">
+    <div class="loadingio-spinner-ball-uogk7q6uhbn">
+      <div class="ldio-gzqtuwybk0u">
+        <div></div>
+      </div>
+    </div>
+  </div>
+
   <div class="container" id="dynamicContent">
     <img
       src="https://res.cloudinary.com/ubongedem78/image/upload/v1702356835/game_exkowy.jpg"
@@ -54,6 +62,16 @@
           container.innerHTML = "Invalid contentId";
       }
     }
+
+    function showLoader() {
+      const loader = document.getElementById("loader");
+      loader.style.display = "flex";
+    }
+
+    function hideLoader() {
+      const loader = document.getElementById("loader");
+      loader.style.display = "none";
+    }
   </script>
 
   <!-- Register Content -->
@@ -83,6 +101,9 @@
         Register
       </button>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="register.js"></script>
   </div>
 
   <!-- Login Content -->

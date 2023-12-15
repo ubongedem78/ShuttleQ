@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function fetchQueues(courtId) {
     try {
+      showLoader();
       const response = await axios.get(`${baseUrl}/api/v1/queues/${courtId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -20,6 +21,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
       console.error("Error fetching queues:", error);
       displayErrorMessage("Error fetching queues. Please try again.");
+    } finally {
+      hideLoader();
     }
   }
 
@@ -85,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Create a game
       createGameButton.addEventListener("click", async () => {
+        showLoader();
         try {
           const response = await axios.post(
             `${baseUrl}/api/v1/games`,
@@ -111,6 +115,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         } catch (error) {
           displayErrorMessage(error.response.data.error.msg);
           console.error("Error creating game:", error);
+        } finally {
+          hideLoader();
         }
       });
     }
@@ -118,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch the list of courts
   try {
+    showLoader();
     const response = await axios.get(`${baseUrl}/api/v1/courts`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -142,6 +149,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   } catch (error) {
     displayErrorMessage(error.response.data.error.msg);
     console.error("Error fetching courts:", error);
+  } finally {
+    hideLoader();
   }
 
   const addPlayerButton = document.getElementById("addPlayer");
@@ -155,6 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function fetchUserData() {
     try {
+      showLoader();
       const id = localStorage.getItem("userId");
       const response = await axios.get(`${baseUrl}/api/v1/users/${id}`, {
         headers: {
@@ -174,11 +184,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
       console.error("Error fetching user information:", error);
       displayErrorMessage("Error fetching user information. Please try again.");
+    } finally {
+      hideLoader();
     }
   }
   await fetchUserData();
 
   async function logout() {
+    showLoader();
     try {
       const response = await axios.post(`${baseUrl}/api/v1/logout`);
 
@@ -193,11 +206,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
       displayErrorMessage(error.response.data.error.msg);
       console.error("Error during logout:", error);
+    } finally {
+      hideLoader();
     }
   }
 
   // Fetch user information and update the greeting
   try {
+    showLoader();
     const id = localStorage.getItem("userId");
     const response = await axios.get(`${baseUrl}/api/v1/users/${id}`, {
       headers: {
@@ -213,6 +229,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   } catch (error) {
     console.error("Error fetching user information:", error);
     displayErrorMessage("Error during logout. Please try again.");
+  } finally {
+    hideLoader();
   }
 
   const logoutButton = document.getElementById("logoutButton");
@@ -224,6 +242,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const endSession = document.getElementById("endSession");
   endSession.addEventListener("click", async () => {
     try {
+      showLoader();
       // end session for a particular court
       const courtId = courtSelect.value;
       console.log(courtId);
@@ -240,6 +259,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     } catch (error) {
       displayErrorMessage("Failed to end session. Please try again");
+    } finally {
+      hideLoader();
     }
   });
 });
@@ -253,4 +274,14 @@ function displayErrorMessage(message) {
   setTimeout(() => {
     errorMessageElement.remove();
   }, 2000);
+}
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "flex";
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  loader.style.display = "none";
 }

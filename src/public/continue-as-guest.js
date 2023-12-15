@@ -8,6 +8,7 @@ const continueAsGuest = async () => {
   }
 
   try {
+    showLoader();
     const response = await axios.post(`${baseUrl}/api/v1/loginGuest`, {
       guestName: guestUsername,
     });
@@ -24,6 +25,8 @@ const continueAsGuest = async () => {
   } catch (error) {
     console.error("Error while registering guest:", error.message);
     displayErrorMessage("Error while registering guest. Please try again.");
+  } finally {
+    hideLoader();
   }
 };
 
