@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       const response = isEdit
-        ? await axios.patch(url, courtData, {
+        ? await axios.put(url, courtData, {
             headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
           })
         : await axios.post(url, courtData, {

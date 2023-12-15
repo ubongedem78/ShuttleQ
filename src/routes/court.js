@@ -10,6 +10,6 @@ const {
 
 router.post("/courts", createCourt);
 router.get("/courts", getCourts);
-router.route("/courts/:courtId").delete(deleteCourt).patch(updateCourt);
+router.route("/courts/:courtId").delete(deleteCourt).put(updateCourt);
 
 module.exports = router;

@@ -21,19 +21,14 @@ const createTeam = async (req, res, next) => {
     const players = await validatePlayerNames(playerNames, formattedGameType);
 
     const userIDs = await findUserIDs(players);
-    console.log("userIDs: ", userIDs);
 
     await checkPlayersInTeams(userIDs, formattedGameType);
 
-    console.log("I am here");
-
     await checkPlayersInQueueOrPlaying(userIDs);
-
-    console.log("I am here 2");
 
     await typeOfGamesOnCourt(courtId, formattedGameType);
 
-    console.log("I am here 3");
+    console.log("I am ready to create team");
 
     // Create Team
     const team = await Team.create({
@@ -45,7 +40,8 @@ const createTeam = async (req, res, next) => {
       isActive: true,
     });
 
-    console.log("I am here 4");
+    console.log("team: ", team);
+
     // Update playerId in User or Guest table for all players
     await updateTablesWithPlayerID(userIDs, team);
 

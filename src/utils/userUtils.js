@@ -1,4 +1,4 @@
-const { User, Team, Guest } = require("../model");
+const { User, Team } = require("../model");
 const { NotFoundError } = require("../errors");
 
 /**
@@ -29,15 +29,7 @@ async function fetchAllUsersById(userId) {
     });
 
     if (!user) {
-      const guest = await Guest.findByPk(userId, {
-        include: [{ model: Team, as: "GuestTeam" }],
-      });
-
-      if (!guest) {
-        throw new NotFoundError("User not found");
-      }
-
-      return guest;
+      throw new Error("User not found");
     }
 
     return user;
@@ -59,16 +51,7 @@ async function updateUserDetails(userId, userData) {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      const guest = await Guest.findByPk(userId);
-
-      if (!guest) {
-        throw new NotFoundError("User not found");
-      }
-
-      userData.userName = userData.userName.toLowerCase();
-
-      await guest.update(userData);
-      return guest;
+      throw new Error("User not found");
     }
 
     userData.userName = userData.userName.toLowerCase();

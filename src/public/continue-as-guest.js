@@ -12,9 +12,9 @@ const continueAsGuest = async () => {
       guestName: guestUsername,
     });
 
-    if (response.status === 200 && response.data && response.data.token) {
-      localStorage.setItem("jwt", response.data.token);
+    console.log("response: ", response);
 
+    if (response.status === 200 && response.data) {
       const userId = response.data.guest.id;
       localStorage.setItem("userId", userId);
 

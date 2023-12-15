@@ -1,4 +1,4 @@
-const { Team, User, Queue, Guest, Court } = require("../model");
+const { Team, User, Queue, Court } = require("../model");
 const { Op } = require("sequelize");
 
 /**
@@ -35,6 +35,7 @@ async function validatePlayerNames(playerNames, formattedGameType) {
   }
 
   const players = playerNames.split(",").map((playerName) => playerName.trim());
+  console.log("players: ", players);
   const numberOfPlayers = players.length;
 
   switch (formattedGameType) {
@@ -53,7 +54,7 @@ async function validatePlayerNames(playerNames, formattedGameType) {
     default:
       throw new Error("Invalid gameType");
   }
-
+  console.log("formattedGameType: ", formattedGameType);
   return players;
 }
 
@@ -74,44 +75,37 @@ async function findUserIDs(players) {
       },
     },
   });
+  console.log("users: ", users);
 
-  const userMap = new Map(
-    users.map((user) => [user.userName.toUpperCase(), user.id])
-  );
+  const userMap = new Map(users.map((user) => [user.userName, user.id]));
+
+  console.log("userMap: ", userMap);
 
   // Iterate over each player name in the 'players' array
   for (const playerName of players) {
-    const formattedPlayerName = playerName.toUpperCase();
     // Retrieve the user ID from the map based on the player name
-    const userID = userMap.get(formattedPlayerName);
+    const userID = userMap.get(playerName);
 
     // Check if a user ID was found for the current player
     if (userID) {
-      console.log("There is a userID")
+      console.log("There is a userID");
       userIDs.push(userID);
-      console.log("Ihave pushed")
-    } else {
-      console.log("There is no userID")
-      const existingGuest = await Guest.findOne({
-        where: {
-          userName: playerName,
-        },
+      console.log("Ihave pushed");
+      console.log("userIDs: ", userIDs);
+    } else if (!userID) {
+      console.log("There is no userID");
+      const guest = await User.create({
+        userName: playerName,
+        isGuest: true,
       });
-
-      if (existingGuest) {
-        console.log("There is an existing guest")
-        userIDs.push(existingGuest.id);
-      } else if (!existingGuest) {
-        console.log("There is no existing guest")
-        const createdGuest = await Guest.create({
-          userName: playerName,
-        });
-        userIDs.push(createdGuest.id);
-        console.log("I have pushed guestID to userID")
+      console.log("guest: ", guest);
+      if (guest) {
+        userIDs.push(guest.id);
       }
     }
   }
-  console.log("I am here 6")
+  console.log("I am here 6");
+  console.log("userIDs: ", userIDs);
   return userIDs;
 }
 
@@ -131,12 +125,14 @@ async function checkPlayersInQueueOrPlaying(userIDs) {
     },
   });
 
+  console.log("playersInQueueOrPlaying: ", playersInQueueOrPlaying);
+
   // If players in a queue or playing are found, throw an error.
   if (playersInQueueOrPlaying) {
     throw new Error(
-      `Player(s) with id ${userIDs.join(" or ")} is already ${
-        playersInQueueOrPlaying.status
-      }`
+      `Player(s) with id ${userIDs.join(" or ")} is already in a ${
+        playersInQueueOrPlaying.gameType
+      } team`
     );
   }
 }
@@ -159,6 +155,11 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
     },
   });
 
+  console.log(
+    "playersInTeamWithDifferentGameType: ",
+    playersInTeamWithDifferentGameType
+  );
+
   // If players with different game types are found in a team, throw an error.
   if (playersInTeamWithDifferentGameType) {
     throw new Error(
@@ -179,13 +180,16 @@ async function checkPlayersInTeams(userIDs, formattedGameType) {
  * @throws {Error} If something goes wrong during the update.
  */
 async function updateTablesWithPlayerID(userIDs, team) {
-  console.log("I am here 5")
+  console.log("I am here 5");
   for (const userId of userIDs) {
     try {
-      const isGuest = await Guest.findOne({ where: { id: userId } });
+      const isGuest = await User.findOne({
+        where: { id: userId, isGuest: true },
+      });
+      console.log("isGuest: ", isGuest);
 
       if (isGuest) {
-        await Guest.update(
+        await User.update(
           { playerId: team.id },
           {
             where: {

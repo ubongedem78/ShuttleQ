@@ -16,7 +16,7 @@ const User = sequelize.define(
     },
     email: {
       type: STRING,
-      allowNull: false,
+      allowNull: true,
       unique: {
         args: true,
         msg: "Email address already exists",
@@ -48,62 +48,30 @@ const User = sequelize.define(
     },
     passwordHash: {
       type: STRING,
+      allowNull: true,
+    },
+    isGuest: {
+      type: BOOLEAN,
       allowNull: false,
+      defaultValue: false,
     },
   },
   {
     hooks: {
       beforeCreate: async (user) => {
+        if (user.isGuest) {
+          user.userName = user.userName.toLowerCase();
+          user.avatar = user.userName.charAt(0).toUpperCase();
+          return;
+        }
         const salt = await bcrypt.genSalt(10);
         user.passwordHash = await bcrypt.hash(user.passwordHash, salt);
         user.avatar = user.userName.charAt(0).toUpperCase();
-        user.username = user.userName.toLowerCase();
+        user.userName = user.userName.toLowerCase();
       },
       beforeUpdate: async (user) => {
         user.avatar = user.userName.charAt(0).toUpperCase();
         user.username = user.userName.toLowerCase();
-      },
-    },
-  }
-);
-
-const Guest = sequelize.define(
-  "Guest",
-  {
-    id: {
-      type: UUID,
-      allowNull: false,
-      primaryKey: true,
-      defaultValue: UUIDV4,
-    },
-    userName: {
-      type: STRING,
-      allowNull: false,
-      unique: {
-        args: true,
-        msg: "Username already exists",
-      },
-      validate: {
-        len: {
-          args: [3, 20],
-          msg: "Username must be between 3 and 20 characters",
-        },
-      },
-    },
-    avatar: {
-      type: STRING,
-      allowNull: true,
-    },
-  },
-  {
-    hooks: {
-      beforeCreate: async (guest) => {
-        guest.avatar = guest.userName.charAt(0).toUpperCase();
-        guest.username = guest.userName.toLowerCase();
-      },
-      beforeUpdate: async (guest) => {
-        guest.avatar = guest.userName.charAt(0).toUpperCase();
-        guest.username = guest.userName.toLowerCase();
       },
     },
   }
@@ -302,31 +270,14 @@ User.prototype.createJWT = function () {
   );
 };
 
-Guest.prototype.createJWT = function () {
-  return jwt.sign(
-    { userId: this.id, username: this.userName },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_LIFETIME }
-  );
-};
-
 User.prototype.comparePassword = async function (password) {
   const isMatch = await bcrypt.compare(password, this.passwordHash);
   return isMatch;
 };
 
-Guest.hasOne(Team, {
-  foreignKey: "playerId",
-  as: "GuestTeam",
-  onDelete: "CASCADE",
-});
-Team.belongsTo(Guest, { foreignKey: "player1Id", as: "GuestPlayer1" });
-Team.belongsTo(Guest, { foreignKey: "player2Id", as: "GuestPlayer2" });
-
 User.hasOne(Team, {
   foreignKey: "playerId",
   as: "PlayerTeam",
-  onDelete: "CASCADE",
 });
 Team.belongsTo(User, { foreignKey: "player1Id", as: "Player1" });
 Team.belongsTo(User, { foreignKey: "player2Id", as: "Player2" });
@@ -372,4 +323,4 @@ sequelize
     console.error("Database Sync Failed, error: ", err);
   });
 
-module.exports = { User, Court, Game, Queue, Team, RecentWinners, Guest };
+module.exports = { User, Court, Game, Queue, Team, RecentWinners };

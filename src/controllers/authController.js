@@ -1,4 +1,4 @@
-const { User, Guest } = require("../model");
+const { User } = require("../model");
 const { BadRequestError, NotFoundError } = require("../errors");
 
 // Create User
@@ -88,22 +88,21 @@ const createGuest = async (req, res, next) => {
       throw new BadRequestError("Please provide all required fields");
     }
 
-    const existingGuest = await Guest.findOne({
+    const existingGuest = await User.findOne({
       where: { userName: formattedGuestName },
     });
 
-    if (existingGuest) {
+    if (existingGuest && existingGuest.isGuest) {
       throw new BadRequestError("Guest already exists");
     }
 
-    const guest = await Guest.create({
+    const guest = await User.create({
       userName: formattedGuestName,
       avatar,
+      isGuest: true,
     });
-    const token = guest.createJWT();
     req.session.user = guest;
-    req.session.token = token;
-    return res.status(201).json({ guest, token });
+    return res.status(201).json({ guest });
   } catch (error) {
     next(error);
   }
@@ -118,7 +117,7 @@ const loginGuest = async (req, res, next) => {
       throw new BadRequestError("Please provide all required fields");
     }
 
-    const guest = await Guest.findOne({
+    const guest = await User.findOne({
       where: { userName: formattedGuestName },
     });
 
@@ -126,10 +125,8 @@ const loginGuest = async (req, res, next) => {
       throw new NotFoundError("Guest not found");
     }
 
-    const token = guest.createJWT();
     req.session.user = guest;
-    req.session.token = token;
-    return res.json({ guest, token });
+    return res.json({ guest });
   } catch (error) {
     next(error);
   }
