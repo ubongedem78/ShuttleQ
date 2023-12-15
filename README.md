@@ -26,7 +26,7 @@ ShuttleQ is a web application designed to manage the game of badminton. Badminto
 
 ## Game Types
 
-ShuttleQ supports various game types, including:
+ShuttleQ supports game types, including:
 
 - Singles: 2 players competing against each other.
 - Doubles: 2 pairs competing against each other.
