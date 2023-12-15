@@ -18,9 +18,11 @@ const playAsGuest = async () => {
 
       window.location.href = "home.html";
     } else {
+      displayErrorMessage(error.response.data.error.msg);
       console.error("Error during login: Unexpected server response", response);
     }
   } catch (error) {
+    displayErrorMessage(error.response.data.error.msg);
     console.error("Error whilst registering guest: ", error);
   }
 };

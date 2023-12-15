@@ -12,8 +12,6 @@ const continueAsGuest = async () => {
       guestName: guestUsername,
     });
 
-    console.log("response: ", response);
-
     if (response.status === 200 && response.data) {
       const userId = response.data.guest.id;
       localStorage.setItem("userId", userId);

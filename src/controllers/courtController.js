@@ -1,8 +1,9 @@
-const { Court } = require("../model");
 const {
   findCourtByName,
   createNewCourt,
   getAllCourts,
+  updateCourtById,
+  deleteCourtById,
 } = require("../utils/courtUtils");
 
 const { BadRequestError, NotFoundError } = require("../errors");
@@ -54,20 +55,7 @@ const updateCourt = async (req, res, next) => {
     const { courtId } = req.params;
     const { courtName, courtType } = req.body;
 
-    const court = await Court.findOne({
-      where: {
-        courtId,
-      },
-    });
-
-    if (!court) {
-      throw new NotFoundError("Court not found");
-    }
-
-    court.courtName = courtName;
-    court.courtType = courtType;
-
-    await court.save();
+    const court = await updateCourtById(courtId, { courtName, courtType });
 
     res.status(200).json({
       status: "success",
@@ -83,17 +71,7 @@ const deleteCourt = async (req, res, next) => {
   try {
     const { courtId } = req.params;
 
-    const court = await Court.findOne({
-      where: {
-        courtId,
-      },
-    });
-
-    if (!court) {
-      throw new NotFoundError("Court not found");
-    }
-
-    await court.destroy();
+    const court = await deleteCourtById(courtId);
 
     res.status(200).json({
       status: "success",

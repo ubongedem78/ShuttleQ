@@ -66,6 +66,7 @@ const register = async () => {
     ) {
       displayErrorMessage(error.response.data.error.msg);
     } else {
+      displayErrorMessage(error.response.data.error.msg);
       console.error("Error during registration:", error);
     }
   }

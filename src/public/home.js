@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       })
       .catch((error) => {
         console.error("Error deleting team:", error);
+        displayErrorMessage(error.response.data.error.msg);
       });
   }
 
@@ -101,12 +102,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             // Redirect to the game page
             window.location.href = `game.html?gameId=${gameId}`;
           } else {
+            displayErrorMessage(error.response.data.error.msg);
             console.error(
               "Error creating game: Unexpected server response",
               response
             );
           }
         } catch (error) {
+          displayErrorMessage(error.response.data.error.msg);
           console.error("Error creating game:", error);
         }
       });
@@ -137,6 +140,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     fetchQueues(courtSelect.value);
   } catch (error) {
+    displayErrorMessage(error.response.data.error.msg);
     console.error("Error fetching courts:", error);
   }
 
@@ -183,9 +187,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         localStorage.removeItem("userId");
         window.location.href = "index.html";
       } else {
+        displayErrorMessage(error.response.data.error.msg);
         console.error("Error during logout:", response);
       }
     } catch (error) {
+      displayErrorMessage(error.response.data.error.msg);
       console.error("Error during logout:", error);
     }
   }
