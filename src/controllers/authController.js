@@ -64,7 +64,7 @@ const createGuest = async (req, res, next) => {
     req.session.user = guest;
     req.session.token = token;
 
-    return res.status(201).json({ guest });
+    return res.status(201).json({ guest, token });
   } catch (error) {
     next(error);
   }
@@ -80,7 +80,7 @@ const loginGuest = async (req, res, next) => {
 
     req.session.token = token;
     req.session.user = guest;
-    return res.json({ guest });
+    return res.json({ guest, token });
   } catch (error) {
     next(error);
   }
