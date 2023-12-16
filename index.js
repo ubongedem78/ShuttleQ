@@ -10,7 +10,7 @@ const cors = require("cors");
 const path = require("path");
 const session = require("express-session");
 const swaggerUi = require("swagger-ui-express");
-const swaggerOptions = require("./src/utils/swaggerUtils");
+const swaggerOptions = require("./swagger");
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "src")));
