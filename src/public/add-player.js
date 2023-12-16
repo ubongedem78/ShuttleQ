@@ -51,6 +51,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const player2Name = formData.get("player2Name").toLowerCase();
       const courtId = formData.get("courtId");
 
+      if (player1Name === player2Name) {
+        displayErrorMessage("Player 1 and Player 2 cannot be the same.");
+        return;
+      }
+
       const requestData = {
         gameType,
         playerNames:
