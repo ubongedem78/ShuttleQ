@@ -51,6 +51,7 @@ app.use(
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
+
 readdirSync("./src/routes").map((routePath) => {
   if (routePath === "auth.js") {
     return app.use("/api/v1", require(`./src/routes/${routePath}`));
