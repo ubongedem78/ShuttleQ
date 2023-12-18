@@ -28,7 +28,7 @@ client.on("connect", () => {
   console.log("Redis connected");
 });
 let redisStore = new RedisStore({ client });
-client.connect().catch(console.error)
+client.connect().catch(console.error);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "src")));
@@ -50,7 +50,7 @@ app.use(
 );
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
-
+console.log("swaggerOptions", swaggerOptions);
 
 readdirSync("./src/routes").map((routePath) => {
   if (routePath === "auth.js") {
