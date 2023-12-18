@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "https://shuttleq-ubongedem78.vercel.app/" || "http://localhost:3000" || "https://shuttleq.vercel.app/",
+    origin: "https://shuttleq.vercel.app/",
     credentials: true,
   })
 );
@@ -50,7 +50,6 @@ app.use(
 );
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
-
 
 readdirSync("./src/routes").map((routePath) => {
   if (routePath === "auth.js") {

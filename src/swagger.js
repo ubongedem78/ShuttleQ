@@ -8,6 +8,11 @@ const options = {
       version: "1.0.0",
       description: "API documentation for ShuttleQ application",
     },
+    servers: [
+      {
+        url: "https://shuttleq.onrender.com",
+      },
+    ],
   },
   apis: ["./src/routes/*.js"],
 };

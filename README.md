@@ -53,7 +53,7 @@ ShuttleQ provides a comprehensive solution for organizing and managing badminton
    ```bash
    git clone https://github.com/ubongedem78/ShuttleQ.git
 
-   cd ShuttleQ/src
+   cd shuttleQ
    ```
 
 2. Install dependencies:
@@ -67,12 +67,20 @@ ShuttleQ provides a comprehensive solution for organizing and managing badminton
 4. Start the server:
 
    ```bash
-   npm start
+   npm run dev
    ```
+
+5. Enjoy!
 
 ## Usage
 
+ShuttleQ is currently hosted at [https://shuttleq.vercel.app](https://shuttleq.vercel.app/)
+
+Users can eithe register or continue as guests to gain access to the application. The dashboard displays the current queue, with action buttons for adding new pairs to the queue, starting a game, adding courts and ending sessions. The queue is automatically updated as games are played and won. The queue is also updated when new pairs are added to the queue.
+
 ## API Documentation
+
+The API documentation for ShuttleQ can be found [here](https://shuttleq.onrender.com/api-docs/).
 
 ## Contributing
 
