@@ -13,15 +13,15 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./swagger");
 const pgSession = require("connect-pg-simple")(session);
 
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "src")));
+app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: "https://shuttleq.vercel.app",
     credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "src")));
-app.use(express.urlencoded({ extended: false }));
 
 app.use(
   session({
