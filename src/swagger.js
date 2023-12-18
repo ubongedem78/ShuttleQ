@@ -8,11 +8,6 @@ const options = {
       version: "1.0.0",
       description: "API documentation for ShuttleQ application",
     },
-    servers: [
-      {
-        url: "https://shuttleq.vercel.app",
-      },
-    ],
   },
   apis: ["./src/routes/*.js"],
 };
