@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const { readdirSync } = require("fs");
-const { sequelize } = require("./src/config/database");
+const { sequelize, pool } = require("./src/config/database");
 const authenticate = require("./src/middlewares/auth");
 const errorHandlerMiddleware = require("./src/middlewares/error-handler");
 const notFoundMiddleware = require("./src/middlewares/notFound");
@@ -11,19 +11,24 @@ const path = require("path");
 const session = require("express-session");
 const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./swagger");
+const pgSession = require("connect-pg-simple")(session);
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "src")));
-app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     origin: "https://shuttleq.vercel.app",
     credentials: true,
   })
 );
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "src")));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(
   session({
+    store: new pgSession({
+      pool: pool,
+      tableName: "session",
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
@@ -32,11 +37,11 @@ app.use(
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
 
-readdirSync("./src/routes").map((path) => {
-  if (path === "auth.js") {
-    return app.use("/api/v1", require(`./src/routes/${path}`));
+readdirSync("./src/routes").map((routePath) => {
+  if (routePath === "auth.js") {
+    return app.use("/api/v1", require(`./src/routes/${routePath}`));
   }
-  app.use("/api/v1", authenticate, require(`./src/routes/${path}`));
+  app.use("/api/v1", authenticate, require(`./src/routes/${routePath}`));
 });
 
 app.get("/", (req, res) => {
