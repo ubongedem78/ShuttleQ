@@ -82,6 +82,33 @@ Users can eithe register or continue as guests to gain access to the application
 
 The API documentation for ShuttleQ can be found [here](https://shuttleq.onrender.com/api-docs/).
 
+Routes are prefixed with `/api/v1`.
+
+Responses are in the following format:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Ubong E",
+    "email": "xyz"
+  }
+}
+```
+
+### Status Codes
+
+ShuttleQ returns the following status codes in its API responses:
+
+| Status Code | Description             |
+| :---------- | :---------------------- |
+| 200         | `OK`                    |
+| 201         | `CREATED`               |
+| 400         | `BAD REQUEST`           |
+| 404         | `NOT FOUND`             |
+| 500         | `INTERNAL SERVER ERROR` |
+
 ## Contributing
 
 Pull requests are very welcome. For major changes, please open an issue first to discuss what you would like to change.
