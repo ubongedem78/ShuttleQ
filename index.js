@@ -10,7 +10,7 @@ const cors = require("cors");
 const path = require("path");
 const session = require("express-session");
 const swaggerUi = require("swagger-ui-express");
-const swaggerOptions = require("./swagger");
+const swaggerOptions = require("./src/swagger");
 const { createClient } = require("redis");
 const RedisStore = require("connect-redis").default;
 
@@ -35,10 +35,7 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin:
-      "https://shuttleq-ubongedem78.vercel.app/" ||
-      "http://localhost:3000" ||
-      "https://shuttleq.vercel.app/",
+    origin: "https://shuttleq-ubongedem78.vercel.app/" || "http://localhost:3000" || "https://shuttleq.vercel.app/",
     credentials: true,
   })
 );
@@ -53,7 +50,7 @@ app.use(
 );
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerOptions));
-console.log("swaggerOptions", swaggerOptions);
+
 
 readdirSync("./src/routes").map((routePath) => {
   if (routePath === "auth.js") {
