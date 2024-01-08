@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, "src")));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "https://shuttleq.vercel.app/",
+    origin: "https://shuttleq.vercel.app",
     credentials: true,
   })
 );
