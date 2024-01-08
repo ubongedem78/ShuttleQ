@@ -78,5 +78,3 @@ app.listen(PORT, () => {
       console.error("Database Connection Failed, error: ", err);
     });
 });
-
-module.exports = app;
