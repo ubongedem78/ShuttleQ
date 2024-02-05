@@ -11,24 +11,6 @@ const path = require("path");
 const session = require("express-session");
 const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./src/swagger");
-const { createClient } = require("redis");
-const RedisStore = require("connect-redis").default;
-
-const client = createClient({
-  password: process.env.REDIS_PASS,
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT,
-  },
-});
-client.on("error", (error) => {
-  console.error("Redis connection error:", error);
-});
-client.on("connect", () => {
-  console.log("Redis connected");
-});
-let redisStore = new RedisStore({ client });
-client.connect().catch(console.error);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "src")));
@@ -42,7 +24,6 @@ app.use(
 
 app.use(
   session({
-    store: redisStore,
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
